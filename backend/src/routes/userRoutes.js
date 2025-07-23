@@ -6,7 +6,7 @@ const {
   getUser,
   createUser,
   deleteUser,
-} = require('../controllers/userController');
+} = require('../controllers/userControler');
 const { validateUser } = require('../middleware/validators/userValidator');
 
 router.get('/', getUsers);

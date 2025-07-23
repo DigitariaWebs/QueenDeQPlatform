@@ -1,32 +1,24 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-
-interface Message {
-  id: string;
-  content: string;
-  isUser: boolean;
-  timestamp: Date;
-}
+import { chatService, type Message, type AssistantMode, type StreamChunk } from '../../services/chatService';
 
 const ChatPage: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
-      content: 'Je veux que tu agisses comme une interprète de rêves. Je te donnerai des descriptions de mes rêves, et tu me fourniras des interprétations basées sur les symboles et les thèmes présents dans le rêve. Ne donne pas d\'opinions personnelles ou d\'hypothèses sur le rêveur. Fournis seulement des interprétations factuelles basées sur les informations données. Mon premier rêve était : [J\'ai vu une petite fée volant dans le ciel. Elle portait une robe scintillante quand elle a volé, tout le ciel scintillait de lumière]',
-      isUser: true,
-      timestamp: new Date(Date.now() - 300000)
-    },
-    {
-      id: '2',
-      content: 'Dans votre rêve, l\'apparition d\'une petite fée volant dans le ciel peut symboliser un sentiment d\'émerveillement, de magie et d\'enchantement dans votre vie. Les fées sont souvent associées à l\'imagination, à la créativité et aux royaumes invisibles de l\'existence. Le fait qu\'elle portait une robe scintillante et faisait scintiller tout le ciel de lumière suggère un sentiment d\'admiration et de beauté entourant cette expérience. Ce rêve peut indiquer un désir de plus de joie, de légèreté et de fantaisie dans votre vie éveillée, ou il pourrait signifier un besoin de vous reconnecter avec votre enfant intérieur et d\'embrasser la magie et l\'émerveillement du monde qui vous entoure.',
+      content: "Bienvenue, ma chère âme. Je suis la Reine-Mère, ta confidente et guide spirituelle. Je suis là pour t'écouter, partager ma sagesse, et t'accompagner dans ton cheminement. Que souhaites-tu explorer aujourd'hui ?",
       isUser: false,
-      timestamp: new Date(Date.now() - 240000)
+      timestamp: new Date()
     }
   ]);
   
   const [inputValue, setInputValue] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const [copiedMessageId, setCopiedMessageId] = useState<string | null>(null);
+  const [availableModes, setAvailableModes] = useState<AssistantMode[]>([]);
+  const [selectedMode, setSelectedMode] = useState('default');
+  const [streamingMessage, setStreamingMessage] = useState('');
+  const [useStreaming, setUseStreaming] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -35,33 +27,102 @@ const ChatPage: React.FC = () => {
 
   useEffect(() => {
     scrollToBottom();
-  }, [messages]);
+  }, [messages, streamingMessage]);
+
+  // Load available modes on component mount
+  useEffect(() => {
+    const loadModes = async () => {
+      try {
+        const modes = await chatService.getModes();
+        setAvailableModes(modes);
+        
+        // Set default mode
+        const defaultMode = modes.find(mode => mode.isDefault);
+        if (defaultMode) {
+          setSelectedMode(defaultMode.id);
+        }
+      } catch (error) {
+        console.error('Failed to load modes:', error);
+      }
+    };
+
+    loadModes();
+  }, []);
 
   const handleSendMessage = async () => {
-    if (!inputValue.trim()) return;
+    if (!inputValue.trim() || isTyping) return;
 
     const newMessage: Message = {
       id: Date.now().toString(),
       content: inputValue,
       isUser: true,
-      timestamp: new Date()
+      timestamp: new Date(),
+      mode: selectedMode
     };
 
     setMessages(prev => [...prev, newMessage]);
     setInputValue('');
     setIsTyping(true);
+    setStreamingMessage('');
 
-    // Simuler la réponse de la Reine-Mère
-    setTimeout(() => {
-      const response: Message = {
-        id: (Date.now() + 1).toString(),
-        content: 'Bientôt disponible, ma chère âme. La Reine-Mère prépare ses réponses mystiques pour vous guider dans l\'interprétation de vos rêves et visions.',
-        isUser: false,
-        timestamp: new Date()
+    const currentMessages = [...messages, newMessage];
+
+    if (useStreaming) {
+      // Use streaming
+      let streamingResponse = '';
+      const streamingId = (Date.now() + 1).toString();
+
+      const handleChunk = (chunk: StreamChunk) => {
+        if (chunk.type === 'chunk' && chunk.content) {
+          streamingResponse += chunk.content;
+          setStreamingMessage(streamingResponse);
+        } else if (chunk.type === 'complete') {
+          // Finalize the streaming message
+          const finalMessage: Message = {
+            id: streamingId,
+            content: chunk.fullMessage || streamingResponse,
+            isUser: false,
+            timestamp: new Date(),
+            mode: chunk.mode || selectedMode
+          };
+          
+          setMessages(prev => [...prev, finalMessage]);
+          setStreamingMessage('');
+          setIsTyping(false);
+        } else if (chunk.type === 'error') {
+          // Handle streaming error
+          const errorMessage: Message = {
+            id: streamingId,
+            content: chunk.fallbackMessage || chunk.error || 'Une erreur est survenue.',
+            isUser: false,
+            timestamp: new Date(),
+            mode: selectedMode
+          };
+          
+          setMessages(prev => [...prev, errorMessage]);
+          setStreamingMessage('');
+          setIsTyping(false);
+        }
       };
-      setMessages(prev => [...prev, response]);
+
+      await chatService.sendMessageStream(currentMessages, selectedMode, handleChunk);
+    } else {
+      // Use standard chat
+      const response = await chatService.sendMessage(currentMessages, selectedMode);
+      
+      const responseMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        content: response.success 
+          ? response.message?.content || 'Réponse vide'
+          : response.fallbackMessage || response.error || 'Une erreur est survenue.',
+        isUser: false,
+        timestamp: new Date(),
+        mode: response.message?.mode || selectedMode
+      };
+      
+      setMessages(prev => [...prev, responseMessage]);
       setIsTyping(false);
-    }, 2000);
+    }
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -249,9 +310,53 @@ const ChatPage: React.FC = () => {
             ))}
           </AnimatePresence>
           
+          {/* Streaming message display */}
+          <AnimatePresence>
+            {streamingMessage && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="flex justify-start"
+              >
+                <div className="max-w-3xl order-1">
+                  <div className="flex items-center space-x-2 mb-2">
+                    <div className="w-8 h-8 bg-gradient-to-br from-royal-gold/80 to-royal-champagne/80 rounded-full flex items-center justify-center shadow-sm">
+                      <img 
+                        src="/assets/icons/teacup.svg" 
+                        alt="Tasse de Thé Royal" 
+                        className="w-5 h-5"
+                      />
+                    </div>
+                    <span className="text-sm font-raleway text-royal-purple/70 font-medium">
+                      Reine-Mère
+                    </span>
+                  </div>
+                  
+                  <div className="rounded-2xl p-4 bg-white/20 backdrop-blur-sm border border-white/30 text-royal-purple mr-12">
+                    <p className="font-raleway leading-relaxed">{streamingMessage}</p>
+                    <div className="mt-2 flex items-center space-x-1">
+                      {[0, 1, 2].map((i) => (
+                        <motion.div
+                          key={i}
+                          className="w-1.5 h-1.5 bg-royal-gold rounded-full"
+                          animate={{ scale: [1, 1.3, 1] }}
+                          transition={{
+                            duration: 0.6,
+                            repeat: Infinity,
+                            delay: i * 0.2
+                          }}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
           {/* Typing Indicator */}
           <AnimatePresence>
-            {isTyping && (
+            {isTyping && !streamingMessage && (
               <div className="flex justify-start">
                 <div className="max-w-3xl">
                   <div className="flex items-center space-x-2 mb-2">
@@ -277,8 +382,40 @@ const ChatPage: React.FC = () => {
           <div ref={messagesEndRef} />
         </div>
 
-        {/* Input Area - Sticky au bas */}
-        <div className="sticky bottom-0 bg-white/10 backdrop-blur-lg rounded-2xl shadow-xl p-6 border-t border-white/20">
+        {/* Controls and Input Area */}
+        <div className="sticky bottom-0 bg-white/10 backdrop-blur-lg rounded-2xl shadow-xl p-6 border-t border-white/20 space-y-4">
+          
+          {/* Mode Selection and Settings */}
+          <div className="flex items-center justify-between text-sm">
+            <div className="flex items-center space-x-4">
+              <label className="text-royal-purple/70 font-raleway">Mode :</label>
+              <select
+                value={selectedMode}
+                onChange={(e) => setSelectedMode(e.target.value)}
+                className="bg-white/20 text-royal-purple border border-white/30 rounded-lg px-3 py-1 focus:outline-none focus:ring-2 focus:ring-royal-gold/50 font-raleway"
+              >
+                {availableModes.map((mode) => (
+                  <option key={mode.id} value={mode.id}>
+                    {mode.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+            
+            <div className="flex items-center space-x-4">
+              <label className="flex items-center space-x-2 text-royal-purple/70 font-raleway">
+                <input
+                  type="checkbox"
+                  checked={useStreaming}
+                  onChange={(e) => setUseStreaming(e.target.checked)}
+                  className="rounded border-white/30 bg-white/20 text-royal-gold focus:ring-royal-gold/50"
+                />
+                <span>Réponse en temps réel</span>
+              </label>
+            </div>
+          </div>
+
+          {/* Input Area */}
           <div className="flex items-center space-x-4">
             <div className="flex-1 relative">
               <input

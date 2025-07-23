@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
 
 interface MysteryCardProps {
   icon: React.ReactNode;
   title: string;
   description: string;
   index: number;
+  chatPrompt: string;
 }
 
-export const MysteryCard: React.FC<MysteryCardProps> = ({ icon, title, description, index }) => {
+export const MysteryCard: React.FC<MysteryCardProps> = ({ icon, title, description, index, chatPrompt }) => {
   const [isFlipped, setIsFlipped] = useState(false);
 
   const handleInteraction = () => {
@@ -78,6 +80,14 @@ export const MysteryCard: React.FC<MysteryCardProps> = ({ icon, title, descripti
           <p className="text-royal-purple/90 text-sm leading-relaxed font-sans">
             {description}
           </p>
+          <Link
+            to={`/chat?prompt=${encodeURIComponent(chatPrompt)}`}
+            className="mt-8 inline-block px-8 py-3 rounded-full bg-gradient-to-r from-imperial-gold via-rose-champagne to-imperial-gold text-royal-purple font-bold text-lg border-4 border-imperial-gold ring-2 ring-white/80 shadow-lg hover:from-imperial-gold hover:to-rose-champagne hover:shadow-royal hover:scale-105 hover:brightness-110 focus:outline-none focus:ring-4 focus:ring-imperial-gold focus:ring-offset-2 focus:ring-offset-white transition-all duration-200 drop-shadow-[0_4px_16px_rgba(214,174,96,0.35)]"
+            tabIndex={0}
+            aria-label={`Commencer une conversation sur ${title}`}
+          >
+            Commencer
+          </Link>
           <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-30 pointer-events-none" />
           <div className="absolute inset-0 rounded-2xl border-2 border-royal-gold/70 animate-pulse" />
         </div>

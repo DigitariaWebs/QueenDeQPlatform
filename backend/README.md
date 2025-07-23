@@ -1,29 +1,103 @@
-# Backend API
+# QueenDeQ Backend
 
-## Setup
+Backend pour la plateforme Queen de Q avec intégration OpenAI pour la Reine-Mère.
 
-1. `cp .env.example .env` → fill in your values  
-2. `npm install`  
-3. `npm run dev`  (development)  
-4. `npm start`    (production)
+## Installation
 
-## Project Structure
+```bash
+npm install
+```
 
-- **src/** — source code  
-  - **config/** — DB & env setup  
-  - **controllers/** — route handlers  
-  - **models/** — Mongoose schemas  
-  - **routes/** — Express routers  
-  - **middleware/** — auth, validation, errors  
-  - **services/** — external integrations (email, etc.)  
-  - **utils/** — helpers, standard responses  
-  - **index.js** — app bootstrap
+## Configuration
 
-- **tests/** — Jest + Supertest  
+Créez un fichier `.env` basé sur `.env.example` :
 
-## Scripts
+```bash
+cp .env.example .env
+```
 
-- `npm run dev` — start with nodemon  
-- `npm test`    — run unit & integration tests  
-- `npm run lint`/`format` — ESLint + Prettier  
+Configurez les variables d'environnement :
+
+- `MONGODB_URI` : Votre URI de connexion MongoDB
+- `JWT_SECRET` : Clé secrète pour JWT
+- `OPENAI_API_KEY` : Votre clé API OpenAI (obligatoire pour la fonctionnalité chat)
+- `PORT` : Port du serveur (défaut: 5000)
+
+## Fonctionnalités AI
+
+### La Reine-Mère - Assistant IA
+
+Le backend inclut un système d'IA sophistiqué pour l'assistant "Reine-Mère" avec :
+
+- **Personnalité consistante** : Voix intérieure chaleureuse et complice
+- **Modes multiples** : 
+  - `default` : La Reine-Mère classique
+  - `dreamsInterpreter` : Spécialisée dans l'interprétation des rêves
+  - `mysticalGuide` : Guide spirituelle et mystique
+- **Streaming en temps réel** : Réponses progressives pour une meilleure UX
+- **Gestion d'erreurs robuste** : Messages de fallback en cas de problème
+
+### Endpoints API
+
+#### Chat Standard
+```
+POST /api/ai/chat
+```
+
+Body :
+```json
+{
+  "messages": [
+    {"role": "user", "content": "Votre message"}
+  ],
+  "mode": "default"
+}
+```
+
+#### Chat Streaming
+```
+POST /api/ai/chat/stream
+```
+
+Même format de body, retourne un stream de réponses JSON.
+
+#### Modes Disponibles
+```
+GET /api/ai/modes
+```
+
+Retourne la liste des modes disponibles.
+
+## Démarrage
+
+```bash
+npm start
+```
+
+Le serveur démarre sur le port configuré (défaut: 5000).
+
+## Structure du Projet
+
+```
+src/
+├── config/
+│   ├── database.js      # Configuration MongoDB
+│   └── ai.js           # Configuration OpenAI et prompts système
+├── routes/
+│   ├── index.js        # Routes principales
+│   ├── userRoutes.js   # Routes utilisateur
+│   └── chatRoutes.js   # Routes IA/Chat
+├── middleware/
+│   ├── notFound.js     # Middleware 404
+│   └── errorHandler.js # Gestionnaire d'erreurs
+└── index.js           # Point d'entrée principal
+```
+
+## Sécurité et Limites
+
+- Rate limiting : 100 requêtes/15min
+- Validation des entrées avec express-validator
+- Headers de sécurité avec Helmet
+- Limites de tokens configurables par mode
+- Gestion gracieuse des erreurs OpenAI
 

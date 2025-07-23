@@ -8,7 +8,7 @@ import {
   ShoppingBagIcon,
   SparklesIcon,
   HeartIcon,
-  EyeIcon
+  UserGroupIcon
 } from '@heroicons/react/24/outline';
 import { useAuth } from '../../contexts/AuthContext';
 import { MysteryCard } from '../MysteryCard';
@@ -50,19 +50,22 @@ const quickActions = [
 
 const mysteryFeatures = [
   {
+    icon: <RectangleStackIcon className="w-12 h-12" />,
+    title: 'Les Cartes en Main',
+    description: 'Découvrez les archétypes masculins que vous attirez. 10 cartes gratuites pour commencer votre voyage de découverte.',
+    chatPrompt: "Tu veux qu'on parle de tes cartes?"
+  },
+  {
     icon: <HeartIcon className="w-12 h-12" />,
-    title: 'Essence Royale',
-    description: 'Découvrez les profondeurs de votre âme et révélez votre véritable nature royale à travers une introspection guidée.',
+    title: 'Miroir, Miroir!',
+    description: 'Révélez votre type de Queen : Cœur, Carreau, Trèfle ou Pique. Découvrez votre style relationnel et vos forces.',
+    chatPrompt: "T'es quel genre de Queen, toi, vraiment?"
   },
   {
-    icon: <EyeIcon className="w-12 h-12" />,
-    title: 'Vision Mystique',
-    description: 'Ouvrez votre troisième œil et percez les mystères qui vous entourent grâce à votre intuition développée.',
-  },
-  {
-    icon: <SparklesIcon className="w-12 h-12" />,
-    title: 'Magie Intérieure',
-    description: 'Libérez le pouvoir magique qui sommeille en vous et transformez votre réalité par la force de votre intention.',
+    icon: <UserGroupIcon className="w-12 h-12" />,
+    title: 'Afternoon Tea',
+    description: 'Conversez avec la Reine-Mère, votre guide bienveillante et complice pour une discussion chaleureuse et éclairante.',
+    chatPrompt: "Et si on mettait les cartes sur table?"
   }
 ];
 
@@ -76,8 +79,6 @@ const DashboardHome = () => {
       transition={{ duration: 0.6 }}
       className="first:pt-0 last:pb-0"
     >
-      
-
       {/* Mystery Cards Section */}
       <div className="mb-12 lg:mb-16">
         <motion.div
@@ -87,10 +88,10 @@ const DashboardHome = () => {
           className="text-center mb-8"
         >
           <h2 className="text-3xl font-serif font-bold text-royal-purple mb-4">
-            Révélez Vos Mystères
+            Votre Royaume Intérieur
           </h2>
           <p className="text-cabinet-aubergine/70 font-sans text-lg max-w-2xl mx-auto">
-            Trois cartes mystiques vous attendent. Chacune révèle un aspect de votre pouvoir intérieur.
+            Trois portes s'ouvrent vers votre transformation. Choisissez votre chemin de découverte.
           </p>
         </motion.div>
         
@@ -102,6 +103,7 @@ const DashboardHome = () => {
                 title={feature.title}
                 description={feature.description}
                 index={index}
+                chatPrompt={feature.chatPrompt}
               />
             </div>
           ))}

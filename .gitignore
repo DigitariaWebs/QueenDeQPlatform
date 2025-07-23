@@ -12,8 +12,14 @@
 .env.*.local
 
 # local env files
+.env
 .env.local
 .env.*.local
+
+# Backend env files
+/backend/.env
+/backend/.env.local
+/backend/.env.*.local
 
 # Log files
 npm-debug.log*

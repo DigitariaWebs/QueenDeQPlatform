@@ -1,9 +1,12 @@
 {
   "name": "queendeq-backend",
   "version": "1.0.0",
-  "main": "server.js",
+  "main": "src/index-chat-only.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node src/index-chat-only.js",
+    "dev": "nodemon src/index-chat-only.js",
+    "test-chat": "node test-chat.js",
+    "full-dev": "nodemon src/index.js"
   },
   "dependencies": {
     "axios": "^0.21.1",
@@ -21,8 +24,10 @@
     "joi": "^17.13.3",
     "jsonwebtoken": "^9.0.2",
     "mongodb": "^4.3.0",
+    "mongoose": "^8.16.4",
     "morgan": "^1.10.1",
     "multer": "^2.0.2",
+    "openai": "^4.104.0",
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",
     "winston": "^3.17.0"
