@@ -1,0 +1,10 @@
+<svg width="300" height="450" viewBox="0 0 300 450" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="300" height="450" rx="15" fill="#3B1E50"/>
+  <rect x="10" y="10" width="280" height="430" rx="10" stroke="#D6AE60" stroke-opacity="0.3" stroke-width="2"/>
+  <text x="150" y="225" font-family="sans-serif" font-size="24" fill="#D6AE60" text-anchor="middle">
+    Queen de Q
+  </text>
+  <text x="150" y="255" font-family="sans-serif" font-size="16" fill="#D4B5A5" text-anchor="middle">
+    Carte Archétype
+  </text>
+</svg> 

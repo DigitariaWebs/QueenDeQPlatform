@@ -6,9 +6,12 @@ import {
   BookOpenIcon, 
   ChatBubbleLeftRightIcon, 
   ShoppingBagIcon,
-  SparklesIcon
+  SparklesIcon,
+  HeartIcon,
+  EyeIcon
 } from '@heroicons/react/24/outline';
 import { useAuth } from '../../contexts/AuthContext';
+import { MysteryCard } from '../MysteryCard';
 
 const quickActions = [
   {
@@ -45,6 +48,24 @@ const quickActions = [
   }
 ];
 
+const mysteryFeatures = [
+  {
+    icon: <HeartIcon className="w-12 h-12" />,
+    title: 'Essence Royale',
+    description: 'Découvrez les profondeurs de votre âme et révélez votre véritable nature royale à travers une introspection guidée.',
+  },
+  {
+    icon: <EyeIcon className="w-12 h-12" />,
+    title: 'Vision Mystique',
+    description: 'Ouvrez votre troisième œil et percez les mystères qui vous entourent grâce à votre intuition développée.',
+  },
+  {
+    icon: <SparklesIcon className="w-12 h-12" />,
+    title: 'Magie Intérieure',
+    description: 'Libérez le pouvoir magique qui sommeille en vous et transformez votre réalité par la force de votre intention.',
+  }
+];
+
 const DashboardHome = () => {
   const { user } = useAuth();
 
@@ -55,25 +76,35 @@ const DashboardHome = () => {
       transition={{ duration: 0.6 }}
       className="first:pt-0 last:pb-0"
     >
-      {/* Welcome Section */}
-      <div className="bg-gradient-to-r from-royal-purple/10 to-royal-champagne/10 rounded-2xl p-8 border border-royal-gold/20 mb-12 lg:mb-16">
-        <div className="flex items-center justify-between mb-6">
-          <div>
-            <h1 className="text-4xl font-serif font-bold text-royal-purple mb-2 flex items-center">
-              Bienvenue, {user?.firstName} 
-              <SparklesIcon className="w-8 h-8 text-royal-gold ml-4" />
-            </h1>
-            <p className="text-cabinet-aubergine/70 font-sans text-lg">
-              Votre royaume personnel vous attend. Explorez, découvrez, révélez votre essence royale.
-            </p>
-          </div>
-          <div className="hidden md:flex items-center space-x-2">
-            <SparklesIcon className="w-8 h-8 text-royal-gold" />
-            <div className="text-right">
-              <p className="text-royal-purple font-sans font-bold text-2xl">7</p>
-              <p className="text-cabinet-aubergine/70 text-sm">spots left</p>
+      
+
+      {/* Mystery Cards Section */}
+      <div className="mb-12 lg:mb-16">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.2 }}
+          className="text-center mb-8"
+        >
+          <h2 className="text-3xl font-serif font-bold text-royal-purple mb-4">
+            Révélez Vos Mystères
+          </h2>
+          <p className="text-cabinet-aubergine/70 font-sans text-lg max-w-2xl mx-auto">
+            Trois cartes mystiques vous attendent. Chacune révèle un aspect de votre pouvoir intérieur.
+          </p>
+        </motion.div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-12 max-w-7xl mx-auto">
+          {mysteryFeatures.map((feature, index) => (
+            <div key={index} className="flex justify-center">
+              <MysteryCard
+                icon={feature.icon}
+                title={feature.title}
+                description={feature.description}
+                index={index}
+              />
             </div>
-          </div>
+          ))}
         </div>
       </div>
 
