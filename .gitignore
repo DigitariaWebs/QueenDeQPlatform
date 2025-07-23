@@ -22,3 +22,6 @@ yarn-error.log*
 
 # Allow .gitkeep
 !.gitkeep
+
+/backend/node_modules
+
