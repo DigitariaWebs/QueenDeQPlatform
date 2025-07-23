@@ -10,7 +10,7 @@ import {
   HeartIcon,
   UserGroupIcon
 } from '@heroicons/react/24/outline';
-import { useAuth } from '../../contexts/AuthContext';
+// import { useAuth } from '../../contexts/AuthContext'; // Temporarily commented out until auth is implemented
 import { MysteryCard } from '../MysteryCard';
 
 const quickActions = [
@@ -70,7 +70,7 @@ const mysteryFeatures = [
 ];
 
 const DashboardHome = () => {
-  const { user } = useAuth();
+  // const { user } = useAuth(); // Temporarily commented out until auth is implemented
 
   return (
     <motion.div
