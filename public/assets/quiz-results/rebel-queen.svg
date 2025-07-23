@@ -1,0 +1,45 @@
+<svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background circle -->
+  <circle cx="100" cy="100" r="95" fill="#FDF7F2" stroke="#241B2F" stroke-width="2"/>
+  
+  <!-- Lightning bolts -->
+  <g fill="#241B2F" opacity="0.4">
+    <path d="M60 40 L55 60 L65 55 L50 80 L70 70 L60 90 L80 75 L70 95"/>
+    <path d="M140 40 L135 60 L145 55 L130 80 L150 70 L140 90 L160 75 L150 95"/>
+    <path d="M40 120 L35 140 L45 135 L30 160 L50 150 L40 170"/>
+    <path d="M160 120 L155 140 L165 135 L150 160 L170 150 L160 170"/>
+  </g>
+  
+  <!-- Central rebel symbol -->
+  <circle cx="100" cy="100" r="45" fill="#241B2F" opacity="0.2"/>
+  <g stroke="#241B2F" stroke-width="2" fill="none">
+    <circle cx="100" cy="100" r="35"/>
+    <path d="M85 85 L115 115 M115 85 L85 115"/>
+  </g>
+  
+  <!-- Spiky crown -->
+  <path d="M65 70 L75 45 L85 60 L95 40 L100 55 L105 40 L115 60 L125 45 L135 70 L125 80 L100 85 L75 80 Z" fill="#241B2F" stroke="#3B1E50" stroke-width="1"/>
+  
+  <!-- Face -->
+  <circle cx="85" cy="95" r="3" fill="#3B1E50"/>
+  <circle cx="115" cy="95" r="3" fill="#3B1E50"/>
+  <path d="M85 110 Q100 125 115 110" stroke="#3B1E50" stroke-width="2" fill="none"/>
+  
+  <!-- Rebel energy -->
+  <g stroke="#241B2F" stroke-width="1" opacity="0.6" fill="none">
+    <path d="M100 60 Q80 80 100 100 Q120 80 100 60"/>
+    <path d="M100 140 Q80 120 100 100 Q120 120 100 140"/>
+    <path d="M60 100 Q80 80 100 100 Q80 120 60 100"/>
+    <path d="M140 100 Q120 80 100 100 Q120 120 140 100"/>
+  </g>
+  
+  <!-- Chains (broken) -->
+  <g stroke="#241B2F" stroke-width="2" opacity="0.5">
+    <circle cx="70" cy="130" r="6" fill="none"/>
+    <circle cx="130" cy="130" r="6" fill="none"/>
+    <line x1="76" y1="130" x2="85" y2="130"/>
+    <line x1="115" y1="130" x2="124" y2="130"/>
+    <line x1="90" y1="130" x2="95" y2="130"/>
+    <line x1="105" y1="130" x2="110" y2="130"/>
+  </g>
+</svg>

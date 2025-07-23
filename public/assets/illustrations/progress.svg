@@ -1,0 +1,23 @@
+<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Progress circle -->
+  <circle cx="24" cy="24" r="18" stroke="currentColor" stroke-width="3" fill="none" opacity="0.3"/>
+  <circle cx="24" cy="24" r="18" stroke="currentColor" stroke-width="3" fill="none" 
+          stroke-dasharray="70 113" stroke-dashoffset="28" transform="rotate(-90 24 24)"/>
+  
+  <!-- Trophy/crown icon in center -->
+  <path d="M24 12L26 16L31 16L27 19L28 24L24 22L20 24L21 19L17 16L22 16L24 12Z" fill="currentColor"/>
+  
+  <!-- Celebration particles -->
+  <circle cx="38" cy="12" r="1.5" fill="currentColor"/>
+  <circle cx="10" cy="15" r="1" fill="currentColor"/>
+  <circle cx="40" cy="35" r="1" fill="currentColor"/>
+  <circle cx="8" cy="38" r="1.5" fill="currentColor"/>
+  
+  <!-- Progress indicators -->
+  <circle cx="15" cy="8" r="1" fill="currentColor"/>
+  <circle cx="33" cy="8" r="1" fill="currentColor"/>
+  <circle cx="40" cy="24" r="1" fill="currentColor"/>
+  <circle cx="33" cy="40" r="1" fill="currentColor"/>
+  <circle cx="15" cy="40" r="1" fill="currentColor"/>
+  <circle cx="8" cy="24" r="1" fill="currentColor"/>
+</svg>
