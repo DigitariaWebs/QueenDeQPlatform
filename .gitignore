@@ -21,3 +21,13 @@ yarn-error.log*
 
 /backend/node_modules
 
+
+# local env files
+.env
+.env.local
+.env.*.local
+
+# Backend env files
+/backend/.env
+/backend/.env.local
+/backend/.env.*.local
