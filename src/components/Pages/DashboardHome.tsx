@@ -53,19 +53,22 @@ const mysteryFeatures = [
     icon: <RectangleStackIcon className="w-12 h-12" />,
     title: 'Ta pioche',
     description: 'Découvrez les archétypes masculins que vous attirez. 10 cartes gratuites pour commencer votre voyage de découverte.',
-    chatPrompt: "Tu veux qu'on parle de tes cartes?"
+    chatPrompt: "Tu veux qu'on parle de tes cartes?",
+    path: '/cards'
   },
   {
     icon: <HeartIcon className="w-12 h-12" />,
     title: 'Miroir, Miroir!',
     description: 'Révélez votre type de Queen : Cœur, Carreau, Trèfle ou Pique. Découvrez votre style relationnel et vos forces.',
-    chatPrompt: "T'es quel genre de Queen, toi, vraiment?"
+    chatPrompt: "T'es quel genre de Queen, toi, vraiment?",
+    path: '/quiz'
   },
   {
     icon: <UserGroupIcon className="w-12 h-12" />,
     title: 'Salon de thé',
     description: 'Conversez avec la Reine-Mère, votre guide bienveillante et complice pour une discussion chaleureuse et éclairante.',
-    chatPrompt: "Et si on mettait les cartes sur table?"
+    chatPrompt: "Et si on mettait les cartes sur table?",
+    path: '/chat'
   }
 ];
 
@@ -112,7 +115,7 @@ const DashboardHome = () => {
                 title={feature.title}
                 description={feature.description}
                 index={index}
-                chatPrompt={feature.chatPrompt}
+                path={feature.path}
               />
             </div>
           ))}

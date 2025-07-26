@@ -7,10 +7,10 @@ interface MysteryCardProps {
   title: string;
   description: string;
   index: number;
-  chatPrompt: string;
+  path: string;
 }
 
-export const MysteryCard: React.FC<MysteryCardProps> = ({ icon, title, description, index, chatPrompt }) => {
+export const MysteryCard: React.FC<MysteryCardProps> = ({ icon, title, description, index, path }) => {
   const [isFlipped, setIsFlipped] = useState(false);
 
   const handleInteraction = () => {
@@ -81,10 +81,10 @@ export const MysteryCard: React.FC<MysteryCardProps> = ({ icon, title, descripti
             {description}
           </p>
           <Link
-            to={`/chat?prompt=${encodeURIComponent(chatPrompt)}`}
+            to={path}
             className="mt-8 inline-block px-8 py-3 rounded-full bg-gradient-to-r from-imperial-gold via-rose-champagne to-imperial-gold text-royal-purple font-bold text-lg border-4 border-imperial-gold ring-2 ring-white/80 shadow-lg hover:from-imperial-gold hover:to-rose-champagne hover:shadow-royal hover:scale-105 hover:brightness-110 focus:outline-none focus:ring-4 focus:ring-imperial-gold focus:ring-offset-2 focus:ring-offset-white transition-all duration-200 drop-shadow-[0_4px_16px_rgba(214,174,96,0.35)]"
             tabIndex={0}
-            aria-label={`Commencer une conversation sur ${title}`}
+            aria-label={`Commencer sur ${title}`}
           >
             Commencer
           </Link>

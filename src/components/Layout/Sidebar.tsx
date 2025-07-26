@@ -8,15 +8,15 @@ import {
   ShoppingBagIcon,
   ClipboardDocumentListIcon,
   XMarkIcon,
-  MusicalNoteIcon, 
-  SpeakerXMarkIcon,
+  // MusicalNoteIcon, 
+  // SpeakerXMarkIcon,
   SparklesIcon,
   UserCircleIcon,
   PowerIcon
 } from '@heroicons/react/24/outline';
 import { useEffect, useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
-import { useMusicPlayer } from '../../hooks/useMusicPlayer';
+// import { useMusicPlayer } from '../../hooks/useMusicPlayer';
 
 interface SidebarProps {
   isOpen: boolean;
@@ -56,7 +56,8 @@ const navItems = [
   },
   {
     name: 'Shop',
-    path: '/shop',
+    external: true,
+    url: 'https://www.redbubble.com/fr/people/QueensdeQ/shop?asc=u',
     icon: ShoppingBagIcon,
     label: 'La boutique'
   }
@@ -66,9 +67,9 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
   const location = useLocation();
   const [isLargeScreen, setIsLargeScreen] = useState(false);
   const { user, logout } = useAuth();
-  const { isPlaying, isLoading, controls} = useMusicPlayer('/audio/Roie Shpigler - Marbles.mp3', { 
-    targetVolume: 0.10 
-  });
+  // const { isPlaying, isLoading, controls} = useMusicPlayer('/audio/Roie Shpigler - Marbles.mp3', { 
+  //   targetVolume: 0.10 
+  // });
   const [spotsData] = useState({
     available: 7,
     total: 20,
@@ -139,23 +140,42 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
           <nav className="flex-1 p-6 space-y-2">
             {navItems.map((item) => {
               const Icon = item.icon;
+              // External link for shop
+              if (item.external) {
+                return (
+                  <a
+                    key={item.label}
+                    href={item.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={
+                      'flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 group text-royal-pearl hover:bg-royal-gold/10 hover:text-royal-champagne'
+                    }
+                  >
+                    <Icon className="w-5 h-5 transition-transform group-hover:scale-110 text-royal-pearl" />
+                    <span className="font-sans font-medium">{item.label}</span>
+                  </a>
+                );
+              }
               const isActive = location.pathname === item.path;
               return (
-                <Link
-                  key={item.path}
-                  to={item.path}
-                  onClick={onClose}
-                  className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 group ${
-                    isActive 
-                      ? 'bg-royal-gold text-royal-purple border-l-4 border-royal-gold' 
-                      : 'text-royal-pearl hover:bg-royal-gold/10 hover:text-royal-champagne'
-                  }`}
-                >
-                  <Icon className={`w-5 h-5 transition-transform group-hover:scale-110 ${
-                    isActive ? 'text-royal-purple' : 'text-royal-pearl'
-                  }`} />
-                  <span className="font-sans font-medium">{item.label}</span>
-                </Link>
+                item.path ? (
+                  <Link
+                    key={item.path}
+                    to={item.path}
+                    onClick={onClose}
+                    className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 group ${
+                      isActive 
+                        ? 'bg-royal-gold text-royal-purple border-l-4 border-royal-gold' 
+                        : 'text-royal-pearl hover:bg-royal-gold/10 hover:text-royal-champagne'
+                    }`}
+                  >
+                    <Icon className={`w-5 h-5 transition-transform group-hover:scale-110 ${
+                      isActive ? 'text-royal-purple' : 'text-royal-pearl'
+                    }`} />
+                    <span className="font-sans font-medium">{item.label}</span>
+                  </Link>
+                ) : null
               );
             })}
           </nav>
@@ -177,7 +197,8 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
                 </span>
               </motion.div>
 
-              {/* Music Toggle */}
+              {/* Music Toggle (commented out) */}
+              {/**
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.97 }}
@@ -211,6 +232,7 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
                   {isLoading ? 'Chargement...' : isPlaying ? 'Musique active' : 'Activer la musique'}
                 </span>
               </motion.button>
+              */}
 
               {/* User Menu */}
               <div className="relative group w-full flex flex-col items-stretch">

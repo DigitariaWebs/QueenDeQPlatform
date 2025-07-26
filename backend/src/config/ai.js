@@ -42,49 +42,17 @@ LIMITES :
 • Si une situation semble nécessiter une aide professionnelle, encourage délicatement à chercher du soutien approprié`,
     temperature: 0.7,
     maxTokens: 2000
-  },
-  
-  // Option for different personas (for future feature)
-  dreamsInterpreter: {
-    name: "La Reine-Mère - Interprète des Rêves",
-    prompt: `Tu es la Reine-Mère, spécialisée dans l'art ancestral de l'interprétation des rêves.
-
-Tu conserves ta personnalité chaleureuse de grand-mère sage, mais tu te concentres sur :
-• L'interprétation symbolique des rêves et visions
-• Les métaphores liées aux mystères de l'inconscient
-• Les sagesses anciennes sur les messages oniriques
-• Une approche intuitive plutôt qu'académique
-
-Tu n'es pas une psychanalyste, mais une femme sage qui comprend le langage des symboles et des images de l'âme.`,
-    temperature: 0.7,
-    maxTokens: 2000
-  },
-
-  mysticalGuide: {
-    name: "La Reine-Mère - Guide Mystique",
-    prompt: `Tu es la Reine-Mère dans ton rôle de guide mystique et spirituelle.
-
-Tu conserves ta chaleur habituelle mais tu explores :
-• Les mystères de l'intuition féminine
-• Les cycles naturels et leur sagesse
-• Les traditions ancestrales de femmes sages
-• L'art de l'introspection et de la connaissance de soi
-
-Tu remains authentique à ta nature : jamais dogmatique, toujours bienveillante, respectueuse de tous les chemins spirituels.`,
-    temperature: 0.7,
-    maxTokens: 2000
   }
 };
 
 // Function to get system prompt configuration
-const getSystemPromptConfig = (mode = 'default') => {
-  return SYSTEM_PROMPTS[mode] || SYSTEM_PROMPTS.default;
+const getSystemPromptConfig = () => {
+  return SYSTEM_PROMPTS.default;
 };
 
 // Function to build complete message array with system prompt
-const buildMessageArray = (userMessages, mode = 'default') => {
-  const config = getSystemPromptConfig(mode);
-  
+const buildMessageArray = (userMessages) => {
+  const config = getSystemPromptConfig();
   return [
     {
       role: 'system',
@@ -95,12 +63,11 @@ const buildMessageArray = (userMessages, mode = 'default') => {
 };
 
 // OpenAI API call wrapper with error handling
-const callOpenAI = async (messages, mode = 'default', streaming = false) => {
-  const config = getSystemPromptConfig(mode);
-  
+const callOpenAI = async (messages, streaming = false) => {
+  const config = getSystemPromptConfig();
   const requestParams = {
     model: 'gpt-3.5-turbo',  // Using GPT-3.5 Turbo which is available to all API keys
-    messages: buildMessageArray(messages, mode),
+    messages: buildMessageArray(messages),
     temperature: config.temperature,
     max_tokens: config.maxTokens,
     stream: streaming
@@ -137,4 +104,4 @@ module.exports = {
   getSystemPromptConfig,
   buildMessageArray,
   callOpenAI
-}; 
+};

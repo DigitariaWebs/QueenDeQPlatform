@@ -155,84 +155,13 @@ const ChatPage: React.FC = () => {
           transition={{ duration: 0.8, ease: "easeOut" }}
           className="relative mb-8"
         >
-          {/* Background avec design solide */}
-          <div className="relative bg-royal-purple/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-royal-gold/40 overflow-hidden">
-            
-            {/* Texture ornementale */}
-            <div className="absolute inset-0 opacity-20">
-              <div className="absolute top-0 left-0 w-full h-full bg-royal-purple/10"></div>
-              <div className="absolute top-6 left-6 w-2 h-2 bg-royal-gold/40 rounded-full"></div>
-              <div className="absolute top-4 right-8 w-1 h-1 bg-royal-gold/60 rounded-full"></div>
-              <div className="absolute bottom-4 left-12 w-1 h-1 bg-royal-gold/50 rounded-full"></div>
-            </div>
-
-            {/* Contenu principal */}
-            <div className="relative p-8">
-              <div className="flex items-center justify-between">
-                
-                {/* Section gauche : Avatar et titre */}
-                <div className="flex items-center space-x-6">
-                  
-                  {/* Avatar sophistiqué avec tasse de thé */}
-                  <div className="relative">
-                    {/* Halo doré subtil */}
-                    <div className="absolute -inset-3 bg-royal-gold/20 rounded-full blur-lg"></div>
-                    
-                    {/* Container avatar avec bordure dorée */}
-                    <div className="relative w-16 h-16 bg-royal-gold rounded-full p-0.5 shadow-lg">
-                      <div className="w-full h-full bg-royal-purple rounded-full flex items-center justify-center backdrop-blur-sm">
-                        <img 
-                          src="/assets/icons/teacup.svg" 
-                          alt="Tasse de Thé Royal" 
-                          className="w-8 h-8 filter drop-shadow-sm"
-                        />
-                      </div>
-                    </div>
-                    
-                    {/* Petite couronne flottante */}
-                    <div className="absolute -top-1 -right-1 w-4 h-4 text-royal-gold/80">
-                      <svg viewBox="0 0 24 24" fill="currentColor" className="w-full h-full animate-pulse">
-                        <path d="M12 6L13.13 10.26L17 9L15.87 13.14L19 15L15.87 16.86L17 21L13.13 19.74L12 24L10.87 19.74L7 21L8.13 16.86L5 15L8.13 13.14L7 9L10.87 10.26L12 6Z"/>
-                      </svg>
-                    </div>
-                  </div>
-
-                  {/* Titre et description */}
-                  <div className="space-y-1">
-                    <h1 className="text-3xl font-playfair font-bold text-royal-gold">
-                      Salon de Thé Royal
-                    </h1>
-                    <p className="text-royal-pearl/80 font-raleway text-lg flex items-center space-x-2">
-                      <span>Interprétation des rêves avec la Reine-Mère</span>
-                      <span className="text-royal-gold/70 animate-pulse">✨</span>
-                    </p>
-                  </div>
-                </div>
-
-                {/* Section droite : Statut */}
-                <div className="flex flex-col items-end space-y-1">
-                  <div className="flex items-center space-x-2 text-royal-pearl/70 font-raleway text-sm">
-                    <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div>
-                    <span>Disponible</span>
-                  </div>
-                  <div className="text-royal-pearl/50 font-raleway text-xs">
-                    Guidance mystique
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Ligne dorée décorative en bas */}
-            <div className="absolute bottom-0 left-0 right-0 h-px bg-royal-gold/40"></div>
-          </div>
-
           {/* Ornements flottants */}
           <div className="absolute -top-2 -right-2 w-3 h-3 bg-royal-gold/30 rounded-full animate-bounce" style={{animationDelay: '0.5s'}}></div>
           <div className="absolute -bottom-1 -left-1 w-2 h-2 bg-royal-champagne/40 rounded-full animate-bounce" style={{animationDelay: '1s'}}></div>
         </motion.div>
 
-        {/* Messages Section - Sans scroll fixe */}
-        <div className="space-y-6 mb-6">
+        {/* Messages Section - Scrollable and fills available space, no bottom margin */}
+        <div className="space-y-6 flex-1 overflow-y-auto pr-2" style={{ minHeight: 0 }}>
           {messages.map((message) => (
             <div key={message.id} className={`flex ${message.isUser ? 'justify-end' : 'justify-start'}`}>
               <div className={`max-w-3xl ${message.isUser ? 'order-2' : 'order-1'}`}>
@@ -289,7 +218,6 @@ const ChatPage: React.FC = () => {
               </div>
             </div>
           ))}
-          
           {/* Streaming message display */}
           <AnimatePresence>
             {streamingMessage && (
@@ -334,7 +262,6 @@ const ChatPage: React.FC = () => {
               </motion.div>
             )}
           </AnimatePresence>
-
           {/* Typing Indicator */}
           <AnimatePresence>
             {isTyping && !streamingMessage && (
@@ -359,12 +286,11 @@ const ChatPage: React.FC = () => {
               </div>
             )}
           </AnimatePresence>
-          
           <div ref={messagesEndRef} />
         </div>
 
         {/* Controls and Input Area */}
-        <div className="sticky bottom-0 bg-white/10 backdrop-blur-lg rounded-2xl shadow-xl p-6 border-t border-white/20 space-y-4">
+        <div className="bg-white/10 backdrop-blur-lg rounded-2xl shadow-xl p-6 border-t border-white/20 space-y-4 z-10">
           {/* Input Area */}
           <div className="flex items-center space-x-4">
             <div className="flex-1 relative">
