@@ -24,7 +24,7 @@ const slideData = [
   {
     id: 'journal',
     illustration: '/assets/illustrations/journal.svg',
-    title: 'Journale / Journal',
+    title: 'Le journal du Royaume',
     caption: 'Ajoute la question miroir à ton journal / Add the mirror question to your journal.',
     ariaLabel: 'Journaler - découvrez comment utiliser votre journal'
   },

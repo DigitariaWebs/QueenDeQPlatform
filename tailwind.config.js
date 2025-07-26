@@ -71,13 +71,13 @@ export default {
         'raleway': ['"Raleway"', 'sans-serif'],
         'inter': ['"Inter"', 'system-ui', 'sans-serif'],
       },
-      // Gradient backgrounds
+      // Solid backgrounds (replacing gradients)
       backgroundImage: {
-        'gradient-royal': 'linear-gradient(135deg, #3B1E50 0%, #4B2E43 100%)',
-        'gradient-mystical': 'linear-gradient(135deg, #241B2F 0%, #3B1E50 100%)',
-        'gradient-golden': 'linear-gradient(135deg, #D6AE60 0%, #B79D74 100%)',
-        'gradient-soft': 'linear-gradient(135deg, #FDF7F2 0%, #E8C5C1 100%)',
-        'gradient-cabinet': 'linear-gradient(135deg, #4B2E43 0%, #241B2F 100%)',
+        'solid-royal': 'linear-gradient(0deg, #3B1E50 0%, #3B1E50 100%)',
+        'solid-mystical': 'linear-gradient(0deg, #3B1E50 0%, #3B1E50 100%)',
+        'solid-golden': 'linear-gradient(0deg, #D6AE60 0%, #D6AE60 100%)',
+        'solid-soft': 'linear-gradient(0deg, #FDF7F2 0%, #FDF7F2 100%)',
+        'solid-cabinet': 'linear-gradient(0deg, #3B1E50 0%, #3B1E50 100%)',
       },
       // Queen de Q Shadows
       boxShadow: {

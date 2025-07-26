@@ -9,13 +9,12 @@
 :root {
   font-family: "Raleway", system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
-  font-weight: 400;
   
   /* Variables CSS pour la palette Queen de Q */
   --royal-purple: #3B1E50;
   --royal-gold: #D6AE60;
   --royal-champagne: #D4B5A5;
-  --royal-velvet: #1B1B1B;
+
   --royal-pearl: #FDF7F2;
   
   --cabinet-aubergine: #4B2E43;
@@ -25,12 +24,35 @@
   --cabinet-ink: #181818;
 }
 
+
 body {
   margin: 0;
   min-height: 100vh;
-  background: linear-gradient(135deg, #FDF7F2 0%, #F5EBD6 100%);
-  color: var(--royal-velvet);
+  background: #3B1E50;
+  color: var(--royal-pearl) !important;
   font-family: "Raleway", sans-serif;
+}
+
+/* Enforce text color for all text on dark backgrounds */
+body, body * {
+  color: var(--royal-pearl) !important;
+}
+
+/* Headings always gold for contrast */
+h1, h2, h3, h4, h5, h6 {
+  font-family: "Playfair Display", serif;
+  font-weight: 600;
+  color: var(--royal-gold) !important;
+}
+
+/* Utility: text on light backgrounds */
+.text-on-light {
+  color: var(--cabinet-ink) !important;
+}
+
+/* Utility: text highlight (gold) */
+.text-highlight {
+  color: var(--royal-gold) !important;
 }
 
 /* Typographie Queen de Q */
@@ -73,16 +95,13 @@ h1, h2, h3, h4, h5, h6 {
 /* Règles CSS normales restaurées */
 
 /* Utilitaires personnalisés */
-.royal-wrapper {
-  @apply w-full max-w-none px-4 sm:px-6 lg:px-8 mx-auto;
-}
+/* Removed invalid @apply usage and stray closing brace. If a utility is needed, define it as a class below. */
+
 
 .text-royal-gradient {
-  background: linear-gradient(135deg, var(--royal-gold) 0%, var(--cabinet-patina) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: var(--royal-gold);
 }
+
 
 .shadow-royal {
   box-shadow: 0 4px 20px rgba(59, 30, 80, 0.15);
@@ -375,7 +394,7 @@ h1, h2, h3, h4, h5, h6 {
 
   /* Loading skeleton animation */
   .skeleton {
-    @apply bg-gradient-to-r from-royal-gold/10 via-royal-champagne/20 to-royal-gold/10 bg-cover animate-pulse;
+    @apply bg-royal-purple/10 bg-cover animate-pulse;
     background-size: 200% 100%;
     animation: skeleton-loading 1.5s ease-in-out infinite;
   }

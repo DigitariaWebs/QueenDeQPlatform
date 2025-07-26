@@ -61,16 +61,6 @@ const ShopStandalone: React.FC = () => {
     }
   };
 
-  const getCategoryColor = (category: string) => {
-    switch (category) {
-      case 'cards': return 'from-imperial-gold to-smoky-gold';
-      case 'clothing': return 'from-royal-purple to-vintage-aubergine';
-      case 'protection': return 'from-rose-champagne to-antique-rose';
-      case 'accessories': return 'from-patina-gold to-amber-smoke';
-      default: return 'from-velvet-black to-ink-black';
-    }
-  };
-
   const getCategoryLabel = (cat: string) => {
     switch (cat) {
       case 'all': return 'Tous';
@@ -98,20 +88,12 @@ const ShopStandalone: React.FC = () => {
 
   return (
     <main 
-      className="min-h-screen bg-gradient-to-br from-parchment-cream via-warm-pearl to-moon-milk relative overflow-hidden"
+      className="min-h-screen bg-royal-purple relative overflow-hidden"
       onKeyDown={handleKeyDown}
       tabIndex={-1}
     >
-      {/* Vintage Paper Texture Background - Same as ChatPage */}
-      <div className="absolute inset-0 opacity-30" 
-           style={{
-             backgroundImage: `
-               radial-gradient(circle at 20% 80%, rgba(75, 46, 67, 0.1) 0%, transparent 50%),
-               radial-gradient(circle at 80% 20%, rgba(214, 174, 96, 0.1) 0%, transparent 50%),
-               radial-gradient(circle at 40% 40%, rgba(212, 181, 165, 0.1) 0%, transparent 50%)
-             `
-           }}>
-      </div>
+      {/* Solid Purple Background */}
+      <div className="absolute inset-0 bg-royal-purple opacity-30"></div>
 
       {/* Floating Elements - Same style as ChatPage but with shop items */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
@@ -144,7 +126,7 @@ const ShopStandalone: React.FC = () => {
           >
             {/* Beta Ribbon */}
             <div className="absolute -top-8 -right-8 transform rotate-12">
-              <div className="bg-gradient-to-r from-rose-champagne to-imperial-gold text-white px-4 py-2 rounded-lg shadow-lg border-2 border-white">
+              <div className="bg-royal-gold text-royal-purple px-4 py-2 rounded-lg shadow-lg border-2 border-white">
                 <div className="flex items-center gap-2">
                   <Sparkles size={14} />
                   <span className="text-sm font-bold font-raleway">BOUTIQUE</span>
@@ -165,17 +147,17 @@ const ShopStandalone: React.FC = () => {
             </motion.div>
             
             <h1 className="relative font-rebel text-4xl md:text-5xl font-bold text-royal-purple mb-4">
-              Boutique Queen de Q
+              La boutique Queen de Q
             </h1>
             
             {/* Vintage Underline */}
             <div className="flex items-center justify-center gap-2">
-              <div className="h-px bg-gradient-to-r from-transparent via-imperial-gold to-transparent flex-1"></div>
-              <Crown className="text-imperial-gold" size={20} />
-              <div className="h-px bg-gradient-to-r from-transparent via-imperial-gold to-transparent flex-1"></div>
+              <div className="h-px bg-royal-gold flex-1"></div>
+              <Crown className="text-royal-gold" size={20} />
+              <div className="h-px bg-royal-gold flex-1"></div>
             </div>
             
-            <p className="text-royal-purple/80 text-xl max-w-3xl mx-auto leading-relaxed mt-4">
+            <p className="text-royal-pearl/80 text-xl max-w-3xl mx-auto leading-relaxed mt-4">
               Les produits qui vont réveiller votre Reine intérieure
             </p>
           </motion.div>
@@ -193,8 +175,8 @@ const ShopStandalone: React.FC = () => {
                 onClick={() => setSelectedCategory(category)}
                 className={`px-6 py-3 rounded-full font-medium transition-all duration-300 ${
                   selectedCategory === category
-                    ? 'bg-imperial-gold text-royal-purple shadow-lg shadow-imperial-gold/30'
-                    : 'bg-white/20 text-royal-purple hover:bg-white/30 backdrop-blur-sm border border-imperial-gold/20'
+                    ? 'bg-royal-gold text-royal-purple shadow-lg shadow-royal-gold/30'
+                    : 'bg-royal-purple/60 text-royal-pearl hover:bg-royal-purple/80 backdrop-blur-sm border border-royal-gold/20'
                 }`}
               >
                 {getCategoryLabel(category)}
@@ -213,44 +195,44 @@ const ShopStandalone: React.FC = () => {
                 transition={{ duration: 0.6, delay: index * 0.2 }}
               >
                 {/* Product Card */}
-                <div className="relative bg-white/60 backdrop-blur-xl rounded-2xl p-6 border border-imperial-gold/30 shadow-xl hover:shadow-2xl transition-all duration-500 hover:scale-105 hover:border-imperial-gold/50">
+                <div className="relative bg-royal-purple/80 backdrop-blur-xl rounded-2xl p-6 border border-royal-gold/30 shadow-xl hover:shadow-2xl transition-all duration-500 hover:scale-105 hover:border-royal-gold/50">
                   
                   {/* Badge */}
                   {item.badge && (
-                    <div className="absolute -top-3 -right-3 bg-gradient-to-r from-imperial-gold to-rose-champagne text-royal-purple px-3 py-1 rounded-full text-xs font-bold">
+                    <div className="absolute -top-3 -right-3 bg-royal-gold text-royal-purple px-3 py-1 rounded-full text-xs font-bold">
                       {item.badge}
                     </div>
                   )}
 
                   {/* Category Icon */}
-                  <div className="absolute top-4 left-4 w-10 h-10 bg-gradient-to-br from-white/40 to-white/20 rounded-full flex items-center justify-center border border-imperial-gold/30">
+                  <div className="absolute top-4 left-4 w-10 h-10 bg-royal-purple/60 rounded-full flex items-center justify-center border border-royal-gold/30">
                     {getCategoryIcon(item.category)}
                   </div>
 
                   {/* Product Image Placeholder */}
-                  <div className="w-full h-40 bg-gradient-to-br from-imperial-gold/20 to-rose-champagne/20 rounded-xl mb-6 mt-8 flex items-center justify-center border border-imperial-gold/30">
-                    <div className={`w-16 h-16 bg-gradient-to-r ${getCategoryColor(item.category)} rounded-full flex items-center justify-center`}>
+                  <div className="w-full h-40 bg-royal-purple/40 rounded-xl mb-6 mt-8 flex items-center justify-center border border-royal-gold/30">
+                    <div className={`w-16 h-16 bg-royal-gold rounded-full flex items-center justify-center`}>
                       {getCategoryIcon(item.category)}
                     </div>
                   </div>
 
                   {/* Product Details */}
-                  <h3 className="font-bold text-lg text-royal-purple mb-3 text-center">
+                  <h3 className="font-bold text-lg text-royal-pearl mb-3 text-center">
                     {item.name}
                   </h3>
                   
-                  <p className="text-royal-purple/70 text-sm text-center mb-6 leading-relaxed">
+                  <p className="text-royal-pearl/70 text-sm text-center mb-6 leading-relaxed">
                     {item.description}
                   </p>
 
                   {/* Price & Action */}
                   <div className="flex items-center justify-between">
-                    <span className="font-bold text-xl text-imperial-gold">
+                    <span className="font-bold text-xl text-royal-gold">
                       ${item.price} CAD
                     </span>
                     <motion.button
                       disabled
-                      className="px-4 py-2 bg-gradient-to-r from-imperial-gold/20 to-rose-champagne/20 text-royal-purple rounded-lg font-medium cursor-not-allowed opacity-60 border border-imperial-gold/30 hover:opacity-80 transition-opacity"
+                      className="px-4 py-2 bg-royal-purple/40 text-royal-pearl rounded-lg font-medium cursor-not-allowed opacity-60 border border-royal-gold/30 hover:opacity-80 transition-opacity"
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                     >

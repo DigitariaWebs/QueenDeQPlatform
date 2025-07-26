@@ -19,7 +19,7 @@ const quickActions = [
     description: 'Explorez vos cartes personnalisées',
     icon: RectangleStackIcon,
     path: '/cards',
-    color: 'from-royal-gold/20 to-royal-champagne/20',
+    color: 'bg-royal-purple/80',
     iconColor: 'text-royal-gold'
   },
   {
@@ -27,31 +27,31 @@ const quickActions = [
     description: 'Testez votre essence royale',
     icon: ClipboardDocumentListIcon,
     path: '/quiz',
-    color: 'from-royal-purple/20 to-cabinet-aubergine/20',
-    iconColor: 'text-royal-purple'
+    color: 'bg-royal-purple/80',
+    iconColor: 'text-royal-gold'
   },
   {
     title: 'Journal d\'âme',
     description: 'Créez votre journal personnel',
     icon: BookOpenIcon,
     path: '/journal',
-    color: 'from-royal-champagne/20 to-cabinet-powder/20',
-    iconColor: 'text-royal-champagne'
+    color: 'bg-royal-purple/80',
+    iconColor: 'text-royal-gold'
   },
   {
-    title: 'Afternoon Tea',
+    title: 'Salon de thé',
     description: 'Rejoignez le salon de thé',
     icon: ChatBubbleLeftRightIcon,
     path: '/chat',
-    color: 'from-ritual-smokedGold/20 to-ritual-vintage/20',
-    iconColor: 'text-ritual-smokedGold'
+    color: 'bg-royal-purple/80',
+    iconColor: 'text-royal-gold'
   }
 ];
 
 const mysteryFeatures = [
   {
     icon: <RectangleStackIcon className="w-12 h-12" />,
-    title: 'Les Cartes en Main',
+    title: 'Ta pioche',
     description: 'Découvrez les archétypes masculins que vous attirez. 10 cartes gratuites pour commencer votre voyage de découverte.',
     chatPrompt: "Tu veux qu'on parle de tes cartes?"
   },
@@ -63,7 +63,7 @@ const mysteryFeatures = [
   },
   {
     icon: <UserGroupIcon className="w-12 h-12" />,
-    title: 'Afternoon Tea',
+    title: 'Salon de thé',
     description: 'Conversez avec la Reine-Mère, votre guide bienveillante et complice pour une discussion chaleureuse et éclairante.',
     chatPrompt: "Et si on mettait les cartes sur table?"
   }
@@ -79,6 +79,15 @@ const DashboardHome = () => {
       transition={{ duration: 0.6 }}
       className="first:pt-0 last:pb-0"
     >
+      {/* Welcome Message (left-aligned) */}
+      <div className="mb-16 flex flex-col items-start">
+        <h2 className="text-3xl font-serif font-bold text-royal-gold mb-5">
+          Bonjour, Client
+        </h2>
+        <p className="text-royal-pearl/80 text-lg font-sans">
+          Bienvenue dans votre royaume personnel
+        </p>
+      </div>
       {/* Mystery Cards Section */}
       <div className="mb-12 lg:mb-16">
         <motion.div
@@ -125,18 +134,18 @@ const DashboardHome = () => {
             >
               <Link
                 to={action.path}
-                className={`block p-6 rounded-xl bg-gradient-to-br ${action.color} border border-royal-gold/30 shadow-soft hover:shadow-royal transition-all duration-300`}
+                className={`block p-6 rounded-xl ${action.color} border border-royal-gold/30 shadow-soft hover:shadow-royal transition-all duration-300`}
               >
                 <div className="flex items-center justify-between mb-4">
-                  <div className={`p-3 rounded-lg bg-gradient-to-br from-royal-pearl to-royal-champagne/20 ${action.iconColor} group-hover:scale-110 transition-transform`}>
+                  <div className={`p-3 rounded-lg bg-royal-purple/60 ${action.iconColor} group-hover:scale-110 transition-transform`}>
                     <Icon className="w-6 h-6" />
                   </div>
                   <div className="w-2 h-2 bg-royal-gold rounded-full opacity-50 group-hover:opacity-100 transition-opacity"></div>
                 </div>
-                <h3 className="font-serif font-bold text-royal-purple text-lg mb-2">
+                <h3 className="font-serif font-bold text-royal-pearl text-lg mb-2">
                   {action.title}
                 </h3>
-                <p className="text-cabinet-aubergine/70 font-sans text-sm">
+                <p className="text-royal-pearl/70 font-sans text-sm">
                   {action.description}
                 </p>
               </Link>
@@ -145,21 +154,21 @@ const DashboardHome = () => {
         })}
       </div>
 
-      {/* Recent Activity */}
-      <div className="bg-gradient-to-r from-royal-pearl to-royal-champagne/30 rounded-2xl p-8 border border-royal-gold/20 mb-12 lg:mb-16">
-        <h2 className="text-2xl font-serif font-bold text-royal-purple mb-6">
-          Activité Récente
+      {/* Le journal du Royaume */}
+      <div className="bg-royal-purple/60 rounded-2xl p-8 border border-royal-gold/20 mb-12 lg:mb-16">
+        <h2 className="text-2xl font-serif font-bold text-royal-pearl mb-6">
+          Le journal du Royaume
         </h2>
         <div className="space-y-4">
-          <div className="flex items-center space-x-4 p-4 bg-gradient-to-r from-royal-gold/10 to-royal-champagne/10 rounded-lg">
-            <div className="w-10 h-10 bg-gradient-to-br from-royal-gold to-royal-champagne rounded-full flex items-center justify-center">
+          <div className="flex items-center space-x-4 p-4 bg-royal-purple/40 rounded-lg">
+            <div className="w-10 h-10 bg-royal-gold rounded-full flex items-center justify-center">
               <SparklesIcon className="w-5 h-5 text-royal-purple" />
             </div>
             <div>
-              <p className="font-sans font-medium text-royal-purple">
+              <p className="font-sans font-medium text-royal-pearl">
                 Bienvenue dans votre royaume !
               </p>
-              <p className="text-cabinet-aubergine/70 text-sm">
+              <p className="text-royal-pearl/70 text-sm">
                 Explorez vos premières cartes pour commencer votre voyage royal
               </p>
             </div>
@@ -168,22 +177,22 @@ const DashboardHome = () => {
       </div>
 
       {/* Boutique Preview */}
-      <div className="bg-gradient-to-r from-ritual-smokedGold/10 to-ritual-vintage/10 rounded-2xl p-8 border border-royal-gold/20">
+      <div className="bg-royal-purple/60 rounded-2xl p-8 border border-royal-gold/20">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h2 className="text-2xl font-serif font-bold text-royal-purple mb-2">
+            <h2 className="text-2xl font-serif font-bold text-royal-pearl mb-2">
               Boutique Royal
             </h2>
-            <p className="text-cabinet-aubergine/70 font-sans">
+            <p className="text-royal-pearl/70 font-sans">
               Découvrez notre collection exclusive
             </p>
           </div>
           <Link
             to="/shop"
-            className="inline-flex items-center space-x-2 bg-gradient-to-r from-royal-gold/20 to-royal-champagne/20 rounded-full px-6 py-3 border border-royal-gold/30 hover:from-royal-gold/30 hover:to-royal-champagne/30 transition-all duration-200"
+            className="inline-flex items-center space-x-2 bg-royal-purple/40 rounded-full px-6 py-3 border border-royal-gold/30 hover:bg-royal-purple/60 transition-all duration-200"
           >
             <ShoppingBagIcon className="w-5 h-5 text-royal-gold" />
-            <span className="text-royal-purple font-sans font-medium">
+            <span className="text-royal-pearl font-sans font-medium">
               Voir la boutique
             </span>
           </Link>

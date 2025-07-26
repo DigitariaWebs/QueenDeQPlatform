@@ -38,7 +38,7 @@ const TopBar = ({ onMenuClick }: TopBarProps) => {
   };
 
   return (
-    <header className="bg-gradient-to-r from-royal-pearl to-royal-champagne/30 shadow-soft border-b border-royal-gold/20">
+    <header className="bg-royal-purple/80 shadow-soft border-b border-royal-gold/20">
       <div className="px-6 py-4">
         <div className="flex items-center justify-between">
           {/* Left side - Menu & Welcome */}
@@ -67,7 +67,7 @@ const TopBar = ({ onMenuClick }: TopBarProps) => {
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               transition={{ duration: 0.3 }}
-              className="hidden md:flex items-center space-x-2 bg-gradient-to-r from-royal-gold/20 to-royal-champagne/20 rounded-full px-4 py-2 border border-royal-gold/30"
+              className="hidden md:flex items-center space-x-2 bg-royal-purple/60 rounded-full px-4 py-2 border border-royal-gold/30"
             >
               <SparklesIcon className="w-4 h-4 text-royal-gold" />
               <span className="text-royal-purple font-sans font-medium text-sm">
@@ -82,8 +82,8 @@ const TopBar = ({ onMenuClick }: TopBarProps) => {
               onClick={handleMusicToggle}
               className={`p-3 rounded-full transition-all duration-200 ${
                 isPlaying 
-                  ? 'bg-gradient-to-r from-royal-gold/20 to-royal-champagne/20 text-royal-gold border border-royal-gold/30' 
-                  : 'bg-royal-purple/10 text-royal-purple hover:bg-royal-purple/20'
+                  ? 'bg-royal-gold text-royal-purple border border-royal-gold/30' 
+                  : 'bg-royal-purple/10 text-royal-pearl hover:bg-royal-purple/20'
               }`}
               title={isPlaying ? 'Pause music' : 'Play music'}
               aria-pressed={isPlaying}

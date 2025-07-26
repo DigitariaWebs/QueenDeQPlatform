@@ -145,16 +145,16 @@ const CarouselContent = ({ slideData, KeenSlider, prefersReducedMotion, classNam
             transition={{ duration: 0.6 }}
             className="relative inline-block"
           >
-            <h2 className="text-4xl font-playfair font-bold bg-gradient-to-r from-royal-purple via-royal-purple to-royal-gold bg-clip-text text-transparent mb-4">
+            <h2 className="text-4xl font-playfair font-bold text-royal-gold mb-4">
               Comment utiliser vos cartes
             </h2>
-            <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-24 h-1 bg-gradient-to-r from-royal-gold to-royal-champagne rounded-full"></div>
+            <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-24 h-1 bg-royal-gold rounded-full"></div>
           </motion.div>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="text-xl text-royal-purple/80 font-raleway max-w-3xl mx-auto mt-6"
+            className="text-xl text-royal-pearl/80 font-raleway max-w-3xl mx-auto mt-6"
           >
             Quatre étapes simples pour commencer votre voyage introspectif.
           </motion.p>
@@ -181,11 +181,11 @@ const CarouselContent = ({ slideData, KeenSlider, prefersReducedMotion, classNam
                     }
                   }}
                 >
-                  {/* Card Background avec gradient */}
-                  <div className="absolute inset-0 bg-gradient-to-br from-white/40 via-white/20 to-white/10 rounded-2xl blur-sm group-hover:blur-md transition-all duration-300"></div>
+                  {/* Card Background */}
+                  <div className="absolute inset-0 bg-royal-purple/40 rounded-2xl blur-sm group-hover:blur-md transition-all duration-300"></div>
                   
                   {/* Card Content */}
-                  <div className={`relative bg-gradient-to-br from-white/30 via-white/20 to-white/10 backdrop-blur-xl rounded-2xl p-6 border border-white/40 shadow-xl group-hover:shadow-2xl transition-all duration-300 group-hover:-translate-y-2 h-[320px] flex flex-col cursor-pointer
+                  <div className={`relative bg-royal-purple/60 backdrop-blur-xl rounded-2xl p-6 border border-royal-gold/40 shadow-xl group-hover:shadow-2xl transition-all duration-300 group-hover:-translate-y-2 h-[320px] flex flex-col cursor-pointer
                     ${currentSlide === index ? 'ring-2 ring-royal-gold/50' : ''}
                     ${!hasPulseAnimated && index === 0 ? 'animate-pulse' : ''}
                   `}>
@@ -198,8 +198,8 @@ const CarouselContent = ({ slideData, KeenSlider, prefersReducedMotion, classNam
 
                     {/* Icon Container */}
                     <div className="relative mb-4 flex justify-center flex-shrink-0">
-                      <div className="w-20 h-20 bg-gradient-to-br from-royal-gold/20 to-royal-champagne/20 rounded-full flex items-center justify-center group-hover:scale-110 transition-all duration-300">
-                        <div className="w-16 h-16 bg-gradient-to-br from-royal-gold/80 to-royal-champagne/80 rounded-full flex items-center justify-center shadow-lg">
+                      <div className="w-20 h-20 bg-royal-purple/40 rounded-full flex items-center justify-center group-hover:scale-110 transition-all duration-300">
+                        <div className="w-16 h-16 bg-royal-gold rounded-full flex items-center justify-center shadow-lg">
                           <img 
                             src={slide.illustration} 
                             alt="" 
@@ -210,13 +210,13 @@ const CarouselContent = ({ slideData, KeenSlider, prefersReducedMotion, classNam
                     </div>
 
                     {/* Title */}
-                    <h3 className="font-playfair font-bold text-royal-purple text-xl mb-3 text-center flex-shrink-0">
+                    <h3 className="font-playfair font-bold text-royal-pearl text-xl mb-3 text-center flex-shrink-0">
                       {slide.title}
                     </h3>
 
                     {/* Caption */}
                     <div className="flex-grow flex items-center justify-center">
-                      <p className="font-raleway text-royal-purple/80 leading-relaxed text-center text-base">
+                      <p className="font-raleway text-royal-pearl/80 leading-relaxed text-center text-base">
                         {slide.caption}
                       </p>
                     </div>
@@ -227,7 +227,7 @@ const CarouselContent = ({ slideData, KeenSlider, prefersReducedMotion, classNam
                     </div>
 
                     {/* Ligne décorative en bas */}
-                    <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-royal-gold/40 to-transparent"></div>
+                    <div className="absolute bottom-0 left-0 right-0 h-px bg-royal-gold/40"></div>
                   </div>
                 </motion.div>
               </div>

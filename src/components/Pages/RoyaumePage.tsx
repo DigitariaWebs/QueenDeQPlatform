@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
-import { BookOpenIcon } from '@heroicons/react/24/outline';
+import { SparklesIcon } from '@heroicons/react/24/outline';
 
-const JournalPage = () => {
+const RoyaumePage = () => {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -11,13 +11,13 @@ const JournalPage = () => {
     >
       <div className="text-center mx-auto max-w-lg">
         <div className="w-24 h-24 bg-royal-gold rounded-full flex items-center justify-center mx-auto mb-6 shadow-golden">
-          <BookOpenIcon className="w-12 h-12 text-royal-purple" />
+          <SparklesIcon className="w-12 h-12 text-royal-purple" />
         </div>
         <h1 className="text-4xl font-serif font-bold text-royal-pearl mb-4">
-          Journal d'âme
+          Le Royaume
         </h1>
         <p className="text-royal-pearl/70 font-sans text-lg">
-          Créez votre journal personnel avec nos outils créatifs. Exprimez votre âme royale à travers l'art et l'écriture.
+          Découvrez bientôt votre espace royal personnalisé, conçu pour révéler votre reine intérieure.
         </p>
         <div className="mt-8">
           <div className="inline-flex items-center space-x-2 bg-royal-purple/60 rounded-full px-6 py-3 border border-royal-gold/30">
@@ -32,4 +32,4 @@ const JournalPage = () => {
   );
 };
 
-export default JournalPage;
+export default RoyaumePage;

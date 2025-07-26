@@ -7,9 +7,16 @@ import {
   BookOpenIcon, 
   ShoppingBagIcon,
   ClipboardDocumentListIcon,
-  XMarkIcon
+  XMarkIcon,
+  MusicalNoteIcon, 
+  SpeakerXMarkIcon,
+  SparklesIcon,
+  UserCircleIcon,
+  PowerIcon
 } from '@heroicons/react/24/outline';
 import { useEffect, useState } from 'react';
+import { useAuth } from '../../contexts/AuthContext';
+import { useMusicPlayer } from '../../hooks/useMusicPlayer';
 
 interface SidebarProps {
   isOpen: boolean;
@@ -17,54 +24,66 @@ interface SidebarProps {
 }
 
 const navItems = [
-  { 
-    name: 'Cards', 
-    path: '/cards', 
+  {
+    name: 'Cards',
+    path: '/cards',
     icon: RectangleStackIcon,
-    label: 'Cards / Cartes'
+    label: 'Ta pioche'
   },
-  { 
-    name: 'Quiz', 
-    path: '/quiz', 
+  {
+    name: 'Quiz',
+    path: '/quiz',
     icon: ClipboardDocumentListIcon,
-    label: 'Quiz'
+    label: 'Miroir, miroir,'
   },
-  { 
-    name: 'Journal', 
-    path: '/journal', 
-    icon: BookOpenIcon,
-    label: 'Journal d\'âme'
-  },
-  { 
-    name: 'Chat', 
-    path: '/chat', 
+  {
+    name: 'Chat',
+    path: '/chat',
     icon: ChatBubbleLeftRightIcon,
-    label: 'Chat / Afternoon Tea'
+    label: 'Salon de thé'
   },
-  { 
-    name: 'Shop', 
-    path: '/shop', 
+  {
+    name: 'Dashboard',
+    path: '/royaume',
+    icon: SparklesIcon,
+    label: 'Le Royaume'
+  },
+  {
+    name: 'Journal',
+    path: '/journal',
+    icon: BookOpenIcon,
+    label: 'Le journal du Royaume'
+  },
+  {
+    name: 'Shop',
+    path: '/shop',
     icon: ShoppingBagIcon,
-    label: 'Shop / Boutique'
+    label: 'La boutique'
   }
 ];
 
 const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
   const location = useLocation();
   const [isLargeScreen, setIsLargeScreen] = useState(false);
+  const { user, logout } = useAuth();
+  const { isPlaying, isLoading, controls} = useMusicPlayer('/audio/Roie Shpigler - Marbles.mp3', { 
+    targetVolume: 0.10 
+  });
+  const [spotsData] = useState({
+    available: 7,
+    total: 20,
+    nextEvent: "Tea Time — 13 juillet 19h GMT+1"
+  });
 
-  // Check if screen is large (desktop)
   useEffect(() => {
     const checkScreenSize = () => {
       setIsLargeScreen(window.innerWidth >= 1024);
     };
-
     checkScreenSize();
     window.addEventListener('resize', checkScreenSize);
     return () => window.removeEventListener('resize', checkScreenSize);
   }, []);
 
-  // Animation logic: visible on desktop, animated drawer on mobile
   const sidebarAnimation = {
     initial: { x: isLargeScreen ? 0 : -280 },
     animate: { 
@@ -88,9 +107,9 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
         initial={sidebarAnimation.initial}
         animate={sidebarAnimation.animate}
         transition={sidebarAnimation.transition}
-        className="fixed lg:static inset-y-0 left-0 z-30 w-70 bg-gradient-to-b from-royal-purple to-cabinet-aubergine shadow-royal"
+        className="fixed lg:static inset-y-0 left-0 z-30 w-70 bg-royal-purple shadow-royal"
       >
-        <div className="flex flex-col h-full">
+        <div className="flex flex-col h-screen overflow-hidden">
           {/* Header */}
           <div className="p-6 border-b border-royal-gold/20">
             <div className="flex items-center justify-between">
@@ -121,7 +140,6 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
             {navItems.map((item) => {
               const Icon = item.icon;
               const isActive = location.pathname === item.path;
-              
               return (
                 <Link
                   key={item.path}
@@ -129,12 +147,12 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
                   onClick={onClose}
                   className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 group ${
                     isActive 
-                      ? 'bg-gradient-to-r from-royal-gold/20 to-royal-champagne/20 text-royal-gold border-l-4 border-royal-gold' 
+                      ? 'bg-royal-gold text-royal-purple border-l-4 border-royal-gold' 
                       : 'text-royal-pearl hover:bg-royal-gold/10 hover:text-royal-champagne'
                   }`}
                 >
                   <Icon className={`w-5 h-5 transition-transform group-hover:scale-110 ${
-                    isActive ? 'text-royal-gold' : 'text-royal-pearl'
+                    isActive ? 'text-royal-purple' : 'text-royal-pearl'
                   }`} />
                   <span className="font-sans font-medium">{item.label}</span>
                 </Link>
@@ -142,16 +160,93 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
             })}
           </nav>
 
-          {/* Footer */}
-          <div className="p-6 border-t border-royal-gold/20">
-            <div className="bg-gradient-to-r from-royal-gold/10 to-royal-champagne/10 rounded-lg p-4">
-              <p className="text-royal-champagne text-sm font-sans">
-                "Révélez votre reine intérieure"
-              </p>
-              <p className="text-royal-pearl/60 text-xs mt-1">
-                © 2024 Queen de Q
-              </p>
+          {/* Footer + TopBar widgets */}
+          <div className="p-6 border-t border-royal-gold/20 space-y-4">
+            {/* Enhanced Sidebar Widgets */}
+            <div className="flex flex-col gap-4 mt-2">
+              {/* Spots Left Badge */}
+              <motion.div
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ duration: 0.3 }}
+                className="flex items-center gap-3 bg-royal-purple/70 rounded-xl px-4 py-2 border border-royal-gold/40 shadow-golden hover:shadow-royal transition-all duration-200"
+              >
+                <SparklesIcon className="w-5 h-5 text-royal-gold" />
+                <span className="text-royal-gold font-sans font-semibold text-base tracking-wide">
+                  {spotsData.available} spots left
+                </span>
+              </motion.div>
+
+              {/* Music Toggle */}
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.97 }}
+                onClick={() => controls.toggle()}
+                className={`flex items-center justify-center gap-2 p-3 rounded-xl border transition-all duration-200 shadow-inner-soft focus:outline-none focus:ring-2 focus:ring-royal-gold/60 focus:ring-offset-2 focus:ring-offset-royal-purple/80 ${
+                  isPlaying 
+                    ? 'bg-royal-gold text-royal-purple border-royal-gold/40' 
+                    : 'bg-royal-purple/10 text-royal-pearl border-royal-pearl/10 hover:bg-royal-purple/20'
+                }`}
+                title={isPlaying ? 'Pause music' : 'Play music'}
+                aria-pressed={isPlaying}
+                aria-label={isPlaying ? 'Music on' : 'Music off'}
+                disabled={isLoading}
+              >
+                {isLoading ? (
+                  <svg className="animate-spin h-5 w-5 text-royal-gold" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+                  </svg>
+                ) : isPlaying ? (
+                  <motion.div
+                    animate={{ scale: [1, 1.1, 1] }}
+                    transition={{ duration: 2, repeat: Infinity }}
+                  >
+                    <MusicalNoteIcon className="w-5 h-5" />
+                  </motion.div>
+                ) : (
+                  <SpeakerXMarkIcon className="w-5 h-5" />
+                )}
+                <span className="font-sans text-sm font-medium">
+                  {isLoading ? 'Chargement...' : isPlaying ? 'Musique active' : 'Activer la musique'}
+                </span>
+              </motion.button>
+
+              {/* User Menu */}
+              <div className="relative group w-full flex flex-col items-stretch">
+                <button className="flex items-center gap-2 w-full p-3 rounded-xl bg-royal-purple/20 hover:bg-royal-gold/10 transition-colors border border-royal-gold/20 shadow-soft focus:outline-none focus:ring-2 focus:ring-royal-gold/60 focus:ring-offset-2 focus:ring-offset-royal-purple/80">
+                  <UserCircleIcon className="w-6 h-6 text-royal-gold" />
+                  <span className="text-royal-gold font-sans font-semibold text-base">
+                    {user?.firstName}
+                  </span>
+                </button>
+                {/* Dropdown menu (opens upwards, themed colors, matches button width) */}
+                <div className="absolute left-0 bottom-full mb-2 min-w-full bg-royal-purple rounded-xl shadow-royal border border-royal-gold/20 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                  <div className="p-4 border-b border-royal-gold/20">
+                    <p className="text-royal-gold font-sans font-semibold text-base">{user?.firstName} {user?.lastName}</p>
+                    <p className="text-royal-pearl/80 text-xs">{user?.email}</p>
+                  </div>
+                  <button
+                    onClick={logout}
+                    className="w-full flex items-center gap-2 px-4 py-3 text-left text-royal-pearl hover:bg-royal-gold/10 hover:text-royal-purple transition-colors rounded-t-xl font-sans text-base"
+                  >
+                    <PowerIcon className="w-4 h-4" />
+                    <span>Se déconnecter</span>
+                  </button>
+                </div>
+                {/* Centered quote and copyright under profile */}
+                <div className="bg-royal-purple/60 rounded-lg p-4 mt-4 flex flex-col items-center text-center">
+                  <p className="text-royal-champagne text-sm font-sans">
+                    "Révélez votre reine intérieure"
+                  </p>
+                  <p className="text-royal-pearl/60 text-xs mt-1">
+                    © 2024 Queen de Q
+                  </p>
+                </div>
+              </div>
             </div>
+
+            
           </div>
         </div>
       </motion.div>

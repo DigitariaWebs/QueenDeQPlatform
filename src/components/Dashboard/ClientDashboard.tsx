@@ -26,9 +26,9 @@ const ClientDashboard = ({ onLogout, userEmail }: ClientDashboardProps) => {
 
   const menuItems = [
     { id: 'dashboard', label: 'Mon Royaume', icon: CrownIcon },
-    { id: 'cards', label: 'Les Cartes en Main', icon: CardsIcon },
+    { id: 'cards', label: 'Ta pioche', icon: CardsIcon },
     { id: 'mirror', label: 'Miroir, Miroir', icon: MirrorIcon },
-    { id: 'tea', label: 'Afternoon Tea', icon: TeaIcon },
+    { id: 'tea', label: 'Salon de thé', icon: TeaIcon },
     { id: 'shop', label: 'Boutique Royale', icon: BoutiqueIcon },
     { id: 'journal', label: 'Journal Intime', icon: JournalIcon },
   ];
@@ -87,7 +87,7 @@ const ClientDashboard = ({ onLogout, userEmail }: ClientDashboardProps) => {
               >
                 <div className="flex items-center mb-4">
                   <CardsIcon className="h-8 w-8 text-cabinet-patina group-hover:text-royal-gold transition-colors animate-sparkle" />
-                  <h3 className="text-lg font-title font-semibold text-royal-purple ml-3">Les Cartes en Main</h3>
+                  <h3 className="text-lg font-title font-semibold text-royal-purple ml-3">Ta pioche</h3>
                 </div>
                 <p className="text-cabinet-aubergine font-body text-sm">Découvrez les archétypes masculins à travers un tirage mystique</p>
               </motion.div>
@@ -113,7 +113,7 @@ const ClientDashboard = ({ onLogout, userEmail }: ClientDashboardProps) => {
               >
                 <div className="flex items-center mb-4">
                   <TeaIcon className="h-8 w-8 text-royal-gold group-hover:text-cabinet-patina transition-colors animate-glow" />
-                  <h3 className="text-lg font-title font-semibold text-royal-purple ml-3">Afternoon Tea</h3>
+                  <h3 className="text-lg font-title font-semibold text-royal-purple ml-3">Salon de thé</h3>
                 </div>
                 <p className="text-cabinet-aubergine font-body text-sm">Conversez avec la Reine-Mère pour des conseils avisés</p>
               </motion.div>

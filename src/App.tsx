@@ -6,6 +6,7 @@ import DashboardHome from './components/Pages/DashboardHome';
 import CardsPage from './components/Pages/CardsPage';
 import QuizPage from './components/Pages/QuizPage';
 import JournalPage from './components/Pages/JournalPage';
+import RoyaumePage from './components/Pages/RoyaumePage';
 import ChatPage from './components/Pages/ChatPage';
 
 import ShopPage from './components/Pages/ShopPage';
@@ -25,6 +26,7 @@ const AppContent = () => {
         <Route path="/cards" element={<CardsPage />} />
         <Route path="/quiz" element={<QuizPage />} />
         <Route path="/journal" element={<JournalPage />} />
+        <Route path="/royaume" element={<RoyaumePage />} />
         <Route path="/chat" element={<ChatPage />} />
         
         <Route path="/shop" element={<ShopPage />} />
