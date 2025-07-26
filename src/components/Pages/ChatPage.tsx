@@ -18,7 +18,7 @@ const ChatPage: React.FC = () => {
   const [availableModes, setAvailableModes] = useState<AssistantMode[]>([]);
   const [selectedMode, setSelectedMode] = useState('default');
   const [streamingMessage, setStreamingMessage] = useState('');
-  const [useStreaming, setUseStreaming] = useState(true);
+  // Removed useStreaming state as the feature is no longer used
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -67,62 +67,44 @@ const ChatPage: React.FC = () => {
 
     const currentMessages = [...messages, newMessage];
 
-    if (useStreaming) {
-      // Use streaming
-      let streamingResponse = '';
-      const streamingId = (Date.now() + 1).toString();
+    // Always use streaming (legacy: useStreaming removed)
+    let streamingResponse = '';
+    const streamingId = (Date.now() + 1).toString();
 
-      const handleChunk = (chunk: StreamChunk) => {
-        if (chunk.type === 'chunk' && chunk.content) {
-          streamingResponse += chunk.content;
-          setStreamingMessage(() => streamingResponse);
-        } else if (chunk.type === 'complete') {
-          // Finalize the streaming message
-          const finalMessage: Message = {
-            id: streamingId,
-            content: chunk.fullMessage || streamingResponse,
-            isUser: false,
-            timestamp: new Date(),
-            mode: chunk.mode || selectedMode
-          };
-          
-          setMessages(prev => [...prev, finalMessage]);
-          setStreamingMessage('');
-          setIsTyping(false);
-        } else if (chunk.type === 'error') {
-          // Handle streaming error
-          const errorMessage: Message = {
-            id: streamingId,
-            content: chunk.fallbackMessage || chunk.error || 'Une erreur est survenue.',
-            isUser: false,
-            timestamp: new Date(),
-            mode: selectedMode
-          };
-          
-          setMessages(prev => [...prev, errorMessage]);
-          setStreamingMessage('');
-          setIsTyping(false);
-        }
-      };
+    const handleChunk = (chunk: StreamChunk) => {
+      if (chunk.type === 'chunk' && chunk.content) {
+        streamingResponse += chunk.content;
+        setStreamingMessage(() => streamingResponse);
+      } else if (chunk.type === 'complete') {
+        // Finalize the streaming message
+        const finalMessage: Message = {
+          id: streamingId,
+          content: chunk.fullMessage || streamingResponse,
+          isUser: false,
+          timestamp: new Date(),
+          mode: chunk.mode || selectedMode
+        };
+        
+        setMessages(prev => [...prev, finalMessage]);
+        setStreamingMessage('');
+        setIsTyping(false);
+      } else if (chunk.type === 'error') {
+        // Handle streaming error
+        const errorMessage: Message = {
+          id: streamingId,
+          content: chunk.fallbackMessage || chunk.error || 'Une erreur est survenue.',
+          isUser: false,
+          timestamp: new Date(),
+          mode: selectedMode
+        };
+        
+        setMessages(prev => [...prev, errorMessage]);
+        setStreamingMessage('');
+        setIsTyping(false);
+      }
+    };
 
-      await chatService.sendMessageStream(currentMessages, selectedMode, handleChunk);
-    } else {
-      // Use standard chat
-      const response = await chatService.sendMessage(currentMessages, selectedMode);
-      
-      const responseMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        content: response.success 
-          ? response.message?.content || 'Réponse vide'
-          : response.fallbackMessage || response.error || 'Une erreur est survenue.',
-        isUser: false,
-        timestamp: new Date(),
-        mode: response.message?.mode || selectedMode
-      };
-      
-      setMessages(prev => [...prev, responseMessage]);
-      setIsTyping(false);
-    }
+    await chatService.sendMessageStream(currentMessages, selectedMode, handleChunk);
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
