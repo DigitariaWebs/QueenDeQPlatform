@@ -177,7 +177,7 @@ const DashboardHome = () => {
       </div>
 
       {/* Boutique Preview */}
-      <div className="bg-royal-purple/60 rounded-2xl p-8 border border-royal-gold/20">
+      <div className="bg-royal-purple/60 rounded-2xl p-8 border border-royal-gold/20 mb-8">
         <div className="flex items-center justify-between mb-6">
           <div>
             <h2 className="text-2xl font-serif font-bold text-royal-pearl mb-2">
@@ -197,6 +197,19 @@ const DashboardHome = () => {
             </span>
           </Link>
         </div>
+      </div>
+
+      {/* Mighty Network Button */}
+      <div className="flex justify-center mt-4">
+        <a
+          href="https://www.mightynetworks.com/" target="_blank" rel="noopener noreferrer"
+          className="inline-flex items-center space-x-2 bg-[#C8A96B] text-royal-purple font-bold font-sans rounded-full px-8 py-4 shadow-lg border border-royal-gold/40 hover:bg-[#E2C88F] hover:text-royal-purple transition-all duration-200 text-lg"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M17.25 6.75v-1.5A2.25 2.25 0 0015 3h-6a2.25 2.25 0 00-2.25 2.25v1.5m10.5 0h1.5A2.25 2.25 0 0121 9v6a2.25 2.25 0 01-2.25 2.25h-1.5m-10.5-10.5h-1.5A2.25 2.25 0 003 9v6a2.25 2.25 0 002.25 2.25h1.5m10.5 0v1.5A2.25 2.25 0 0115 21h-6a2.25 2.25 0 01-2.25-2.25v-1.5m10.5 0h-10.5" />
+          </svg>
+          <span>Accéder au Mighty Network</span>
+        </a>
       </div>
     </motion.div>
   );

@@ -75,7 +75,7 @@ const ChatPage: React.FC = () => {
       const handleChunk = (chunk: StreamChunk) => {
         if (chunk.type === 'chunk' && chunk.content) {
           streamingResponse += chunk.content;
-          setStreamingMessage(streamingResponse);
+          setStreamingMessage(() => streamingResponse);
         } else if (chunk.type === 'complete') {
           // Finalize the streaming message
           const finalMessage: Message = {
@@ -251,38 +251,36 @@ const ChatPage: React.FC = () => {
 
         {/* Messages Section - Sans scroll fixe */}
         <div className="space-y-6 mb-6">
-          <AnimatePresence>
-            {messages.map((message) => (
-              <motion.div
-                key={message.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                className={`flex ${message.isUser ? 'justify-end' : 'justify-start'}`}
-              >
-                <div className={`max-w-3xl ${message.isUser ? 'order-2' : 'order-1'}`}>
-                  {!message.isUser && (
-                    <div className="flex items-center space-x-2 mb-2">
-                      <div className="w-8 h-8 bg-royal-gold rounded-full flex items-center justify-center shadow-sm">
-                        <img 
-                          src="/assets/icons/teacup.svg" 
-                          alt="Tasse de Thé Royal" 
-                          className="w-5 h-5"
-                        />
-                      </div>
-                      <span className="text-sm font-raleway text-royal-pearl/70 font-medium">
-                        Reine-Mère
-                      </span>
+          {messages.map((message) => (
+            <div key={message.id} className={`flex ${message.isUser ? 'justify-end' : 'justify-start'}`}>
+              <div className={`max-w-3xl ${message.isUser ? 'order-2' : 'order-1'}`}>
+                {!message.isUser && (
+                  <div className="flex items-center space-x-2 mb-2">
+                    <div className="w-8 h-8 bg-royal-gold rounded-full flex items-center justify-center shadow-sm">
+                      <img 
+                        src="/assets/icons/teacup.svg" 
+                        alt="Tasse de Thé Royal" 
+                        className="w-5 h-5"
+                      />
                     </div>
-                  )}
-                  
-                  <div className={`rounded-2xl p-4 ${
-                    message.isUser 
-                      ? 'bg-royal-purple text-white ml-12' 
-                      : 'bg-royal-purple/60 backdrop-blur-sm border border-royal-gold/30 text-royal-pearl mr-12'
-                  }`}>
-                    <p className="font-raleway leading-relaxed">{message.content}</p>
-                    
+                    <span className="text-sm font-raleway text-royal-pearl/70 font-medium">
+                      Reine-Mère
+                    </span>
+                  </div>
+                )}
+                <AnimatePresence>
+                  <motion.div
+                    key={message.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
+                    className={`rounded-2xl px-5 py-3 shadow-lg transition-all duration-200 ${
+                      message.isUser 
+                        ? 'bg-gradient-to-br from-royal-purple to-royal-champagne/10 text-white ml-12 border border-royal-gold/30' 
+                        : 'bg-royal-pearl/10 backdrop-blur-sm border border-royal-gold/30 text-royal-purple mr-12'
+                    }`}
+                  >
+                    <p className="font-raleway leading-relaxed whitespace-pre-line break-words">{message.content}</p>
                     {/* Action Buttons for bot messages */}
                     {!message.isUser && (
                       <div className="flex items-center space-x-2 mt-4">
@@ -304,18 +302,20 @@ const ChatPage: React.FC = () => {
                         </button>
                       </div>
                     )}
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </AnimatePresence>
+                  </motion.div>
+                </AnimatePresence>
+              </div>
+            </div>
+          ))}
           
           {/* Streaming message display */}
           <AnimatePresence>
             {streamingMessage && (
               <motion.div
+                key={"streaming-message"}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
                 className="flex justify-start"
               >
                 <div className="max-w-3xl order-1">
@@ -331,9 +331,8 @@ const ChatPage: React.FC = () => {
                       Reine-Mère
                     </span>
                   </div>
-                  
-                  <div className="rounded-2xl p-4 bg-royal-purple/60 backdrop-blur-sm border border-royal-gold/30 text-royal-pearl mr-12">
-                    <p className="font-raleway leading-relaxed">{streamingMessage}</p>
+                  <div className="rounded-2xl px-5 py-3 shadow-lg transition-all duration-200 bg-royal-pearl/10 backdrop-blur-sm border border-royal-gold/30 text-royal-purple mr-12">
+                    <p className="font-raleway leading-relaxed whitespace-pre-line break-words">{streamingMessage}</p>
                     <div className="mt-2 flex items-center space-x-1">
                       {[0, 1, 2].map((i) => (
                         <motion.div
@@ -384,37 +383,6 @@ const ChatPage: React.FC = () => {
 
         {/* Controls and Input Area */}
         <div className="sticky bottom-0 bg-white/10 backdrop-blur-lg rounded-2xl shadow-xl p-6 border-t border-white/20 space-y-4">
-          
-          {/* Mode Selection and Settings */}
-          <div className="flex items-center justify-between text-sm">
-            <div className="flex items-center space-x-4">
-              <label className="text-royal-purple/70 font-raleway">Mode :</label>
-              <select
-                value={selectedMode}
-                onChange={(e) => setSelectedMode(e.target.value)}
-                className="bg-white/20 text-royal-purple border border-white/30 rounded-lg px-3 py-1 focus:outline-none focus:ring-2 focus:ring-royal-gold/50 font-raleway"
-              >
-                {availableModes.map((mode) => (
-                  <option key={mode.id} value={mode.id}>
-                    {mode.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-            
-            <div className="flex items-center space-x-4">
-              <label className="flex items-center space-x-2 text-royal-purple/70 font-raleway">
-                <input
-                  type="checkbox"
-                  checked={useStreaming}
-                  onChange={(e) => setUseStreaming(e.target.checked)}
-                  className="rounded border-white/30 bg-white/20 text-royal-gold focus:ring-royal-gold/50"
-                />
-                <span>Réponse en temps réel</span>
-              </label>
-            </div>
-          </div>
-
           {/* Input Area */}
           <div className="flex items-center space-x-4">
             <div className="flex-1 relative">
@@ -442,6 +410,25 @@ const ChatPage: React.FC = () => {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
               </svg>
             </button>
+          </div>
+
+          {/* Mode Selection and Settings (moved below input) */}
+          <div className="flex items-center justify-between text-sm pt-2">
+            <div className="flex items-center space-x-4">
+              <label className="text-royal-purple/70 font-raleway">Mode :</label>
+              <select
+                value={selectedMode}
+                onChange={(e) => setSelectedMode(e.target.value)}
+                className="bg-white/20 text-royal-purple border border-white/30 rounded-lg px-3 py-1 focus:outline-none focus:ring-2 focus:ring-royal-gold/50 font-raleway"
+              >
+                {availableModes.map((mode) => (
+                  <option key={mode.id} value={mode.id}>
+                    {mode.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+            {/* Removed 'Réponse en temps réel' checkbox as requested */}
           </div>
         </div>
       </div>
