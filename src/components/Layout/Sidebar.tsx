@@ -259,7 +259,7 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
                 {/* Centered quote and copyright under profile */}
                 <div className="bg-royal-purple/60 rounded-lg p-4 mt-4 flex flex-col items-center text-center">
                   <p className="text-royal-champagne text-sm font-sans">
-                    "Révélez votre reine intérieure"
+                    "Révèle ta reine intérieure"
                   </p>
                   <p className="text-royal-pearl/60 text-xs mt-1">
                     © 2024 Queen de Q

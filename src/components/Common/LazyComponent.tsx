@@ -39,7 +39,7 @@ class LazyComponent extends Component<LazyComponentProps, LazyComponentState> {
               <span className="text-cabinet-aubergine/50 text-2xl">⚠</span>
             </div>
             <p className="text-cabinet-aubergine/70 font-sans">
-              Something went wrong. Please try again.
+              Une erreur est survenue. Essaie encore.
             </p>
           </div>
         </div>
@@ -56,7 +56,7 @@ class LazyComponent extends Component<LazyComponentProps, LazyComponentState> {
           <div className="text-center">
             <div className="w-8 h-8 border-2 border-royal-gold/30 border-t-royal-gold rounded-full animate-spin mx-auto mb-4"></div>
             <p className="text-cabinet-aubergine/70 font-sans text-sm">
-              Loading...
+              Chargement...
             </p>
           </div>
         </motion.div>

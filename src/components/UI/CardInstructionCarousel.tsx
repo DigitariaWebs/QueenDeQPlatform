@@ -11,29 +11,29 @@ const slideData = [
     id: 'explore',
     illustration: '/assets/illustrations/explore.svg',
     title: 'Explorer / Explore',
-    caption: 'Clique sur une carte pour révéler son message / Click a card to reveal its message.',
-    ariaLabel: 'Explorer - découvrez comment explorer vos cartes'
+    caption: 'Clique sur une carte pour révéler ton message / Click a card to reveal your message.',
+    ariaLabel: 'Explorer - découvre comment explorer ta carte'
   },
   {
     id: 'spread',
     illustration: '/assets/illustrations/spread.svg',
     title: 'Tirage / Spread',
     caption: 'Utilise le tirage 3 cartes pour une méditation guidée / Use the 3-card spread for guided reflection.',
-    ariaLabel: 'Tirage - découvrez comment faire un tirage de cartes'
+    ariaLabel: 'Tirage - découvre comment faire un tirage de carte'
   },
   {
     id: 'journal',
     illustration: '/assets/illustrations/journal.svg',
     title: 'Le journal du Royaume',
     caption: 'Ajoute la question miroir à ton journal / Add the mirror question to your journal.',
-    ariaLabel: 'Journaler - découvrez comment utiliser votre journal'
+    ariaLabel: 'Journaler - découvre comment utiliser ton journal'
   },
   {
     id: 'progress',
     illustration: '/assets/illustrations/progress.svg',
     title: 'Progresser / Progress',
     caption: 'Débloque des célébrations en découvrant plus de cartes / Unlock celebrations as you reveal more cards.',
-    ariaLabel: 'Progresser - découvrez comment suivre votre progression'
+    ariaLabel: 'Progresser - découvre comment suivre ta progression'
   }
 ];
 
@@ -138,7 +138,7 @@ const CardInstructionCarousel = ({ className = '' }: CardInstructionCarouselProp
             className="relative inline-block"
           >
             <h2 className="text-4xl font-playfair font-bold bg-gradient-to-r from-royal-purple via-royal-purple to-royal-gold bg-clip-text text-transparent mb-4">
-              Comment utiliser vos cartes
+              Comment utiliser tes cartes
             </h2>
             <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-24 h-1 bg-gradient-to-r from-royal-gold to-royal-champagne rounded-full"></div>
           </motion.div>
@@ -148,7 +148,7 @@ const CardInstructionCarousel = ({ className = '' }: CardInstructionCarouselProp
             transition={{ duration: 0.6, delay: 0.2 }}
             className="text-xl text-royal-purple/80 font-raleway max-w-3xl mx-auto mt-6"
           >
-            Quatre étapes simples pour commencer votre voyage introspectif.
+            Quatre étapes simples pour commencer ton voyage introspectif.
           </motion.p>
         </div>
 

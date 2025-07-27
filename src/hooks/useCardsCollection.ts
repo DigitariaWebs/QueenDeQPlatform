@@ -73,7 +73,7 @@ export const useCardsCollection = (cards: Card[]) => {
 
     // Announce milestone to screen readers
     a11yUtils.announce(
-      `Congratulations! You've opened ${milestone} cards. / Félicitations ! Vous avez ouvert ${milestone} cartes.`,
+      `Congratulations! You've opened ${milestone} cards. / Félicitations ! Tu as ouvert ${milestone} cartes.`,
       'assertive'
     );
   }, [prefersReducedMotion]);
@@ -117,7 +117,7 @@ export const useCardsCollection = (cards: Card[]) => {
     saveProgress(newProgress);
 
     // Announce to screen readers
-    a11yUtils.announce('Added to journal / Ajouté au journal', 'polite');
+    a11yUtils.announce('Added to journal / Ajouté à ton journal', 'polite');
     
     return entry;
   }, [progress, saveProgress]);

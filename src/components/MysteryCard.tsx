@@ -57,8 +57,8 @@ export const MysteryCard: React.FC<MysteryCardProps> = ({ icon, title, descripti
             {title}
           </h4>
           <div className="text-royal-purple/80 text-sm font-sans italic drop-shadow-[0_2px_6px_rgba(0,0,0,0.10)]">
-            <span className="hidden md:inline">Survolez pour découvrir</span>
-            <span className="md:hidden">Touchez pour découvrir</span>
+            <span className="hidden md:inline">Survole pour découvrir</span>
+            <span className="md:hidden">Touche pour découvrir</span>
           </div>
           <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-transparent via-royal-gold/10 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
         </div>

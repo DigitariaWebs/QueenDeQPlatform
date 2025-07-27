@@ -41,7 +41,7 @@ interface QuizResult {
 const quizQuestions: QuizQuestion[] = [
   {
     id: 1,
-    question: "Quelle qualité vous définit le mieux ?",
+    question: "Quelle qualité te définit le mieux ?",
     options: [
       { id: 'a', text: 'Compassion', icon: HeartIcon, archetype: 'Bienveillante' },
       { id: 'b', text: 'Créativité', icon: SparklesIcon, archetype: 'Créative' },
@@ -51,7 +51,7 @@ const quizQuestions: QuizQuestion[] = [
   },
   {
     id: 2,
-    question: "Votre moment préféré de la journée ?",
+    question: "Ton moment préféré de la journée ?",
     options: [
       { id: 'a', text: 'Lever du soleil', icon: SunIcon, archetype: 'Solaire' },
       { id: 'b', text: 'Coucher de soleil', icon: MoonIcon, archetype: 'Lunaire' },
@@ -61,7 +61,7 @@ const quizQuestions: QuizQuestion[] = [
   },
   {
     id: 3,
-    question: "Votre environnement idéal ?",
+    question: "Ton environnement idéal ?",
     options: [
       { id: 'a', text: 'Jardin secret', icon: SparklesIcon, archetype: 'Bienveillante' },
       { id: 'b', text: 'Atelier créatif', icon: BeakerIcon, archetype: 'Créative' },
@@ -71,7 +71,7 @@ const quizQuestions: QuizQuestion[] = [
   },
   {
     id: 4,
-    question: "Votre façon d'aider les autres ?",
+    question: "Ta façon d'aider les autres ?",
     options: [
       { id: 'a', text: 'Écouter avec le cœur', icon: HeartIcon, archetype: 'Bienveillante' },
       { id: 'b', text: 'Inspirer par l\'art', icon: SparklesIcon, archetype: 'Créative' },
@@ -81,7 +81,7 @@ const quizQuestions: QuizQuestion[] = [
   },
   {
     id: 5,
-    question: "Votre plus grande force ?",
+    question: "Ta plus grande force ?",
     options: [
       { id: 'a', text: 'Empathie', icon: HeartIcon, archetype: 'Bienveillante' },
       { id: 'b', text: 'Imagination', icon: SparklesIcon, archetype: 'Créative' },
@@ -91,7 +91,7 @@ const quizQuestions: QuizQuestion[] = [
   },
   {
     id: 6,
-    question: "Comment rechargez-vous vos batteries ?",
+    question: "Comment recharges-tu tes batteries ?",
     options: [
       { id: 'a', text: 'Méditation', icon: MoonIcon, archetype: 'Lunaire' },
       { id: 'b', text: 'Création artistique', icon: SparklesIcon, archetype: 'Créative' },
@@ -101,7 +101,7 @@ const quizQuestions: QuizQuestion[] = [
   },
   {
     id: 7,
-    question: "Votre style de leadership ?",
+    question: "Ton style de leadership ?",
     options: [
       { id: 'a', text: 'Avec le cœur', icon: HeartIcon, archetype: 'Bienveillante' },
       { id: 'b', text: 'Avec innovation', icon: SparklesIcon, archetype: 'Créative' },
@@ -111,7 +111,7 @@ const quizQuestions: QuizQuestion[] = [
   },
   {
     id: 8,
-    question: "Votre vision du bonheur ?",
+    question: "Ta vision du bonheur ?",
     options: [
       { id: 'a', text: 'Harmonie collective', icon: HeartIcon, archetype: 'Bienveillante' },
       { id: 'b', text: 'Expression créative', icon: SparklesIcon, archetype: 'Créative' },
@@ -125,25 +125,25 @@ const queenResults: { [key: string]: QuizResult } = {
   'Bienveillante': {
     name: 'La Reine Solaire',
     portrait: '/assets/quiz-results/solar-queen.svg',
-    description: 'Votre énergie rayonne comme le soleil, illuminant tout sur votre passage. Vous êtes une source naturelle d\'inspiration et de chaleur humaine. Votre présence apporte joie et réconfort à ceux qui vous entourent.',
+    description: 'Ton énergie rayonne comme le soleil, illuminant tout sur ton passage. Tu es une source naturelle d\'inspiration et de chaleur humaine. Ta présence apporte joie et réconfort à ceux qui t\'entourent.',
     color: 'from-parchment-cream to-warm-pearl'
   },
   'Créative': {
     name: 'L\'Impératrice Rebelle',
     portrait: '/assets/quiz-results/rebel-queen.svg',
-    description: 'Votre esprit libre défie les conventions avec grâce et audace. Vous n\'avez pas peur de tracer votre propre chemin et d\'inspirer les autres à embrasser leur authenticité. Votre créativité révolutionnaire change le monde.',
+    description: 'Ton esprit libre défie les conventions avec grâce et audace. Tu n\'as pas peur de tracer ton propre chemin et d\'inspirer les autres à embrasser leur authenticité. Ta créativité révolutionnaire change le monde.',
     color: 'from-antique-rose to-powder-rose'
   },
   'Sage': {
     name: 'La Souveraine Sage',
     portrait: '/assets/quiz-results/sage-queen.svg',
-    description: 'Votre sagesse profonde et votre intuition vous guident vers la vérité. Vous êtes une source de conseil et de guidance pour ceux qui cherchent des réponses. Votre connaissance éclaire le chemin des autres.',
+    description: 'Ta sagesse profonde et ton intuition te guident vers la vérité. Tu es une source de conseil et de guidance pour ceux qui cherchent des réponses. Ta connaissance éclaire le chemin des autres.',
     color: 'from-smoky-gold to-parchment-cream'
   },
   'Guerrière': {
     name: 'La Reine Lunaire',
     portrait: '/assets/quiz-results/lunar-queen.svg',
-    description: 'Votre force mystique puise dans les cycles naturels et l\'intuition féminine. Vous maîtrisez l\'art de la transformation et de l\'adaptation. Votre sagesse émotionnelle guide vos décisions avec une profondeur remarquable.',
+    description: 'Ta force mystique puise dans les cycles naturels et l\'intuition féminine. Tu maîtrises l\'art de la transformation et de l\'adaptation. Ta sagesse émotionnelle guide tes décisions avec une profondeur remarquable.',
     color: 'from-rose-champagne to-moon-milk'
   }
 };
@@ -474,7 +474,7 @@ const QuizPage = () => {
             </div>
             
             <p className="text-royal-purple/80 font-raleway text-lg max-w-2xl mx-auto">
-              Découvrez votre archétype royal en 8 questions. Laissez votre intuition vous guider vers votre véritable essence.
+              Découvre ton archétype royal en 8 questions. Laisse ton intuition te guider vers ta véritable essence.
             </p>
           </motion.div>
 

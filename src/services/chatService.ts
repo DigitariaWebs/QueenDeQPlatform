@@ -76,7 +76,7 @@ class ChatService {
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Erreur inconnue',
-        fallbackMessage: "Pardonne-moi, ma chère âme, mais je rencontre quelques difficultés en ce moment. Peux-tu réessayer dans quelques instants ?"
+        fallbackMessage: "Pardonne-moi, ma chère âme, mais je rencontre une difficulté en ce moment. Peux-tu réessayer dans un instant ?"
       };
     }
   }
@@ -136,7 +136,7 @@ class ChatService {
       onChunk({
         type: 'error',
         error: error instanceof Error ? error.message : 'Erreur inconnue',
-        fallbackMessage: "Pardonne-moi, ma chère âme, mais je rencontre quelques difficultés en ce moment. Peux-tu réessayer dans quelques instants ?",
+        fallbackMessage: "Pardonne-moi, ma chère âme, mais je rencontre une difficulté en ce moment. Peux-tu réessayer dans un instant ?",
         timestamp: new Date().toISOString()
       });
     }

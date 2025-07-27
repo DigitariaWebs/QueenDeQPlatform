@@ -55,7 +55,7 @@ const TopBar = ({ onMenuClick }: TopBarProps) => {
                 Bonjour, {user?.firstName}
               </h2>
               <p className="text-cabinet-aubergine/70 text-sm font-sans">
-                Bienvenue dans votre royaume personnel
+                Bienvenue dans ton royaume personnel
               </p>
             </div>
           </div>

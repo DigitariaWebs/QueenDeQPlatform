@@ -17,7 +17,7 @@ const RoyaumePage = () => {
           Le Royaume
         </h1>
         <p className="text-royal-pearl/70 font-sans text-lg">
-          Découvrez bientôt votre espace royal personnalisé, conçu pour révéler votre reine intérieure.
+          Découvre bientôt ton espace royal personnalisé, conçu pour révéler ta reine intérieure.
         </p>
         <div className="mt-8">
           <div className="inline-flex items-center space-x-2 bg-royal-purple/60 rounded-full px-6 py-3 border border-royal-gold/30">

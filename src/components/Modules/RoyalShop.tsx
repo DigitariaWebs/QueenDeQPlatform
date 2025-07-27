@@ -138,7 +138,7 @@ const RoyalShop: React.FC = () => {
           </div>
           
           <p className="text-royal-purple/80 text-xl max-w-3xl mx-auto leading-relaxed mt-4 font-raleway">
-            Les produits qui vont réveiller votre Reine intérieure
+            Les produits qui vont réveiller ta Reine intérieure
           </p>
         </motion.div>
 
@@ -237,7 +237,7 @@ const RoyalShop: React.FC = () => {
               La Boutique s'Éveille
             </h2>
             <p className="text-royal-purple/80 max-w-2xl mx-auto leading-relaxed font-raleway">
-              Notre collection exclusive arrive bientôt avec des produits authentiques Queen de Q. Restez connectées pour les premières révélations !
+              Notre collection exclusive arrive bientôt avec des produits authentiques Queen de Q. Reste connecté·e pour les premières révélations !
             </p>
           </div>
         </motion.div>

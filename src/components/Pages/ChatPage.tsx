@@ -162,7 +162,7 @@ const ChatInputBar: React.FC<{
           value={inputValue}
           onChange={e => setInputValue(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder="Décrivez votre rêve à la Reine-Mère..."
+          placeholder="Décris ton rêve à la Reine-Mère..."
           className="chat-input-field flex-1 py-3 px-4 rounded-full bg-white text-royal-purple placeholder-royal-purple/60 font-raleway focus:outline-none focus:ring-2 focus:ring-royal-gold/40 transition-all duration-200 shadow-sm"
           disabled={isTyping}
         />
@@ -184,7 +184,7 @@ const ChatPage: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
-      content: "Bienvenue, ma chère âme. Je suis la Reine-Mère, ta confidente et guide spirituelle. Je suis là pour t'écouter, partager ma sagesse, et t'accompagner dans ton cheminement. Que souhaites-tu explorer aujourd'hui ?",
+      content: "Bienvenue, ma chère âme. Je suis la Reine-Mère, ta confidente et guide spirituelle. Je suis là pour t'écouter, partager ma sagesse, et t'accompagner dans ton cheminement. Qu'aimerais-tu explorer aujourd'hui ?",
       isUser: false,
       timestamp: new Date()
     }

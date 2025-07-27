@@ -158,7 +158,7 @@ const ShopStandalone: React.FC = () => {
             </div>
             
             <p className="text-royal-pearl/80 text-xl max-w-3xl mx-auto leading-relaxed mt-4">
-              Les produits qui vont réveiller votre Reine intérieure
+              Les produits qui vont réveiller ta Reine intérieure
             </p>
           </motion.div>
 

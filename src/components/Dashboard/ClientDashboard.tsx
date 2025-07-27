@@ -40,8 +40,8 @@ const ClientDashboard = ({ onLogout, userEmail }: ClientDashboardProps) => {
         return (
           <div>
             <div className="mb-8">
-              <h2 className="text-3xl font-title font-bold text-royal-purple">Bienvenue dans votre royaume personnel</h2>
-              <p className="text-cabinet-aubergine mt-2 font-body">Explorez vos archétypes et découvrez votre pouvoir féminin</p>
+              <h2 className="text-3xl font-title font-bold text-royal-purple">Bienvenue dans ton royaume personnel</h2>
+              <p className="text-cabinet-aubergine mt-2 font-body">Explore tes archétypes et découvre ton pouvoir féminin</p>
             </div>
 
             {/* Quick Stats */}
@@ -89,7 +89,7 @@ const ClientDashboard = ({ onLogout, userEmail }: ClientDashboardProps) => {
                   <CardsIcon className="h-8 w-8 text-cabinet-patina group-hover:text-royal-gold transition-colors animate-sparkle" />
                   <h3 className="text-lg font-title font-semibold text-royal-purple ml-3">Ta pioche</h3>
                 </div>
-                <p className="text-cabinet-aubergine font-body text-sm">Découvrez les archétypes masculins à travers un tirage mystique</p>
+                <p className="text-cabinet-aubergine font-body text-sm">Découvre les archétypes masculins à travers un tirage mystique</p>
               </motion.div>
 
               <motion.div 
@@ -102,7 +102,7 @@ const ClientDashboard = ({ onLogout, userEmail }: ClientDashboardProps) => {
                   <MirrorIcon className="h-8 w-8 text-cabinet-powder group-hover:text-royal-gold transition-colors animate-float" />
                   <h3 className="text-lg font-title font-semibold text-royal-purple ml-3">Miroir, Miroir</h3>
                 </div>
-                <p className="text-cabinet-aubergine font-body text-sm">Révélez votre archétype féminin avec notre quiz mystique</p>
+                <p className="text-cabinet-aubergine font-body text-sm">Révèle ton archétype féminin avec notre quiz mystique</p>
               </motion.div>
 
               <motion.div 
@@ -115,7 +115,7 @@ const ClientDashboard = ({ onLogout, userEmail }: ClientDashboardProps) => {
                   <TeaIcon className="h-8 w-8 text-royal-gold group-hover:text-cabinet-patina transition-colors animate-glow" />
                   <h3 className="text-lg font-title font-semibold text-royal-purple ml-3">Salon de thé</h3>
                 </div>
-                <p className="text-cabinet-aubergine font-body text-sm">Conversez avec la Reine-Mère pour des conseils avisés</p>
+                <p className="text-cabinet-aubergine font-body text-sm">Converse avec la Reine-Mère pour des conseils avisés</p>
               </motion.div>
 
               <motion.div 
@@ -128,7 +128,7 @@ const ClientDashboard = ({ onLogout, userEmail }: ClientDashboardProps) => {
                   <BoutiqueIcon className="h-8 w-8 text-cabinet-patina group-hover:text-royal-gold transition-colors animate-float" />
                   <h3 className="text-lg font-title font-semibold text-royal-purple ml-3">Boutique Royale</h3>
                 </div>
-                <p className="text-cabinet-aubergine font-body text-sm">Cartes physiques et objets mystiques pour votre collection</p>
+                <p className="text-cabinet-aubergine font-body text-sm">Cartes physiques et objets mystiques pour ta collection</p>
               </motion.div>
 
               <motion.div 
@@ -141,7 +141,7 @@ const ClientDashboard = ({ onLogout, userEmail }: ClientDashboardProps) => {
                   <JournalIcon className="h-8 w-8 text-cabinet-powder group-hover:text-royal-gold transition-colors animate-sparkle" />
                   <h3 className="text-lg font-title font-semibold text-royal-purple ml-3">Journal Intime</h3>
                 </div>
-                <p className="text-cabinet-aubergine font-body text-sm">Consignez vos réflexions et votre parcours introspectif</p>
+                <p className="text-cabinet-aubergine font-body text-sm">Consigne tes réflexions et ton parcours introspectif</p>
               </motion.div>
             </div>
           </div>

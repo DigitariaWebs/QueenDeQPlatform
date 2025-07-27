@@ -52,8 +52,8 @@ const demoCards: Card[] = [
     name: '4♦ Solar Manipulator',
     suit: '♦',
     rank: '4',
-    punchline: 'Votre charisme commande naturellement le respect et l\'attention de tous',
-    mirrorQuestion: 'Comment votre présence influence-t-elle positivement votre entourage ?',
+    punchline: 'Ton charisme commande naturellement le respect et l\'attention de tous',
+    mirrorQuestion: 'Comment ta présence influence-t-elle positivement ton entourage ?',
     image: '/assets/images/3carrau.png',
     color: 'from-royal-gold to-royal-champagne',
     keywords: ['charisme', 'leadership', 'influence', 'respect']
@@ -63,8 +63,8 @@ const demoCards: Card[] = [
     name: '7♠ Shadow Architect',
     suit: '♠',
     rank: '7',
-    punchline: 'Vous construisez des stratégies dans l\'ombre avec une précision chirurgicale',
-    mirrorQuestion: 'Quelle est votre stratégie la plus brillante et comment l\'avez-vous développée ?',
+    punchline: 'Tu construis des stratégies dans l\'ombre avec une précision chirurgicale',
+    mirrorQuestion: 'Quelle est ta stratégie la plus brillante et comment l\'as-tu développée ?',
     image: '/assets/images/3carrau.png',
     color: 'from-royal-purple to-cabinet-aubergine',
     keywords: ['stratégie', 'planification', 'analyse', 'précision']
@@ -74,8 +74,8 @@ const demoCards: Card[] = [
     name: 'K♥ Emotional Alchemist',
     suit: '♥',
     rank: 'K',
-    punchline: 'Vous transformez la douleur en force et la vulnérabilité en pouvoir authentique',
-    mirrorQuestion: 'Comment transformez-vous vos émotions les plus intenses en sources de force ?',
+    punchline: 'Tu transformes la douleur en force et la vulnérabilité en pouvoir authentique',
+    mirrorQuestion: 'Comment transformes-tu tes émotions les plus intenses en sources de force ?',
     image: '/assets/images/3carrau.png',
     color: 'from-ritual-smokedGold to-ritual-vintage',
     keywords: ['émotions', 'transformation', 'résilience', 'authenticité']
@@ -85,8 +85,8 @@ const demoCards: Card[] = [
     name: 'A♣ Intellectual Dominator',
     suit: '♣',
     rank: 'A',
-    punchline: 'Votre esprit analytique déconstruit et maîtrise tous les systèmes complexes',
-    mirrorQuestion: 'Quel système complexe avez-vous le mieux maîtrisé et décomposé ?',
+    punchline: 'Ton esprit analytique déconstruit et maîtrise tous les systèmes complexes',
+    mirrorQuestion: 'Quel système complexe as-tu le mieux maîtrisé et décomposé ?',
     image: '/assets/images/3carrau.png',
     color: 'from-royal-champagne to-cabinet-powder',
     keywords: ['intellect', 'analyse', 'système', 'maîtrise']
@@ -96,8 +96,8 @@ const demoCards: Card[] = [
     name: 'J♦ Charismatic Rebel',
     suit: '♦',
     rank: 'J',
-    punchline: 'Vous défiez les conventions avec un style et une audace inégalés',
-    mirrorQuestion: 'Quelle règle ou convention avez-vous brisée avec élégance et succès ?',
+    punchline: 'Tu défies les conventions avec un style et une audace inégalés',
+    mirrorQuestion: 'Quelle règle ou convention as-tu brisée avec élégance et succès ?',
     image: '/assets/images/3carrau.png',
     color: 'from-ritual-indigo to-royal-purple',
     keywords: ['rébellion', 'innovation', 'audace', 'originalité']
@@ -107,8 +107,8 @@ const demoCards: Card[] = [
     name: 'Q♠ Strategic Phantom',
     suit: '♠',
     rank: 'Q',
-    punchline: 'Votre vision à long terme anticipe et influence tous les mouvements',
-    mirrorQuestion: 'Quelle vision d\'avenir guide vos décisions les plus importantes ?',
+    punchline: 'Ta vision à long terme anticipe et influence tous les mouvements',
+    mirrorQuestion: 'Quelle vision d\'avenir guide tes décisions les plus importantes ?',
     image: '/assets/images/3carrau.png',
     color: 'from-ritual-vintage to-ritual-smokedGold',
     keywords: ['vision', 'anticipation', 'stratégie', 'influence']
@@ -118,8 +118,8 @@ const demoCards: Card[] = [
     name: '10♥ Passionate Conqueror',
     suit: '♥',
     rank: '10',
-    punchline: 'Votre intensité émotionnelle consume et transforme tout sur son passage',
-    mirrorQuestion: 'Quelle passion brûlante vous consume et vous pousse vers l\'excellence ?',
+    punchline: 'Ton intensité émotionnelle consume et transforme tout sur son passage',
+    mirrorQuestion: 'Quelle passion brûlante te consume et te pousse vers l\'excellence ?',
     image: '/assets/images/3carrau.png',
     color: 'from-cabinet-powder to-royal-champagne',
     keywords: ['passion', 'intensité', 'transformation', 'excellence']
@@ -129,8 +129,8 @@ const demoCards: Card[] = [
     name: '9♣ Tactical Mastermind',
     suit: '♣',
     rank: '9',
-    punchline: 'Vous orchestrez des plans complexes avec une patience et intelligence redoutables',
-    mirrorQuestion: 'Quel plan complexe avez-vous mené à bien grâce à votre patience ?',
+    punchline: 'Tu orchestres des plans complexes avec une patience et intelligence redoutables',
+    mirrorQuestion: 'Quel plan complexe as-tu mené à bien grâce à ta patience ?',
     image: '/assets/images/3carrau.png',
     color: 'from-royal-gold to-cabinet-patina',
     keywords: ['tactique', 'patience', 'orchestration', 'intelligence']
@@ -441,7 +441,7 @@ const CardsPage = () => {
             Cards Collection
         </h1>
           <p className="text-cabinet-aubergine/70 font-sans text-lg max-w-2xl">
-            Découvrez les archétypes masculins qui reflètent votre essence. 
+            Découvre les archétypes masculins qui reflètent ton essence. 
             {progress.openedCards.size > 0 && (
               <span className="ml-2 text-royal-gold font-medium">
                 {progress.openedCards.size}/{demoCards.length} révélées
@@ -909,7 +909,7 @@ const CardsPage = () => {
             Aucune carte trouvée / No cards found
           </h3>
           <p className="text-cabinet-aubergine/70 font-sans">
-            Essayez d'ajuster vos filtres ou votre recherche
+            Essaie d'ajuster tes filtres ou ta recherche
           </p>
         </div>
       )}

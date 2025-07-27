@@ -118,7 +118,7 @@ const AuthPage = () => {
             </div>
             
             <p className="text-royal-purple/80 font-handwriting text-lg" style={{ fontFamily: 'Kalam, cursive' }}>
-              Révélez votre essence royale
+              Révèle ton essence royale
             </p>
           </motion.div>
 

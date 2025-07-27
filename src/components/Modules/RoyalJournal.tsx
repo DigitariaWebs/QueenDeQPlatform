@@ -17,7 +17,7 @@ const RoyalJournal = () => {
           Journal Royal
         </h1>
         <p className="text-cabinet-aubergine/70 font-sans text-lg">
-          Consignez vos réflexions et votre parcours introspectif dans votre journal personnel.
+          Consigne tes réflexions et ton parcours introspectif dans ton journal personnel.
         </p>
         <div className="mt-8">
           <div className="inline-flex items-center space-x-2 bg-gradient-to-r from-royal-gold/20 to-royal-champagne/20 rounded-full px-6 py-3 border border-royal-gold/30">

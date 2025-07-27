@@ -52,21 +52,21 @@ const mysteryFeatures = [
   {
     icon: <RectangleStackIcon className="w-12 h-12" />,
     title: 'Ta pioche',
-    description: 'Découvrez les archétypes masculins que vous attirez. 10 cartes gratuites pour commencer votre voyage de découverte.',
+    description: 'Découvre les archétypes masculins que tu attires. 10 cartes gratuites pour commencer ton voyage de découverte.',
     chatPrompt: "Tu veux qu'on parle de tes cartes?",
     path: '/cards'
   },
   {
     icon: <HeartIcon className="w-12 h-12" />,
     title: 'Miroir, Miroir!',
-    description: 'Révélez votre type de Queen : Cœur, Carreau, Trèfle ou Pique. Découvrez votre style relationnel et vos forces.',
+    description: 'Révèle ton type de Queen : Cœur, Carreau, Trèfle ou Pique. Découvre ton style relationnel et tes forces.',
     chatPrompt: "T'es quel genre de Queen, toi, vraiment?",
     path: '/quiz'
   },
   {
     icon: <UserGroupIcon className="w-12 h-12" />,
     title: 'Salon de thé',
-    description: 'Conversez avec la Reine-Mère, votre guide bienveillante et complice pour une discussion chaleureuse et éclairante.',
+    description: 'Converse avec la Reine-Mère, ta guide bienveillante et complice pour une discussion chaleureuse et éclairante.',
     chatPrompt: "Et si on mettait les cartes sur table?",
     path: '/chat'
   }
@@ -88,7 +88,7 @@ const DashboardHome = () => {
           Bonjour, Client
         </h2>
         <p className="text-royal-pearl/80 text-lg font-sans">
-          Bienvenue dans votre royaume personnel
+            Bienvenue dans ton royaume personnel
         </p>
       </div>
       {/* Mystery Cards Section */}
@@ -99,11 +99,11 @@ const DashboardHome = () => {
           transition={{ duration: 0.8, delay: 0.2 }}
           className="text-center mb-8"
         >
-          <h2 className="text-3xl font-serif font-bold text-royal-purple mb-4">
-            Votre Royaume Intérieur
+            <h2 className="text-3xl font-serif font-bold text-royal-purple mb-4">
+              Ton Royaume Intérieur
           </h2>
-          <p className="text-cabinet-aubergine/70 font-sans text-lg max-w-2xl mx-auto">
-            Trois portes s'ouvrent vers votre transformation. Choisissez votre chemin de découverte.
+            <p className="text-cabinet-aubergine/70 font-sans text-lg max-w-2xl mx-auto">
+              Trois portes s'ouvrent vers ta transformation. Choisis ton chemin de découverte.
           </p>
         </motion.div>
         
@@ -169,10 +169,10 @@ const DashboardHome = () => {
             </div>
             <div>
               <p className="font-sans font-medium text-royal-pearl">
-                Bienvenue dans votre royaume !
+                Bienvenue dans ton royaume !
               </p>
               <p className="text-royal-pearl/70 text-sm">
-                Explorez vos premières cartes pour commencer votre voyage royal
+                Explore tes premières cartes pour commencer ton voyage royal
               </p>
             </div>
           </div>
