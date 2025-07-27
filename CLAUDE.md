@@ -286,7 +286,7 @@ plugins: [
 
 ## Sprint 2 · Journal & Shop (1.5 days)
 
-### 1. Journal d’âme
+### 1. Journal du Royaume
 - 800×500 canvas, 3 SVG stickers; drag-drop coords saved to localStorage 🕸 :contentReference[oaicite:7]{index=7}.  
 - Toast “Sauvegardé / Saved” + Reset.
 

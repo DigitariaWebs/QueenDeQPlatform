@@ -210,6 +210,12 @@ h1, h2, h3, h4, h5, h6 {
     0 3px 6px rgba(0,0,0,0.23);
 }
 
+/* Fix: Ensure chat input text is visible regardless of global color rules */
+.chat-input-field {
+  color: var(--royal-purple) !important;
+  background: #fff !important;
+}
+
 .depth-layer-3 {
   box-shadow: 
     0 10px 20px rgba(0,0,0,0.19),

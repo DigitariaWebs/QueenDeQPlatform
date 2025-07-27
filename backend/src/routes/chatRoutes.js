@@ -12,7 +12,6 @@ const validateChatMessage = [
       if (!messages.length) {
         throw new Error('Messages array cannot be empty');
       }
-      
       for (const message of messages) {
         if (!message.role || !message.content) {
           throw new Error('Each message must have role and content');
@@ -22,18 +21,13 @@ const validateChatMessage = [
         }
       }
       return true;
-    }),
-  body('mode')
-    .optional()
-    .isIn(['default', 'dreamsInterpreter', 'mysticalGuide'])
-    .withMessage('Invalid mode specified')
+    })
 ];
 
 // Standard chat endpoint
 router.post('/chat', validateChatMessage, async (req, res) => {
   try {
     console.log('Received chat request:', {
-      mode: req.body.mode,
       messagesCount: req.body.messages?.length
     });
 
@@ -48,12 +42,10 @@ router.post('/chat', validateChatMessage, async (req, res) => {
       });
     }
 
-    const { messages, mode = 'default' } = req.body;
+    const { messages } = req.body;
 
     // Call OpenAI with Reine-Mère configuration
-    console.log('Calling OpenAI with mode:', mode);
-    const response = await callOpenAI(messages, mode, false);
-    
+    const response = await callOpenAI(messages, undefined, false);
     const aiMessage = response.choices[0].message.content;
     console.log('OpenAI response received, length:', aiMessage.length);
 
@@ -62,16 +54,14 @@ router.post('/chat', validateChatMessage, async (req, res) => {
       message: {
         role: 'assistant',
         content: aiMessage,
-        timestamp: new Date().toISOString(),
-        mode: mode
+        timestamp: new Date().toISOString()
       },
       usage: response.usage
     };
 
     console.log('Sending response:', {
       success: true,
-      messageLength: aiMessage.length,
-      mode: mode
+      messageLength: aiMessage.length
     });
 
     res.json(responseData);
@@ -96,7 +86,6 @@ router.post('/chat', validateChatMessage, async (req, res) => {
 router.post('/chat/stream', validateChatMessage, async (req, res) => {
   try {
     console.log('Received streaming request:', {
-      mode: req.body.mode,
       messagesCount: req.body.messages?.length
     });
 
@@ -111,7 +100,7 @@ router.post('/chat/stream', validateChatMessage, async (req, res) => {
       });
     }
 
-    const { messages, mode = 'default' } = req.body;
+    const { messages } = req.body;
 
     // Set headers for streaming
     res.setHeader('Content-Type', 'text/plain; charset=utf-8');
@@ -120,17 +109,14 @@ router.post('/chat/stream', validateChatMessage, async (req, res) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
 
     // Call OpenAI with streaming
-    console.log('Starting OpenAI stream with mode:', mode);
-    const stream = await callOpenAI(messages, mode, true);
+    const stream = await callOpenAI(messages, undefined, true);
 
     let fullResponse = '';
 
     for await (const chunk of stream) {
       const content = chunk.choices[0]?.delta?.content;
-      
       if (content) {
         fullResponse += content;
-        
         // Send each chunk to the client
         const chunkData = {
           type: 'chunk',
@@ -146,7 +132,6 @@ router.post('/chat/stream', validateChatMessage, async (req, res) => {
     const completionData = {
       type: 'complete',
       fullMessage: fullResponse,
-      mode: mode,
       timestamp: new Date().toISOString()
     };
     console.log('Stream complete, total length:', fullResponse.length);
@@ -161,7 +146,6 @@ router.post('/chat/stream', validateChatMessage, async (req, res) => {
       code: error.code,
       type: error.type
     });
-    
     // Send error in streaming format
     const errorData = {
       type: 'error',
@@ -169,57 +153,13 @@ router.post('/chat/stream', validateChatMessage, async (req, res) => {
       fallbackMessage: "Pardonne-moi, ma chère âme, mais je rencontre quelques difficultés en ce moment. Peux-tu réessayer dans quelques instants ?",
       timestamp: new Date().toISOString()
     };
-    
     res.write(JSON.stringify(errorData) + '\n');
     res.end();
   }
 });
 
-// Get available modes endpoint
-router.get('/modes', (req, res) => {
-  console.log('Fetching available modes');
-  const { SYSTEM_PROMPTS } = require('../config/ai');
-  
-  const modes = Object.keys(SYSTEM_PROMPTS).map(key => ({
-    id: key,
-    name: SYSTEM_PROMPTS[key].name,
-    isDefault: key === 'default'
-  }));
+// Removed /modes endpoint
 
-  console.log('Available modes:', modes);
-  res.json({
-    success: true,
-    modes: modes
-  });
-});
-
-// Test OpenAI connection
-router.get('/test', async (req, res) => {
-  try {
-    console.log('Testing OpenAI connection...');
-    
-    const testMessages = [
-      { role: 'user', content: 'Bonjour, es-tu là?' }
-    ];
-
-    const response = await callOpenAI(testMessages, 'default', false);
-    
-    res.json({
-      success: true,
-      message: response.choices[0].message.content,
-      model: response.model,
-      usage: response.usage
-    });
-
-  } catch (error) {
-    console.error('Test endpoint error:', error);
-    res.status(500).json({
-      success: false,
-      error: error.message,
-      type: error.type,
-      code: error.code
-    });
-  }
-});
+// Removed /test endpoint
 
 module.exports = router; 

@@ -14,10 +14,10 @@ const JournalPage = () => {
           <BookOpenIcon className="w-12 h-12 text-royal-purple" />
         </div>
         <h1 className="text-4xl font-serif font-bold text-royal-pearl mb-4">
-          Journal d'âme
+          Journal du Royaume
         </h1>
         <p className="text-royal-pearl/70 font-sans text-lg">
-          Créez votre journal personnel avec nos outils créatifs. Exprimez votre âme royale à travers l'art et l'écriture.
+          Discover the latest news from the kingdom here.
         </p>
         <div className="mt-8">
           <div className="inline-flex items-center space-x-2 bg-royal-purple/60 rounded-full px-6 py-3 border border-royal-gold/30">

@@ -5,7 +5,6 @@ export interface Message {
   content: string;
   isUser: boolean;
   timestamp: Date;
-  mode?: string;
 }
 
 export interface ChatRequest {
@@ -13,7 +12,6 @@ export interface ChatRequest {
     role: 'user' | 'assistant';
     content: string;
   }>;
-  mode?: 'default' | 'dreamsInterpreter' | 'mysticalGuide';
 }
 
 export interface ChatResponse {
@@ -22,7 +20,6 @@ export interface ChatResponse {
     role: 'assistant';
     content: string;
     timestamp: string;
-    mode: string;
   };
   error?: string;
   fallbackMessage?: string;
@@ -35,13 +32,6 @@ export interface StreamChunk {
   error?: string;
   fallbackMessage?: string;
   timestamp: string;
-  mode?: string;
-}
-
-export interface AssistantMode {
-  id: string;
-  name: string;
-  isDefault: boolean;
 }
 
 const API_BASE = '/api/ai';
@@ -56,11 +46,10 @@ class ChatService {
   }
 
   // Standard chat (non-streaming)
-  async sendMessage(messages: Message[], mode: string = 'default'): Promise<ChatResponse> {
+  async sendMessage(messages: Message[]): Promise<ChatResponse> {
     try {
       console.log('Sending chat request:', {
-        messages: this.convertMessagesToAPIFormat(messages),
-        mode
+        messages: this.convertMessagesToAPIFormat(messages)
       });
 
       const response = await fetch(`${API_BASE}/chat`, {
@@ -69,8 +58,7 @@ class ChatService {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          messages: this.convertMessagesToAPIFormat(messages),
-          mode
+          messages: this.convertMessagesToAPIFormat(messages)
         })
       });
 
@@ -95,14 +83,12 @@ class ChatService {
 
   // Streaming chat
   async sendMessageStream(
-    messages: Message[], 
-    mode: string = 'default',
+    messages: Message[],
     onChunk: (chunk: StreamChunk) => void
   ): Promise<void> {
     try {
       console.log('Sending streaming request:', {
-        messages: this.convertMessagesToAPIFormat(messages),
-        mode
+        messages: this.convertMessagesToAPIFormat(messages)
       });
 
       const response = await fetch(`${API_BASE}/chat/stream`, {
@@ -111,8 +97,7 @@ class ChatService {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          messages: this.convertMessagesToAPIFormat(messages),
-          mode
+          messages: this.convertMessagesToAPIFormat(messages)
         })
       });
 
@@ -157,28 +142,7 @@ class ChatService {
     }
   }
 
-  // Get available modes
-  async getModes(): Promise<AssistantMode[]> {
-    try {
-      console.log('Fetching available modes');
-      const response = await fetch(`${API_BASE}/modes`);
-      const data = await response.json();
-
-      if (!response.ok) {
-        console.error('Modes error response:', data);
-        throw new Error(data.error || 'Erreur lors du chargement des modes');
-      }
-
-      console.log('Available modes:', data.modes);
-      return data.modes;
-    } catch (error) {
-      console.error('Get modes error:', error);
-      // Return default mode if API fails
-      return [
-        { id: 'default', name: 'La Reine-Mère', isDefault: true }
-      ];
-    }
-  }
+  // Removed getModes and all mode logic
 }
 
 export const chatService = new ChatService(); 

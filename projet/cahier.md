@@ -74,7 +74,7 @@ Le tout dans une approche ludique, stylée, auto-réflexive, décomplexée et em
 ● développer la partie Aide avec ressources psycho (affiiliation?)
 ● bouton événement sur l’app
 ● partage de la carte (visuel de la carte) sur les RS
-● Journal d’âme qu’elle pourra personnaliser avec des “stickers” fond, pique, coeur, etc.
+● Journal du Royaume : Discover the latest news from the kingdom here. (A blog for platform news)
 ● Couronnement (4e cartes) vendue à l’utilisation (achat de crédits)
  
 

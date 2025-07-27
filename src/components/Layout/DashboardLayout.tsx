@@ -19,7 +19,7 @@ const DashboardLayout = () => {
       <div className="flex-1 flex flex-col overflow-hidden lg:ml-0">      
         {/* Page Content */}
         <main className="flex-1 overflow-x-hidden overflow-y-auto">
-          <div className="royal-wrapper space-y-12 lg:space-y-16 py-6">
+          <div className="royal-wrapper">
             <Outlet />
           </div>
         </main>

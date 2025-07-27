@@ -1,6 +1,184 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
+import type { RefObject } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { chatService, type Message, type AssistantMode, type StreamChunk } from '../../services/chatService';
+import { chatService, type Message, type StreamChunk } from '../../services/chatService';
+
+// ChatLayout: full height, flex column, input fixed at bottom
+const ChatLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  return (
+    <div
+      className="min-h-screen w-full flex flex-col z-0 mb"
+      style={{
+        background: 'linear-gradient(135deg, #3B1E50 0%, #5A2A6D 50%, #4B2E43 100%)'
+      }}
+    >
+      <div className="flex items-center justify-center w-full h-full min-h-screen">
+        <div className="w-full max-w-2xl h-full min-h-screen flex flex-col flex-1">
+          {children}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+interface ChatMessagesProps {
+  messages: Message[];
+  streamingMessage: string;
+  isTyping: boolean;
+  copiedMessageId: string | null;
+  onCopy: (id: string, content: string) => void;
+  messagesEndRef: RefObject<HTMLDivElement | null>;
+}
+
+const ChatMessages: React.FC<ChatMessagesProps> = ({ 
+  messages, 
+  streamingMessage, 
+  isTyping, 
+  copiedMessageId, 
+  onCopy, 
+  messagesEndRef 
+}) => {
+  return (
+    <div className="flex-1 overflow-y-auto px-3 sm:px-6 md:px-8 pb-4" style={{scrollbarGutter:'stable', maxHeight: 'calc(100vh - 90px)'}}>
+      <div className="max-w-2xl mx-auto flex flex-col gap-4 py-6">
+        <AnimatePresence initial={false}>
+          {messages.map((message) => (
+            <motion.div
+              key={message.id}
+              initial={{ opacity: 0, translateY: 20 }}
+              animate={{ opacity: 1, translateY: 0 }}
+              exit={{ opacity: 0, translateY: 20 }}
+              transition={{ duration: 0.25 }}
+              className={`flex w-full ${message.isUser ? 'justify-end' : 'justify-start'}`}
+            >
+              <div className={`flex items-end gap-2 ${message.isUser ? 'flex-row-reverse' : ''}`}> 
+                {/* Avatar */}
+                {!message.isUser && (
+                  <div className="w-8 h-8 bg-royal-gold rounded-full flex items-center justify-center shadow-sm">
+                    <img src="/assets/icons/teacup.svg" alt="Tasse de Thé Royal" className="w-5 h-5" />
+                  </div>
+                )}
+                {/* Bubble */}
+                <div
+                  className={`rounded-2xl px-4 py-2 font-raleway text-base whitespace-pre-line break-words max-w-[80vw] md:max-w-lg
+                    ${message.isUser
+                      ? 'bg-gradient-to-r from-royal-purple/90 to-royal-gold/30 text-white border-2 border-royal-gold shadow-golden'
+                      : 'bg-gradient-to-r from-royal-champagne/80 to-royal-gold/40 text-cabinet-ink border-2 border-royal-gold/30 shadow-royal'}
+                  `}
+                >
+                  {message.content}
+                  {/* Copy button for bot messages */}
+                  {!message.isUser && (
+                    <button
+                      onClick={() => onCopy(message.id, message.content)}
+                      className="ml-2 px-2 py-0.5 rounded-full text-xs bg-royal-gold/80 hover:bg-royal-gold text-cabinet-ink font-semibold border border-royal-gold/60 shadow-golden transition-colors"
+                    >
+                      {copiedMessageId === message.id ? 'Copié' : 'Copier'}
+                    </button>
+                  )}
+                </div>
+              </div>
+            </motion.div>
+          ))}
+          {/* Streaming message */}
+          {streamingMessage && (
+            <motion.div
+              key="streaming-message"
+              initial={{ opacity: 0, translateY: 20 }}
+              animate={{ opacity: 1, translateY: 0 }}
+              exit={{ opacity: 0, translateY: 20 }}
+              transition={{ duration: 0.25 }}
+              className="flex w-full justify-start"
+            >
+              <div className="flex items-end gap-2">
+                <div className="w-8 h-8 bg-royal-gold rounded-full flex items-center justify-center shadow-sm">
+                  <img src="/assets/icons/teacup.svg" alt="Tasse de Thé Royal" className="w-5 h-5" />
+                </div>
+                <div className="rounded-2xl px-4 py-2 font-raleway text-base text-royal-purple max-w-[80vw] md:max-w-lg">
+                  {streamingMessage}
+                  <span className="ml-2 animate-pulse text-royal-gold">...</span>
+                </div>
+              </div>
+            </motion.div>
+          )}
+          {/* Typing indicator */}
+          {isTyping && !streamingMessage && (
+            <motion.div
+              key="typing-indicator"
+              initial={{ opacity: 0, translateY: 20 }}
+              animate={{ opacity: 1, translateY: 0 }}
+              exit={{ opacity: 0, translateY: 20 }}
+              transition={{ duration: 0.25 }}
+              className="flex w-full justify-start"
+            >
+              <div className="flex items-end gap-2">
+                <div className="w-8 h-8 bg-royal-gold rounded-full flex items-center justify-center shadow-sm">
+                  <img src="/assets/icons/teacup.svg" alt="Tasse de Thé Royal" className="w-5 h-5" />
+                </div>
+                <div className="rounded-2xl px-4 py-2 font-raleway text-base text-royal-purple max-w-[80vw] md:max-w-lg flex items-center gap-2">
+                  <span className="flex gap-1">
+                    <span className="w-2 h-2 bg-royal-gold rounded-full animate-bounce" style={{animationDelay:'0s'}}></span>
+                    <span className="w-2 h-2 bg-royal-gold rounded-full animate-bounce" style={{animationDelay:'0.2s'}}></span>
+                    <span className="w-2 h-2 bg-royal-gold rounded-full animate-bounce" style={{animationDelay:'0.4s'}}></span>
+                  </span>
+                  <span className="text-xs text-royal-gold/80">La Reine-Mère écrit...</span>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+        <div ref={messagesEndRef} />
+      </div>
+    </div>
+  );
+};
+
+// ChatInputBar: fixed at bottom, shadow divider
+const ChatInputBar: React.FC<{
+  inputValue: string;
+  setInputValue: (v: string) => void;
+  onSend: () => void;
+  isTyping: boolean;
+}> = ({ inputValue, setInputValue, onSend, isTyping }) => {
+  const inputRef = React.useRef<HTMLInputElement>(null);
+  React.useEffect(() => {
+    if (!isTyping) {
+      inputRef.current?.focus();
+    }
+  }, [isTyping]);
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      onSend();
+      // focus will be restored by useEffect after isTyping becomes false
+    }
+  };
+  return (
+    <div className="sticky bottom-0 left-0 w-full bg-white backdrop-blur-lg border-t rounded-full border-royal-gold/10 shadow-lg mb-3 z-20">
+      <div className="max-w-2xl mx-auto px-4 py-3 flex items-end gap-2">
+        <input
+          ref={inputRef}
+          type="text"
+          value={inputValue}
+          onChange={e => setInputValue(e.target.value)}
+          onKeyDown={handleKeyDown}
+          placeholder="Décrivez votre rêve à la Reine-Mère..."
+          className="chat-input-field flex-1 py-3 px-4 rounded-full bg-white text-royal-purple placeholder-royal-purple/60 font-raleway focus:outline-none focus:ring-2 focus:ring-royal-gold/40 transition-all duration-200 shadow-sm"
+          disabled={isTyping}
+        />
+        <button
+          onClick={onSend}
+          disabled={!inputValue.trim() || isTyping}
+          className="w-12 h-12 bg-gradient-to-r from-royal-gold to-royal-champagne hover:from-royal-gold/90 hover:to-royal-champagne/90 disabled:opacity-50 disabled:cursor-not-allowed rounded-full flex items-center justify-center transition-all duration-200 shadow-lg hover:shadow-xl"
+        >
+          <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  );
+};
 
 const ChatPage: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([
@@ -11,107 +189,59 @@ const ChatPage: React.FC = () => {
       timestamp: new Date()
     }
   ]);
-  
   const [inputValue, setInputValue] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const [copiedMessageId, setCopiedMessageId] = useState<string | null>(null);
-  const [availableModes, setAvailableModes] = useState<AssistantMode[]>([]);
-  const [selectedMode, setSelectedMode] = useState('default');
   const [streamingMessage, setStreamingMessage] = useState('');
-  // Removed useStreaming state as the feature is no longer used
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  const scrollToBottom = () => {
+  // Scroll to bottom on new message
+  useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  };
-
-  useEffect(() => {
-    scrollToBottom();
   }, [messages, streamingMessage]);
-
-  // Load available modes on component mount
-  useEffect(() => {
-    const loadModes = async () => {
-      try {
-        const modes = await chatService.getModes();
-        setAvailableModes(modes);
-        
-        // Set default mode
-        const defaultMode = modes.find(mode => mode.isDefault);
-        if (defaultMode) {
-          setSelectedMode(defaultMode.id);
-        }
-      } catch (error) {
-        console.error('Failed to load modes:', error);
-      }
-    };
-
-    loadModes();
-  }, []);
 
   const handleSendMessage = async () => {
     if (!inputValue.trim() || isTyping) return;
-
     const newMessage: Message = {
       id: Date.now().toString(),
       content: inputValue,
       isUser: true,
-      timestamp: new Date(),
-      mode: selectedMode
+      timestamp: new Date()
     };
-
     setMessages(prev => [...prev, newMessage]);
     setInputValue('');
     setIsTyping(true);
     setStreamingMessage('');
-
     const currentMessages = [...messages, newMessage];
-
-    // Always use streaming (legacy: useStreaming removed)
     let streamingResponse = '';
     const streamingId = (Date.now() + 1).toString();
-
     const handleChunk = (chunk: StreamChunk) => {
       if (chunk.type === 'chunk' && chunk.content) {
         streamingResponse += chunk.content;
         setStreamingMessage(() => streamingResponse);
       } else if (chunk.type === 'complete') {
-        // Finalize the streaming message
         const finalMessage: Message = {
           id: streamingId,
           content: chunk.fullMessage || streamingResponse,
           isUser: false,
-          timestamp: new Date(),
-          mode: chunk.mode || selectedMode
+          timestamp: new Date()
         };
-        
         setMessages(prev => [...prev, finalMessage]);
         setStreamingMessage('');
         setIsTyping(false);
       } else if (chunk.type === 'error') {
-        // Handle streaming error
         const errorMessage: Message = {
           id: streamingId,
           content: chunk.fallbackMessage || chunk.error || 'Une erreur est survenue.',
           isUser: false,
-          timestamp: new Date(),
-          mode: selectedMode
+          timestamp: new Date()
         };
-        
         setMessages(prev => [...prev, errorMessage]);
         setStreamingMessage('');
         setIsTyping(false);
       }
     };
-
-    await chatService.sendMessageStream(currentMessages, selectedMode, handleChunk);
-  };
-
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      handleSendMessage();
-    }
+    await chatService.sendMessageStream(currentMessages, handleChunk);
   };
 
   const copyMessage = (messageId: string, content: string) => {
@@ -120,227 +250,23 @@ const ChatPage: React.FC = () => {
     setTimeout(() => setCopiedMessageId(null), 2000);
   };
 
-  const TypingIndicator = () => (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -20 }}
-      className="flex items-center space-x-2 text-slate-500"
-    >
-      <div className="flex space-x-1">
-        {[0, 1, 2].map((i) => (
-          <motion.div
-            key={i}
-            className="w-2 h-2 bg-royal-gold rounded-full"
-            animate={{ scale: [1, 1.2, 1] }}
-            transition={{
-              duration: 0.6,
-              repeat: Infinity,
-              delay: i * 0.2
-            }}
-          />
-        ))}
-      </div>
-      <span className="text-sm">La Reine-Mère écrit...</span>
-    </motion.div>
-  );
-
   return (
-    <div className="w-full">
-      <div className="max-w-4xl mx-auto px-4">
-        {/* Header - Design Royal Amélioré */}
-        <motion.div
-          initial={{ y: -30, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
-          className="relative mb-8"
-        >
-          {/* Ornements flottants */}
-          <div className="absolute -top-2 -right-2 w-3 h-3 bg-royal-gold/30 rounded-full animate-bounce" style={{animationDelay: '0.5s'}}></div>
-          <div className="absolute -bottom-1 -left-1 w-2 h-2 bg-royal-champagne/40 rounded-full animate-bounce" style={{animationDelay: '1s'}}></div>
-        </motion.div>
-
-        {/* Messages Section - Scrollable and fills available space, no bottom margin */}
-        <div className="space-y-6 flex-1 overflow-y-auto pr-2" style={{ minHeight: 0 }}>
-          {messages.map((message) => (
-            <div key={message.id} className={`flex ${message.isUser ? 'justify-end' : 'justify-start'}`}>
-              <div className={`max-w-3xl ${message.isUser ? 'order-2' : 'order-1'}`}>
-                {!message.isUser && (
-                  <div className="flex items-center space-x-2 mb-2">
-                    <div className="w-8 h-8 bg-royal-gold rounded-full flex items-center justify-center shadow-sm">
-                      <img 
-                        src="/assets/icons/teacup.svg" 
-                        alt="Tasse de Thé Royal" 
-                        className="w-5 h-5"
-                      />
-                    </div>
-                    <span className="text-sm font-raleway text-royal-pearl/70 font-medium">
-                      Reine-Mère
-                    </span>
-                  </div>
-                )}
-                <AnimatePresence>
-                  <motion.div
-                    key={message.id}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -20 }}
-                    className={`rounded-2xl px-5 py-3 shadow-lg transition-all duration-200 ${
-                      message.isUser 
-                        ? 'bg-gradient-to-br from-royal-purple to-royal-champagne/10 text-white ml-12 border border-royal-gold/30' 
-                        : 'bg-royal-pearl/10 backdrop-blur-sm border border-royal-gold/30 text-royal-purple mr-12'
-                    }`}
-                  >
-                    <p className="font-raleway leading-relaxed whitespace-pre-line break-words">{message.content}</p>
-                    {/* Action Buttons for bot messages */}
-                    {!message.isUser && (
-                      <div className="flex items-center space-x-2 mt-4">
-                        <button className="w-8 h-8 rounded-full bg-royal-gold/20 hover:bg-royal-gold/30 flex items-center justify-center transition-colors">
-                          <svg className="w-4 h-4 text-royal-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                          </svg>
-                        </button>
-                        <button className="w-8 h-8 rounded-full bg-royal-gold/20 hover:bg-royal-gold/30 flex items-center justify-center transition-colors">
-                          <svg className="w-4 h-4 text-royal-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 13l3 3 7-7" />
-                          </svg>
-                        </button>
-                        <button 
-                          onClick={() => copyMessage(message.id, message.content)}
-                          className="px-3 py-1 rounded-full bg-royal-gold/20 hover:bg-royal-gold/30 text-royal-gold text-sm font-raleway transition-colors"
-                        >
-                          {copiedMessageId === message.id ? 'Copié' : 'Copier'}
-                        </button>
-                      </div>
-                    )}
-                  </motion.div>
-                </AnimatePresence>
-              </div>
-            </div>
-          ))}
-          {/* Streaming message display */}
-          <AnimatePresence>
-            {streamingMessage && (
-              <motion.div
-                key={"streaming-message"}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                className="flex justify-start"
-              >
-                <div className="max-w-3xl order-1">
-                  <div className="flex items-center space-x-2 mb-2">
-                    <div className="w-8 h-8 bg-royal-gold rounded-full flex items-center justify-center shadow-sm">
-                      <img 
-                        src="/assets/icons/teacup.svg" 
-                        alt="Tasse de Thé Royal" 
-                        className="w-5 h-5"
-                      />
-                    </div>
-                    <span className="text-sm font-raleway text-royal-pearl/70 font-medium">
-                      Reine-Mère
-                    </span>
-                  </div>
-                  <div className="rounded-2xl px-5 py-3 shadow-lg transition-all duration-200 bg-royal-pearl/10 backdrop-blur-sm border border-royal-gold/30 text-royal-purple mr-12">
-                    <p className="font-raleway leading-relaxed whitespace-pre-line break-words">{streamingMessage}</p>
-                    <div className="mt-2 flex items-center space-x-1">
-                      {[0, 1, 2].map((i) => (
-                        <motion.div
-                          key={i}
-                          className="w-1.5 h-1.5 bg-royal-gold rounded-full"
-                          animate={{ scale: [1, 1.3, 1] }}
-                          transition={{
-                            duration: 0.6,
-                            repeat: Infinity,
-                            delay: i * 0.2
-                          }}
-                        />
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-          {/* Typing Indicator */}
-          <AnimatePresence>
-            {isTyping && !streamingMessage && (
-              <div className="flex justify-start">
-                <div className="max-w-3xl">
-                  <div className="flex items-center space-x-2 mb-2">
-                    <div className="w-8 h-8 bg-gradient-to-br from-royal-gold/80 to-royal-champagne/80 rounded-full flex items-center justify-center shadow-sm">
-                      <img 
-                        src="/assets/icons/teacup.svg" 
-                        alt="Tasse de Thé Royal" 
-                        className="w-5 h-5"
-                      />
-                    </div>
-                    <span className="text-sm font-raleway text-royal-purple/70 font-medium">
-                      Reine-Mère
-                    </span>
-                  </div>
-                  <div className="bg-white/20 backdrop-blur-sm border border-white/30 rounded-2xl p-4 mr-12">
-                    <TypingIndicator />
-                  </div>
-                </div>
-              </div>
-            )}
-          </AnimatePresence>
-          <div ref={messagesEndRef} />
-        </div>
-
-        {/* Controls and Input Area */}
-        <div className="bg-white/10 backdrop-blur-lg rounded-2xl shadow-xl p-6 border-t border-white/20 space-y-4 z-10">
-          {/* Input Area */}
-          <div className="flex items-center space-x-4">
-            <div className="flex-1 relative">
-              <input
-                type="text"
-                value={inputValue}
-                onChange={(e) => setInputValue(e.target.value)}
-                onKeyPress={handleKeyPress}
-                placeholder="Décrivez votre rêve à la Reine-Mère..."
-                className="w-full py-3 px-4 bg-white/20 backdrop-blur-sm rounded-full 
-                         text-royal-purple placeholder-royal-purple/60 font-raleway
-                         focus:outline-none focus:ring-2 focus:ring-royal-gold/50
-                         transition-all duration-200"
-              />
-            </div>
-            <button
-              onClick={handleSendMessage}
-              disabled={!inputValue.trim() || isTyping}
-              className="w-12 h-12 bg-gradient-to-r from-royal-gold to-royal-champagne hover:from-royal-gold/90 hover:to-royal-champagne/90 
-                       disabled:opacity-50 disabled:cursor-not-allowed
-                       rounded-full flex items-center justify-center transition-all duration-200
-                       shadow-lg hover:shadow-xl"
-            >
-              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-              </svg>
-            </button>
-          </div>
-
-          {/* Mode Selection and Settings (moved below input) */}
-          <div className="flex items-center justify-between text-sm pt-2">
-            <div className="flex items-center space-x-4">
-              <label className="text-royal-purple/70 font-raleway">Mode :</label>
-              <select
-                value={selectedMode}
-                onChange={(e) => setSelectedMode(e.target.value)}
-                className="bg-white/20 text-royal-purple border border-white/30 rounded-lg px-3 py-1 focus:outline-none focus:ring-2 focus:ring-royal-gold/50 font-raleway"
-              >
-                {availableModes.map((mode) => (
-                  <option key={mode.id} value={mode.id}>
-                    {mode.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-            {/* Removed 'Réponse en temps réel' checkbox as requested */}
-          </div>
-        </div>
-      </div>
-    </div>
+    <ChatLayout>
+      <ChatMessages
+        messages={messages}
+        streamingMessage={streamingMessage}
+        isTyping={isTyping}
+        copiedMessageId={copiedMessageId}
+        onCopy={copyMessage}
+        messagesEndRef={messagesEndRef}
+      />
+      <ChatInputBar
+        inputValue={inputValue}
+        setInputValue={setInputValue}
+        onSend={handleSendMessage}
+        isTyping={isTyping}
+      />
+    </ChatLayout>
   );
 };
 
