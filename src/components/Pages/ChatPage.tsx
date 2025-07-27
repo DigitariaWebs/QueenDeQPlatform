@@ -180,6 +180,39 @@ const ChatInputBar: React.FC<{
   );
 };
 
+import { useNavigate } from 'react-router-dom';
+
+const SideNavButtons: React.FC = () => {
+  const navigate = useNavigate();
+  // Sidebar width: Tailwind w-70 = 280px (see Sidebar.tsx)
+  // Responsive: on mobile, sidebar is hidden, so use left-4
+  // On desktop, sidebar is visible, so offset by 280px + 16px
+  // Use CSS clamp for safety
+  return (
+    <>
+      {/* Left button: Ta Pauch, offset to not overlap sidebar (desktop) */}
+      <button
+        onClick={() => navigate('/ta-pauch')}
+        className="fixed top-1/2 -translate-y-1/2 z-30 bg-gradient-to-b from-royal-gold to-royal-champagne hover:from-royal-gold/90 hover:to-royal-champagne/90 text-royal-purple shadow-lg hover:shadow-xl rounded-full w-36 h-14 flex items-center justify-center border-2 border-royal-gold/60 transition-all duration-200 group left-4 lg:left-[296px] px-4"
+        aria-label="Aller à Ta Pauch"
+        style={{ left: undefined }}
+      >
+        <span className="text-lg font-bold group-hover:scale-110 transition-transform mr-2">👜</span>
+        <span className="font-semibold text-base hidden sm:inline">Ta Pauch</span>
+      </button>
+      {/* Right button: Mirroire */}
+      <button
+        onClick={() => navigate('/mirroire')}
+        className="fixed right-4 top-1/2 -translate-y-1/2 z-30 bg-gradient-to-b from-royal-gold to-royal-champagne hover:from-royal-gold/90 hover:to-royal-champagne/90 text-royal-purple shadow-lg hover:shadow-xl rounded-full w-36 h-14 flex items-center justify-center border-2 border-royal-gold/60 transition-all duration-200 group px-4"
+        aria-label="Aller à Mirroire"
+      >
+        <span className="font-semibold text-base hidden sm:inline mr-2">Mirroire</span>
+        <span className="text-lg font-bold group-hover:scale-110 transition-transform">🪞</span>
+      </button>
+    </>
+  );
+};
+
 const ChatPage: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([
     {
@@ -251,22 +284,25 @@ const ChatPage: React.FC = () => {
   };
 
   return (
-    <ChatLayout>
-      <ChatMessages
-        messages={messages}
-        streamingMessage={streamingMessage}
-        isTyping={isTyping}
-        copiedMessageId={copiedMessageId}
-        onCopy={copyMessage}
-        messagesEndRef={messagesEndRef}
-      />
-      <ChatInputBar
-        inputValue={inputValue}
-        setInputValue={setInputValue}
-        onSend={handleSendMessage}
-        isTyping={isTyping}
-      />
-    </ChatLayout>
+    <>
+      <SideNavButtons />
+      <ChatLayout>
+        <ChatMessages
+          messages={messages}
+          streamingMessage={streamingMessage}
+          isTyping={isTyping}
+          copiedMessageId={copiedMessageId}
+          onCopy={copyMessage}
+          messagesEndRef={messagesEndRef}
+        />
+        <ChatInputBar
+          inputValue={inputValue}
+          setInputValue={setInputValue}
+          onSend={handleSendMessage}
+          isTyping={isTyping}
+        />
+      </ChatLayout>
+    </>
   );
 };
 
