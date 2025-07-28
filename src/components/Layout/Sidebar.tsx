@@ -43,9 +43,10 @@ const navItems = [
   },
   {
     name: 'Dashboard',
-    path: '/royaume',
+    external: true,
+    url: 'https://le-royaume-de-queen-de-q.mn.co/',
     icon: SparklesIcon,
-    label: 'Le Royaume'
+    label: 'Le Royaume Queen de Q'
   },
   {
     name: 'Journal',
