@@ -1,8 +1,5 @@
-import { useState } from 'react';
-import { motion } from 'framer-motion';
 import { 
   Bars3Icon, 
-  SparklesIcon,
   UserCircleIcon,
   PowerIcon
 } from '@heroicons/react/24/outline';

@@ -1,53 +1,15 @@
 import { motion } from 'framer-motion';
-import { Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { 
   RectangleStackIcon, 
-  ClipboardDocumentListIcon,
-  BookOpenIcon, 
-  ChatBubbleLeftRightIcon, 
-  ShoppingBagIcon,
-  SparklesIcon,
   HeartIcon,
-  UserGroupIcon
+  UserGroupIcon,
+  SparklesIcon
 } from '@heroicons/react/24/outline';
 // import { useAuth } from '../../contexts/AuthContext'; // Temporarily commented out until auth is implemented
 import { MysteryCard } from '../MysteryCard';
 
-const quickActions = [
-  {
-    title: 'Cards Collection',
-    description: 'Explorez vos cartes personnalisées',
-    icon: RectangleStackIcon,
-    path: '/cards',
-    color: 'bg-royal-purple/80',
-    iconColor: 'text-royal-gold'
-  },
-  {
-    title: 'Quiz Royal',
-    description: 'Testez votre essence royale',
-    icon: ClipboardDocumentListIcon,
-    path: '/quiz',
-    color: 'bg-royal-purple/80',
-    iconColor: 'text-royal-gold'
-  },
-  {
-    title: 'Journal d\'âme',
-    description: 'Créez votre journal personnel',
-    icon: BookOpenIcon,
-    path: '/journal',
-    color: 'bg-royal-purple/80',
-    iconColor: 'text-royal-gold'
-  },
-  {
-    title: 'Salon de thé',
-    description: 'Rejoignez le salon de thé',
-    icon: ChatBubbleLeftRightIcon,
-    path: '/chat',
-    color: 'bg-royal-purple/80',
-    iconColor: 'text-royal-gold'
-  }
-];
+
 
 const mysteryFeatures = [
   {
@@ -146,40 +108,7 @@ const DashboardHome = () => {
         </div>
       </div>
 
-      {/* Quick Actions Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12 lg:mb-16">
-        {quickActions.map((action, index) => {
-          const Icon = action.icon;
-          return (
-            <motion.div
-              key={action.path}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: index * 0.1 }}
-              whileHover={{ scale: 1.02 }}
-              className="group"
-            >
-              <Link
-                to={action.path}
-                className={`block p-6 rounded-xl ${action.color} border border-royal-gold/30 shadow-soft hover:shadow-royal transition-all duration-300`}
-              >
-                <div className="flex items-center justify-between mb-4">
-                  <div className={`p-3 rounded-lg bg-royal-purple/60 ${action.iconColor} group-hover:scale-110 transition-transform`}>
-                    <Icon className="w-6 h-6" />
-                  </div>
-                  <div className="w-2 h-2 bg-royal-gold rounded-full opacity-50 group-hover:opacity-100 transition-opacity"></div>
-                </div>
-                <h3 className="font-serif font-bold text-royal-pearl text-lg mb-2">
-                  {action.title}
-                </h3>
-                <p className="text-royal-pearl/70 font-sans text-sm">
-                  {action.description}
-                </p>
-              </Link>
-            </motion.div>
-          );
-        })}
-      </div>
+      
 
       {/* Le journal du Royaume */}
       <div className="bg-royal-purple/60 rounded-2xl p-8 border border-royal-gold/20 mb-12 lg:mb-16">
@@ -214,28 +143,19 @@ const DashboardHome = () => {
               Découvrez notre collection exclusive
             </p>
           </div>
-          <Link
-            to="/shop"
-            className="inline-flex items-center space-x-2 bg-royal-purple/40 rounded-full px-6 py-3 border border-royal-gold/30 hover:bg-royal-purple/60 transition-all duration-200"
-          >
-            <ShoppingBagIcon className="w-5 h-5 text-royal-gold" />
-            <span className="text-royal-pearl font-sans font-medium">
-              Voir la boutique
-            </span>
-          </Link>
         </div>
       </div>
 
       {/* Mighty Network Button */}
-      <div className="flex justify-center mt-4">
+      <div className="flex justify-center my-4">
         <a
-          href="https://www.mightynetworks.com/" target="_blank" rel="noopener noreferrer"
+          href="https://le-royaume-de-queen-de-q.mn.co/" target="_blank" rel="noopener noreferrer"
           className="inline-flex items-center space-x-2 bg-[#C8A96B] text-royal-purple font-bold font-sans rounded-full px-8 py-4 shadow-lg border border-royal-gold/40 hover:bg-[#E2C88F] hover:text-royal-purple transition-all duration-200 text-lg"
         >
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M17.25 6.75v-1.5A2.25 2.25 0 0015 3h-6a2.25 2.25 0 00-2.25 2.25v1.5m10.5 0h1.5A2.25 2.25 0 0121 9v6a2.25 2.25 0 01-2.25 2.25h-1.5m-10.5-10.5h-1.5A2.25 2.25 0 003 9v6a2.25 2.25 0 002.25 2.25h1.5m10.5 0v1.5A2.25 2.25 0 0115 21h-6a2.25 2.25 0 01-2.25-2.25v-1.5m10.5 0h-10.5" />
+            <path strokeLinecap="round" strokeLinejoin="round" d="M12 2L14.5 8.5L21 9.5L16 14.5L17.5 21L12 17.5L6.5 21L8 14.5L3 9.5L9.5 8.5L12 2Z" />
           </svg>
-          <span>Accéder au Mighty Network</span>
+          <span>Accéder au Royaume de Queen de Q</span>
         </a>
       </div>
     </motion.div>

@@ -249,7 +249,7 @@ const QuizPage = () => {
   const [result, setResult] = useState<QuizResult | null>(null);
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
   const [confettiTriggered, setConfettiTriggered] = useState(false);
-  const [isSharing, setIsSharing] = useState(false);
+
   const [starPositions, setStarPositions] = useState<Array<{x: number, y: number, delay: number}>>([]);
   
   const ariaLiveRef = useRef<HTMLDivElement>(null);
