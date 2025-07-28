@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 import { 
   RectangleStackIcon, 
   ClipboardDocumentListIcon,
@@ -74,14 +75,37 @@ const mysteryFeatures = [
 
 const DashboardHome = () => {
   // const { user } = useAuth(); // Temporarily commented out until auth is implemented
+  const [starPositions, setStarPositions] = useState<Array<{x: number, y: number, delay: number}>>([]);
+
+  useEffect(() => {
+    // Generate random star positions for background
+    const stars = Array.from({ length: 15 }, (_, _index) => ({
+      x: Math.random() * 100,
+      y: Math.random() * 100,
+      delay: Math.random() * 2
+    }));
+    setStarPositions(stars);
+  }, []);
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6 }}
-      className="first:pt-0 last:pb-0"
-    >
+    <div className="relative min-h-screen">
+      {/* Animated Background Stars */}
+      {starPositions.map((star, i) => (
+        <motion.div
+          key={i}
+          className="absolute w-1 h-1 bg-white rounded-full pointer-events-none"
+          style={{ left: `${star.x}%`, top: `${star.y}%` }}
+          animate={{ opacity: [0.3, 1, 0.3], scale: [1, 1.5, 1] }}
+          transition={{ duration: 3, repeat: Infinity, delay: star.delay }}
+        />
+      ))}
+
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        className="first:pt-0 last:pb-0 relative z-10"
+      >
       {/* Welcome Message (left-aligned) */}
       <div className="mb-16 flex flex-col items-start">
         <h2 className="text-3xl font-serif font-bold text-royal-gold mb-5">
@@ -215,6 +239,7 @@ const DashboardHome = () => {
         </a>
       </div>
     </motion.div>
+    </div>
   );
 };
 

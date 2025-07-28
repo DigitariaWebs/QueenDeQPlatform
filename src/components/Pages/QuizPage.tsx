@@ -1,642 +1,309 @@
-import { useState, useEffect, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
+import type { RefObject } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { gsap } from 'gsap';
-import { 
-  HeartIcon, 
-  SparklesIcon, 
-  SunIcon, 
-  MoonIcon,
-  FireIcon,
-  BeakerIcon,
-  EyeIcon,
-  ShieldCheckIcon,
-  ArrowRightIcon,
-  ArrowLeftIcon,
-  StarIcon,
-  ShareIcon,
-  ArrowPathIcon
-} from '@heroicons/react/24/outline';
+import { chatService, type Message, type StreamChunk } from '../../services/chatService';
 
-// Lazy load confetti
-const loadConfetti = () => import('canvas-confetti');
-
-interface QuizQuestion {
-  id: number;
-  question: string;
-  options: {
-    id: string;
-    text: string;
-    icon: React.ComponentType<{ className?: string }>;
-    archetype: string;
-  }[];
-}
-
-interface QuizResult {
-  name: string;
-  portrait: string;
-  description: string;
-  color: string;
-}
-
-const quizQuestions: QuizQuestion[] = [
-  {
-    id: 1,
-    question: "Quelle qualité te définit le mieux ?",
-    options: [
-      { id: 'a', text: 'Compassion', icon: HeartIcon, archetype: 'Bienveillante' },
-      { id: 'b', text: 'Créativité', icon: SparklesIcon, archetype: 'Créative' },
-      { id: 'c', text: 'Sagesse', icon: EyeIcon, archetype: 'Sage' },
-      { id: 'd', text: 'Force', icon: ShieldCheckIcon, archetype: 'Guerrière' }
-    ]
-  },
-  {
-    id: 2,
-    question: "Ton moment préféré de la journée ?",
-    options: [
-      { id: 'a', text: 'Lever du soleil', icon: SunIcon, archetype: 'Solaire' },
-      { id: 'b', text: 'Coucher de soleil', icon: MoonIcon, archetype: 'Lunaire' },
-      { id: 'c', text: 'Minuit', icon: MoonIcon, archetype: 'Mystique' },
-      { id: 'd', text: 'Midi', icon: FireIcon, archetype: 'Visionnaire' }
-    ]
-  },
-  {
-    id: 3,
-    question: "Ton environnement idéal ?",
-    options: [
-      { id: 'a', text: 'Jardin secret', icon: SparklesIcon, archetype: 'Bienveillante' },
-      { id: 'b', text: 'Atelier créatif', icon: BeakerIcon, archetype: 'Créative' },
-      { id: 'c', text: 'Bibliothèque', icon: EyeIcon, archetype: 'Sage' },
-      { id: 'd', text: 'Sommet de montagne', icon: ShieldCheckIcon, archetype: 'Guerrière' }
-    ]
-  },
-  {
-    id: 4,
-    question: "Ta façon d'aider les autres ?",
-    options: [
-      { id: 'a', text: 'Écouter avec le cœur', icon: HeartIcon, archetype: 'Bienveillante' },
-      { id: 'b', text: 'Inspirer par l\'art', icon: SparklesIcon, archetype: 'Créative' },
-      { id: 'c', text: 'Partager la connaissance', icon: EyeIcon, archetype: 'Sage' },
-      { id: 'd', text: 'Montrer l\'exemple', icon: ShieldCheckIcon, archetype: 'Guerrière' }
-    ]
-  },
-  {
-    id: 5,
-    question: "Ta plus grande force ?",
-    options: [
-      { id: 'a', text: 'Empathie', icon: HeartIcon, archetype: 'Bienveillante' },
-      { id: 'b', text: 'Imagination', icon: SparklesIcon, archetype: 'Créative' },
-      { id: 'c', text: 'Intuition', icon: EyeIcon, archetype: 'Sage' },
-      { id: 'd', text: 'Détermination', icon: ShieldCheckIcon, archetype: 'Guerrière' }
-    ]
-  },
-  {
-    id: 6,
-    question: "Comment recharges-tu tes batteries ?",
-    options: [
-      { id: 'a', text: 'Méditation', icon: MoonIcon, archetype: 'Lunaire' },
-      { id: 'b', text: 'Création artistique', icon: SparklesIcon, archetype: 'Créative' },
-      { id: 'c', text: 'Lecture', icon: EyeIcon, archetype: 'Sage' },
-      { id: 'd', text: 'Sport/Défi', icon: FireIcon, archetype: 'Guerrière' }
-    ]
-  },
-  {
-    id: 7,
-    question: "Ton style de leadership ?",
-    options: [
-      { id: 'a', text: 'Avec le cœur', icon: HeartIcon, archetype: 'Bienveillante' },
-      { id: 'b', text: 'Avec innovation', icon: SparklesIcon, archetype: 'Créative' },
-      { id: 'c', text: 'Avec sagesse', icon: EyeIcon, archetype: 'Sage' },
-      { id: 'd', text: 'Avec courage', icon: ShieldCheckIcon, archetype: 'Guerrière' }
-    ]
-  },
-  {
-    id: 8,
-    question: "Ta vision du bonheur ?",
-    options: [
-      { id: 'a', text: 'Harmonie collective', icon: HeartIcon, archetype: 'Bienveillante' },
-      { id: 'b', text: 'Expression créative', icon: SparklesIcon, archetype: 'Créative' },
-      { id: 'c', text: 'Compréhension profonde', icon: EyeIcon, archetype: 'Sage' },
-      { id: 'd', text: 'Accomplissement personnel', icon: ShieldCheckIcon, archetype: 'Guerrière' }
-    ]
-  }
-];
-
-const queenResults: { [key: string]: QuizResult } = {
-  'Bienveillante': {
-    name: 'La Reine Solaire',
-    portrait: '/assets/quiz-results/solar-queen.svg',
-    description: 'Ton énergie rayonne comme le soleil, illuminant tout sur ton passage. Tu es une source naturelle d\'inspiration et de chaleur humaine. Ta présence apporte joie et réconfort à ceux qui t\'entourent.',
-    color: 'from-parchment-cream to-warm-pearl'
-  },
-  'Créative': {
-    name: 'L\'Impératrice Rebelle',
-    portrait: '/assets/quiz-results/rebel-queen.svg',
-    description: 'Ton esprit libre défie les conventions avec grâce et audace. Tu n\'as pas peur de tracer ton propre chemin et d\'inspirer les autres à embrasser leur authenticité. Ta créativité révolutionnaire change le monde.',
-    color: 'from-antique-rose to-powder-rose'
-  },
-  'Sage': {
-    name: 'La Souveraine Sage',
-    portrait: '/assets/quiz-results/sage-queen.svg',
-    description: 'Ta sagesse profonde et ton intuition te guident vers la vérité. Tu es une source de conseil et de guidance pour ceux qui cherchent des réponses. Ta connaissance éclaire le chemin des autres.',
-    color: 'from-smoky-gold to-parchment-cream'
-  },
-  'Guerrière': {
-    name: 'La Reine Lunaire',
-    portrait: '/assets/quiz-results/lunar-queen.svg',
-    description: 'Ta force mystique puise dans les cycles naturels et l\'intuition féminine. Tu maîtrises l\'art de la transformation et de l\'adaptation. Ta sagesse émotionnelle guide tes décisions avec une profondeur remarquable.',
-    color: 'from-rose-champagne to-moon-milk'
-  }
-};
-
-const QuizResultDisplay = ({ 
-  result, 
-  onRestart,
-  onShare,
-  prefersReducedMotion 
-}: { 
-  result: QuizResult; 
-  onRestart: () => void;
-  onShare: (result: QuizResult) => void;
-  prefersReducedMotion: boolean;
-}) => {
-
-  useEffect(() => {
-    if (!prefersReducedMotion) {
-      const triggerConfetti = async () => {
-        try {
-          const confetti = (await loadConfetti()).default;
-          confetti({
-            particleCount: 150,
-            spread: 90,
-            origin: { y: 0.6 },
-            colors: ['#D6AE60', '#D4B5A5', '#3B1E50', '#B79D74', '#FFFFFF']
-          });
-        } catch (e) {
-          console.warn('Failed to load confetti');
-        }
-      };
-      triggerConfetti();
-    }
-  }, [prefersReducedMotion]);
-
+// ChatLayout: full height, flex column, input fixed at bottom
+const ChatLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
-    <motion.div 
-      className={`relative w-full max-w-4xl mx-auto bg-gradient-to-br ${result.color} p-8 md:p-12 rounded-3xl shadow-2xl overflow-hidden border-4 border-white/50`}
-      initial={{ opacity: 0, scale: 0.9, y: 50 }}
-      animate={{ opacity: 1, scale: 1, y: 0 }}
-      transition={{ duration: 0.7, ease: 'easeOut' }}
+    <div
+      className="min-h-screen w-full flex flex-col z-0 mb"
+      style={{
+        background: 'linear-gradient(135deg, #3B1E50 0%, #5A2A6D 50%, #4B2E43 100%)'
+      }}
     >
-      <div className="flex flex-col md:flex-row items-center gap-8 md:gap-12">
-        <motion.div 
-          className="w-48 h-48 md:w-64 md:h-64 flex-shrink-0"
-          initial={{ opacity: 0, scale: 0.5, rotate: -15 }}
-          animate={{ opacity: 1, scale: 1, rotate: 0, transition: { delay: 0.2, type: 'spring', stiffness: 100 } }}
-        >
-          <img 
-            src={result.portrait} 
-            alt={`Portrait de ${result.name}`}
-            className="w-full h-full object-contain filter drop-shadow-lg"
-          />
-        </motion.div>
-        
-        <div className="text-center md:text-left">
-          <motion.h2 
-            className="text-4xl md:text-5xl font-serif font-bold text-royal-purple leading-tight"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0, transition: { delay: 0.4, duration: 0.5 } }}
-          >
-            {result.name}
-          </motion.h2>
-          <motion.p 
-            className="mt-4 text-lg text-cabinet-aubergine font-sans max-w-prose"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0, transition: { delay: 0.6, duration: 0.5 } }}
-          >
-            {result.description}
-          </motion.p>
+      <div className="flex items-center justify-center w-full h-full min-h-screen">
+        <div className="w-full max-w-2xl h-full min-h-screen flex flex-col flex-1">
+          {children}
         </div>
       </div>
-      
-      <motion.div 
-        className="mt-10 flex flex-col sm:flex-row justify-center items-center gap-4"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0, transition: { delay: 0.8, duration: 0.5 } }}
-      >
-        <button
-          onClick={() => onShare(result)}
-          className="inline-flex items-center justify-center gap-2 px-8 py-3 bg-white/40 text-royal-purple font-semibold rounded-full shadow-md hover:bg-white/60 transition-all transform hover:scale-105"
-        >
-          <ShareIcon className="w-5 h-5" />
-          <span>Partager mon résultat</span>
-        </button>
-        <button
-          onClick={onRestart}
-          className="inline-flex items-center justify-center gap-2 px-8 py-3 text-royal-purple font-medium rounded-full hover:bg-white/20 transition-colors"
-        >
-          <ArrowPathIcon className="w-5 h-5" />
-          <span>Refaire le quiz</span>
-        </button>
-      </motion.div>
-    </motion.div>
+    </div>
   );
 };
 
-const QuizPage = () => {
-  const [currentQuestion, setCurrentQuestion] = useState(0);
-  const [answers, setAnswers] = useState<{ [key: number]: string }>({});
-  const [showResult, setShowResult] = useState(false);
-  const [selectedAnswer, setSelectedAnswer] = useState<string>('');
-  const [result, setResult] = useState<QuizResult | null>(null);
-  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
-  const [confettiTriggered, setConfettiTriggered] = useState(false);
-  
-  const ariaLiveRef = useRef<HTMLDivElement>(null);
+interface ChatMessagesProps {
+  messages: Message[];
+  streamingMessage: string;
+  isTyping: boolean;
+  copiedMessageId: string | null;
+  onCopy: (id: string, content: string) => void;
+  messagesEndRef: RefObject<HTMLDivElement | null>;
+}
 
-  // Note colors and rotations for the manuscript style
-  const noteStyles = [
-    { color: 'from-parchment-cream to-warm-pearl', borderColor: 'border-patina-gold', rotation: 'rotate-1' },
-    { color: 'from-powder-rose to-antique-rose', borderColor: 'border-rose-champagne', rotation: '-rotate-1' },
-    { color: 'from-moon-milk to-powder-rose', borderColor: 'border-smoky-gold', rotation: 'rotate-2' },
-    { color: 'from-vintage-aubergine/10 to-royal-purple/10', borderColor: 'border-imperial-gold', rotation: '-rotate-2' }
-  ];
-
-  useEffect(() => {
-    // Check for reduced motion preference
-    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-    setPrefersReducedMotion(mediaQuery.matches);
-
-    const handleChange = (e: MediaQueryListEvent) => {
-      setPrefersReducedMotion(e.matches);
-    };
-
-    mediaQuery.addEventListener('change', handleChange);
-    return () => mediaQuery.removeEventListener('change', handleChange);
-  }, []);
-
-  useEffect(() => {
-    // Staggered answer reveal animation
-    if (!prefersReducedMotion) {
-      const options = document.querySelectorAll('.quiz-note-option');
-      gsap.fromTo(options, 
-        { opacity: 0, y: 50, rotateX: -15 },
-        { 
-          opacity: 1, 
-          y: 0,
-          rotateX: 0,
-          duration: 0.8,
-          stagger: 0.12,
-          ease: "easeOut"
-        }
-      );
-    }
-  }, [currentQuestion, prefersReducedMotion]);
-
-  // Keyboard shortcuts
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (showResult) return;
-      
-      const keyNumber = parseInt(e.key);
-      if (keyNumber >= 1 && keyNumber <= 4) {
-        const option = quizQuestions[currentQuestion]?.options[keyNumber - 1];
-        if (option) {
-          handleAnswerSelect(option.id);
-          if (ariaLiveRef.current) {
-            ariaLiveRef.current.textContent = `Option ${keyNumber} selected: ${option.text}`;
-          }
-        }
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [currentQuestion, showResult]);
-
-  const handleAnswerSelect = (optionId: string) => {
-    setSelectedAnswer(optionId);
-  };
-
-  const handleNext = async () => {
-    if (!selectedAnswer) return;
-
-    const newAnswers = { ...answers, [currentQuestion]: selectedAnswer };
-    setAnswers(newAnswers);
-    setSelectedAnswer('');
-
-    if (currentQuestion < quizQuestions.length - 1) {
-      setCurrentQuestion(currentQuestion + 1);
-    } else {
-      // Calculate result
-      const archetypes: { [key: string]: number } = {};
-      const validArchetypes = Object.keys(queenResults);
-
-      Object.entries(newAnswers).forEach(([questionIndex, answerId]) => {
-        const question = quizQuestions[parseInt(questionIndex, 10)];
-        const option = question.options.find(opt => opt.id === answerId);
-        
-        // Only count archetypes that have a corresponding result defined
-        if (option && validArchetypes.includes(option.archetype)) {
-          archetypes[option.archetype] = (archetypes[option.archetype] || 0) + 1;
-        }
-      });
-
-      const topArchetype = Object.keys(archetypes).length > 0
-        ? Object.keys(archetypes).reduce((a, b) => archetypes[a] > archetypes[b] ? a : b)
-        : validArchetypes[0]; // Default to the first valid archetype
-
-      setResult(queenResults[topArchetype]);
-      setShowResult(true);
-
-      if (!confettiTriggered) {
-        // Track event (placeholder for Plausible)
-        if (typeof window !== 'undefined' && (window as unknown as { plausible?: Function }).plausible) {
-          (window as unknown as { plausible: Function }).plausible('quiz_finished', {
-            props: { result: topArchetype }
-          });
-        }
-        setConfettiTriggered(true);
-      }
-    }
-  };
-
-  const handlePrevious = () => {
-    if (currentQuestion > 0) {
-      setCurrentQuestion(currentQuestion - 1);
-      setSelectedAnswer(answers[currentQuestion - 1] || '');
-    }
-  };
-
-  const handleRestart = () => {
-    setCurrentQuestion(0);
-    setAnswers({});
-    setSelectedAnswer('');
-    setShowResult(false);
-    setResult(null);
-    setConfettiTriggered(false);
-  };
-
-  const handleShareResult = async (resultToShare: QuizResult) => {
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: `Quiz Royal - ${resultToShare.name}`,
-          text: `Je suis ${resultToShare.name}! Découvrez votre archétype royal avec le Quiz Royal de Queen de Q.`,
-          url: window.location.href
-        });
-      } catch (error) {
-        console.log('Error sharing:', error);
-      }
-    } else {
-      const text = `Je suis ${resultToShare.name}! Découvrez votre archétype royal avec le Quiz Royal de Queen de Q. ${window.location.href}`;
-      navigator.clipboard.writeText(text);
-      alert('Résultat copié dans le presse-papiers!');
-    }
-  };
-
-  if (showResult && result) {
-    return (
-      <div className="w-full flex items-center justify-center p-4">
-        <QuizResultDisplay 
-          result={result} 
-          onRestart={handleRestart}
-          onShare={handleShareResult}
-          prefersReducedMotion={prefersReducedMotion}
-        />
-      </div>
-    );
-  }
-
-  const currentQ = quizQuestions[currentQuestion];
-
+const ChatMessages: React.FC<ChatMessagesProps> = ({ 
+  messages, 
+  streamingMessage, 
+  isTyping, 
+  copiedMessageId, 
+  onCopy, 
+  messagesEndRef 
+}) => {
   return (
-    <main className="w-full flex flex-col items-center justify-center p-4">
-      {/* Vintage Paper Texture Background */}
-      <div className="absolute inset-0 opacity-30" 
-           style={{
-             backgroundImage: `
-               radial-gradient(circle at 20% 80%, rgba(75, 46, 67, 0.1) 0%, transparent 50%),
-               radial-gradient(circle at 80% 20%, rgba(214, 174, 96, 0.1) 0%, transparent 50%),
-               radial-gradient(circle at 40% 40%, rgba(212, 181, 165, 0.1) 0%, transparent 50%)
-             `
-           }}>
-      </div>
-
-      {/* Floating Quiz Elements */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute top-20 left-10 text-4xl animate-float opacity-30" style={{ color: '#776650' }}>📝</div>
-        <div className="absolute top-40 right-20 text-3xl animate-float opacity-40" style={{ color: '#C8A96B', animationDelay: '1s' }}>✨</div>
-        <div className="absolute top-60 left-1/4 text-2xl animate-float opacity-25" style={{ color: '#B79D74', animationDelay: '2s' }}>🌟</div>
-        <div className="absolute bottom-40 right-1/3 text-3xl animate-float opacity-35" style={{ color: '#D4B5A5', animationDelay: '0.5s' }}>🔮</div>
-        <div className="absolute top-1/3 right-10 text-2xl animate-float opacity-30" style={{ color: '#776650', animationDelay: '1.5s' }}>📜</div>
-        <div className="absolute bottom-20 left-20 text-xl animate-float opacity-40" style={{ color: '#C8A96B', animationDelay: '2.5s' }}>💫</div>
-      </div>
-
-      <div className="relative z-10 px-4 sm:px-6 lg:px-8 py-12">
-        {/* Aria-live region for keyboard selections */}
-        <div
-          ref={ariaLiveRef}
-          aria-live="polite"
-          aria-atomic="true"
-          className="sr-only"
-        />
-      
-        {/* Header */}
-        <div className="text-center mb-12 lg:mb-16 max-w-4xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: -50 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="relative"
-          >
-            {/* Beta Ribbon */}
-            <div className="absolute -top-8 -right-8 transform rotate-12">
-              <div className="bg-gradient-to-r from-rose-champagne to-imperial-gold text-white px-4 py-2 rounded-lg shadow-lg border-2 border-white">
-                <div className="flex items-center gap-2">
-                  <SparklesIcon className="w-4 h-4" />
-                  <span className="text-sm font-bold font-raleway">QUIZ ROYAL</span>
-                  <StarIcon className="w-4 h-4" />
+    <div className="flex-1 overflow-y-auto px-3 sm:px-6 md:px-8 pb-4" style={{scrollbarGutter:'stable', maxHeight: 'calc(100vh - 90px)'}}>
+      <div className="max-w-2xl mx-auto flex flex-col gap-4 py-6">
+        <AnimatePresence initial={false}>
+          {messages.map((message) => (
+            <motion.div
+              key={message.id}
+              initial={{ opacity: 0, translateY: 20 }}
+              animate={{ opacity: 1, translateY: 0 }}
+              exit={{ opacity: 0, translateY: 20 }}
+              transition={{ duration: 0.25 }}
+              className={`flex w-full ${message.isUser ? 'justify-end' : 'justify-start'}`}
+            >
+              <div className={`flex items-end gap-2 ${message.isUser ? 'flex-row-reverse' : ''}`}> 
+                {/* Avatar */}
+                {!message.isUser && (
+                  <div className="w-8 h-8 bg-royal-gold rounded-full flex items-center justify-center shadow-sm">
+                    <img src="/assets/icons/teacup.svg" alt="Tasse de Thé Royal" className="w-5 h-5" />
+                  </div>
+                )}
+                {/* Bubble */}
+                <div
+                  className={`rounded-2xl px-4 py-2 font-raleway text-base whitespace-pre-line break-words max-w-[80vw] md:max-w-lg
+                    ${message.isUser
+                      ? 'bg-gradient-to-r from-royal-purple/90 to-royal-gold/30 text-white border-2 border-royal-gold shadow-golden'
+                      : 'bg-gradient-to-r from-royal-champagne/80 to-royal-gold/40 text-cabinet-ink border-2 border-royal-gold/30 shadow-royal'}
+                  `}
+                >
+                  {message.content}
+                  {/* Copy button for bot messages */}
+                  {!message.isUser && (
+                    <button
+                      onClick={() => onCopy(message.id, message.content)}
+                      className="ml-2 px-2 py-0.5 rounded-full text-xs bg-royal-gold/80 hover:bg-royal-gold text-cabinet-ink font-semibold border border-royal-gold/60 shadow-golden transition-colors"
+                    >
+                      {copiedMessageId === message.id ? 'Copié' : 'Copier'}
+                    </button>
+                  )}
                 </div>
               </div>
-            </div>
-
-            {/* Decorative Frame */}
-            <div className="absolute -inset-4 border-4 border-dashed border-imperial-gold/40 rounded-lg transform rotate-1"></div>
-            
-            <h1 className="relative text-4xl lg:text-5xl font-playfair font-bold text-royal-purple mb-4">
-              Miroir, Miroir
-            </h1>
-            
-            {/* Vintage Underline */}
-            <div className="flex items-center justify-center gap-2 mb-4">
-              <div className="h-px bg-gradient-to-r from-transparent via-imperial-gold to-transparent flex-1"></div>
-              <StarIcon className="text-imperial-gold w-5 h-5" />
-              <div className="h-px bg-gradient-to-r from-transparent via-imperial-gold to-transparent flex-1"></div>
-            </div>
-            
-            <p className="text-royal-purple/80 font-raleway text-lg max-w-2xl mx-auto">
-              Découvre ton archétype royal en 8 questions. Laisse ton intuition te guider vers ta véritable essence.
-            </p>
-          </motion.div>
-
-          {/* Progress Bar */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.3 }}
-            className="max-w-xl mx-auto mt-8"
-          >
-            <div className="flex items-center justify-between mb-4">
-              <span className="text-royal-purple font-raleway font-medium">
-                Question {currentQuestion + 1} / {quizQuestions.length}
-              </span>
-              <span className="text-royal-purple/70 font-raleway text-sm">
-                {Math.round(((currentQuestion + 1) / quizQuestions.length) * 100)}% complété
-              </span>
-            </div>
-            <div className="w-full bg-imperial-gold/20 rounded-full h-3">
-              <motion.div
-                className="bg-gradient-to-r from-imperial-gold to-smoky-gold h-3 rounded-full"
-                initial={{ width: 0 }}
-                animate={{ width: `${((currentQuestion + 1) / quizQuestions.length) * 100}%` }}
-                transition={{ duration: 0.5, ease: "easeOut" }}
-              />
-            </div>
-          </motion.div>
-        </div>
-
-        {/* Question */}
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={currentQuestion}
-            initial={{ opacity: 0, x: 50 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -50 }}
-            transition={{ duration: 0.5 }}
-            className="max-w-6xl mx-auto"
-          >
-            {/* Question Title */}
-            <div className="text-center mb-12">
-              <h2 id="question-title" className="text-2xl md:text-3xl font-playfair font-bold text-royal-purple">
-                {currentQ.question}
-              </h2>
-            </div>
-
-            {/* Options as handwritten notes */}
-            <div 
-              className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12"
-              role="radiogroup"
-              aria-labelledby="question-title"
+            </motion.div>
+          ))}
+          {/* Streaming message */}
+          {streamingMessage && (
+            <motion.div
+              key="streaming-message"
+              initial={{ opacity: 0, translateY: 20 }}
+              animate={{ opacity: 1, translateY: 0 }}
+              exit={{ opacity: 0, translateY: 20 }}
+              transition={{ duration: 0.25 }}
+              className="flex w-full justify-start"
             >
-              {currentQ.options.map((option, index) => {
-                const isSelected = selectedAnswer === option.id;
-                const noteStyle = noteStyles[index % noteStyles.length];
-                
-                return (
-                  <motion.div
-                    key={option.id}
-                    className={`quiz-note-option relative ${index === currentQuestion ? 'z-20' : 'z-10'}`}
-                    initial={{ opacity: 0, y: 50, rotateX: -15 }}
-                    animate={{ 
-                      opacity: 1,
-                      y: 0,
-                      rotateX: 0,
-                      scale: isSelected ? 1.05 : 1
-                    }}
-                    transition={{ duration: 0.8, ease: "easeOut" }}
-                  >
-                    {/* Handwritten Note */}
-                    <button
-                      onClick={() => handleAnswerSelect(option.id)}
-                      className={`w-full bg-gradient-to-br ${noteStyle.color} p-6 md:p-8 rounded-lg shadow-xl border-2 ${noteStyle.borderColor} ${noteStyle.rotation} relative h-full flex flex-col items-center justify-center cursor-pointer hover:shadow-2xl transition-all duration-300 ${
-                        isSelected ? 'ring-2 ring-imperial-gold ring-opacity-50' : ''
-                      }`}
-                      role="radio"
-                      aria-checked={isSelected}
-                      aria-labelledby={`option-${option.id}`}
-                    >
-                      {/* Paper Holes */}
-                      <div className="absolute left-4 top-6 w-3 h-3 bg-warm-pearl rounded-full border border-patina-gold/50"></div>
-                      <div className="absolute left-4 top-12 w-3 h-3 bg-warm-pearl rounded-full border border-patina-gold/50"></div>
-                      <div className="absolute left-4 top-18 w-3 h-3 bg-warm-pearl rounded-full border border-patina-gold/50"></div>
-
-                      {/* Lines like notebook paper */}
-                      <div className="absolute inset-6 opacity-10">
-                        {[...Array(4)].map((_, i) => (
-                          <div key={i} className="h-px bg-patina-gold mb-6"></div>
-                        ))}
-                      </div>
-
-                      {/* Keyboard number indicator */}
-                      <div className="absolute -top-2 -left-2 w-6 h-6 bg-imperial-gold rounded-full flex items-center justify-center shadow-lg">
-                        <span className="text-royal-purple font-raleway font-bold text-xs">
-                          {index + 1}
-                        </span>
-                      </div>
-
-                      {/* Selection indicator */}
-                      {isSelected && (
-                        <motion.div
-                          initial={{ scale: 0 }}
-                          animate={{ scale: 1 }}
-                          className="absolute -top-2 -right-2 w-6 h-6 bg-imperial-gold rounded-full flex items-center justify-center shadow-lg"
-                        >
-                          <div className="w-2 h-2 bg-royal-purple rounded-full"></div>
-                        </motion.div>
-                      )}
-
-                      {/* Icon */}
-                      <div className="mb-4">
-                        <div className="w-12 h-12 bg-imperial-gold/20 rounded-full flex items-center justify-center">
-                          <option.icon className="w-6 h-6 text-royal-purple" />
-                        </div>
-                      </div>
-
-                      {/* Text */}
-                      <div 
-                        id={`option-${option.id}`}
-                        className="relative z-10 font-handwriting text-lg md:text-xl leading-relaxed text-velvet-black text-center" 
-                        style={{ fontFamily: 'Kalam, cursive' }}
-                      >
-                        {option.text}
-                      </div>
-                    </button>
-                  </motion.div>
-                );
-              })}
-            </div>
-
-            {/* Navigation */}
-            <div className="flex items-center justify-between max-w-xl mx-auto">
-              <button
-                onClick={handlePrevious}
-                disabled={currentQuestion === 0}
-                className="flex items-center space-x-2 px-6 py-3 rounded-full border border-imperial-gold/30 text-royal-purple disabled:opacity-50 disabled:cursor-not-allowed hover:bg-imperial-gold/10 transition-colors font-raleway"
-              >
-                <ArrowLeftIcon className="w-5 h-5" />
-                <span>Précédent</span>
-              </button>
-
-              <button
-                onClick={handleNext}
-                disabled={!selectedAnswer}
-                className="flex items-center space-x-2 px-6 py-3 rounded-full bg-gradient-to-r from-imperial-gold/20 to-rose-champagne/20 border border-imperial-gold/30 text-royal-purple font-raleway font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:from-imperial-gold/30 hover:to-rose-champagne/30 transition-all duration-200"
-              >
-                <span>
-                  {currentQuestion === quizQuestions.length - 1 ? 'Voir résultat' : 'Suivant'}
-                </span>
-                <ArrowRightIcon className="w-5 h-5" />
-              </button>
-            </div>
-          </motion.div>
+              <div className="flex items-end gap-2">
+                <div className="w-8 h-8 bg-royal-gold rounded-full flex items-center justify-center shadow-sm">
+                  <img src="/assets/icons/teacup.svg" alt="Tasse de Thé Royal" className="w-5 h-5" />
+                </div>
+                <div className="rounded-2xl px-4 py-2 font-raleway text-base text-royal-purple max-w-[80vw] md:max-w-lg">
+                  {streamingMessage}
+                  <span className="ml-2 animate-pulse text-royal-gold">...</span>
+                </div>
+              </div>
+            </motion.div>
+          )}
+          {/* Typing indicator */}
+          {isTyping && !streamingMessage && (
+            <motion.div
+              key="typing-indicator"
+              initial={{ opacity: 0, translateY: 20 }}
+              animate={{ opacity: 1, translateY: 0 }}
+              exit={{ opacity: 0, translateY: 20 }}
+              transition={{ duration: 0.25 }}
+              className="flex w-full justify-start"
+            >
+              <div className="flex items-end gap-2">
+                <div className="w-8 h-8 bg-royal-gold rounded-full flex items-center justify-center shadow-sm">
+                  <img src="/assets/icons/teacup.svg" alt="Tasse de Thé Royal" className="w-5 h-5" />
+                </div>
+                <div className="rounded-2xl px-4 py-2 font-raleway text-base text-royal-purple max-w-[80vw] md:max-w-lg flex items-center gap-2">
+                  <span className="flex gap-1">
+                    <span className="w-2 h-2 bg-royal-gold rounded-full animate-bounce" style={{animationDelay:'0s'}}></span>
+                    <span className="w-2 h-2 bg-royal-gold rounded-full animate-bounce" style={{animationDelay:'0.2s'}}></span>
+                    <span className="w-2 h-2 bg-royal-gold rounded-full animate-bounce" style={{animationDelay:'0.4s'}}></span>
+                  </span>
+                  <span className="text-xs text-royal-gold/80">La Reine-Mère écrit...</span>
+                </div>
+              </div>
+            </motion.div>
+          )}
         </AnimatePresence>
+        <div ref={messagesEndRef} />
       </div>
-
-      {/* Add Kalam font for handwriting effect */}
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&display=swap');
-      `}</style>
-    </main>
+    </div>
   );
 };
 
-export default QuizPage;
+// ChatInputBar: fixed at bottom, shadow divider
+const ChatInputBar: React.FC<{
+  inputValue: string;
+  setInputValue: (v: string) => void;
+  onSend: () => void;
+  isTyping: boolean;
+}> = ({ inputValue, setInputValue, onSend, isTyping }) => {
+  const inputRef = React.useRef<HTMLInputElement>(null);
+  React.useEffect(() => {
+    if (!isTyping) {
+      inputRef.current?.focus();
+    }
+  }, [isTyping]);
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      onSend();
+      // focus will be restored by useEffect after isTyping becomes false
+    }
+  };
+  return (
+    <div className="sticky bottom-0 left-0 w-full bg-white backdrop-blur-lg border-t rounded-full border-royal-gold/10 shadow-lg mb-3 z-20">
+      <div className="max-w-2xl mx-auto px-4 py-3 flex items-end gap-2">
+        <input
+          ref={inputRef}
+          type="text"
+          value={inputValue}
+          onChange={e => setInputValue(e.target.value)}
+          onKeyDown={handleKeyDown}
+          placeholder="Décris ton rêve à la Reine-Mère..."
+          className="chat-input-field flex-1 py-3 px-4 rounded-full bg-white text-royal-purple placeholder-royal-purple/60 font-raleway focus:outline-none focus:ring-2 focus:ring-royal-gold/40 transition-all duration-200 shadow-sm"
+          disabled={isTyping}
+        />
+        <button
+          onClick={onSend}
+          disabled={!inputValue.trim() || isTyping}
+          className="w-12 h-12 bg-gradient-to-r from-royal-gold to-royal-champagne hover:from-royal-gold/90 hover:to-royal-champagne/90 disabled:opacity-50 disabled:cursor-not-allowed rounded-full flex items-center justify-center transition-all duration-200 shadow-lg hover:shadow-xl"
+        >
+          <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  );
+};
+
+import { useNavigate } from 'react-router-dom';
+
+const SideNavButtons: React.FC = () => {
+  const navigate = useNavigate();
+  // Sidebar width: Tailwind w-70 = 280px (see Sidebar.tsx)
+  // Responsive: on mobile, sidebar is hidden, so use left-4
+  // On desktop, sidebar is visible, so offset by 280px + 16px
+  // Use CSS clamp for safety
+  return (
+    <>
+      {/* Left button: Ta Pauch, offset to not overlap sidebar (desktop) */}
+      <button
+        onClick={() => navigate('/ta-pauch')}
+        className="fixed top-1/2 -translate-y-1/2 z-30 bg-gradient-to-b from-royal-gold to-royal-champagne hover:from-royal-gold/90 hover:to-royal-champagne/90 text-royal-purple shadow-lg hover:shadow-xl rounded-full w-36 h-14 flex items-center justify-center border-2 border-royal-gold/60 transition-all duration-200 group left-4 lg:left-[296px] px-4"
+        aria-label="Aller à Ta Pauch"
+        style={{ left: undefined }}
+      >
+        <span className="text-lg font-bold group-hover:scale-110 transition-transform mr-2">👜</span>
+        <span className="font-semibold text-base hidden sm:inline">Ta Pauch</span>
+      </button>
+      {/* Right button: Mirroire */}
+      <button
+        onClick={() => navigate('/mirroire')}
+        className="fixed right-4 top-1/2 -translate-y-1/2 z-30 bg-gradient-to-b from-royal-gold to-royal-champagne hover:from-royal-gold/90 hover:to-royal-champagne/90 text-royal-purple shadow-lg hover:shadow-xl rounded-full w-36 h-14 flex items-center justify-center border-2 border-royal-gold/60 transition-all duration-200 group px-4"
+        aria-label="Aller à Mirroire"
+      >
+        <span className="font-semibold text-base hidden sm:inline mr-2">Mirroire</span>
+        <span className="text-lg font-bold group-hover:scale-110 transition-transform">🪞</span>
+      </button>
+    </>
+  );
+};
+
+const ChatPage: React.FC = () => {
+  const [messages, setMessages] = useState<Message[]>([
+    {
+      id: '1',
+      content: "Bienvenue, ma chère âme. Je suis la Reine-Mère, ta confidente et guide spirituelle. Je suis là pour t'écouter, partager ma sagesse, et t'accompagner dans ton cheminement. Qu'aimerais-tu explorer aujourd'hui ?",
+      isUser: false,
+      timestamp: new Date()
+    }
+  ]);
+  const [inputValue, setInputValue] = useState('');
+  const [isTyping, setIsTyping] = useState(false);
+  const [copiedMessageId, setCopiedMessageId] = useState<string | null>(null);
+  const [streamingMessage, setStreamingMessage] = useState('');
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // Scroll to bottom on new message
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages, streamingMessage]);
+
+  const handleSendMessage = async () => {
+    if (!inputValue.trim() || isTyping) return;
+    const newMessage: Message = {
+      id: Date.now().toString(),
+      content: inputValue,
+      isUser: true,
+      timestamp: new Date()
+    };
+    setMessages(prev => [...prev, newMessage]);
+    setInputValue('');
+    setIsTyping(true);
+    setStreamingMessage('');
+    const currentMessages = [...messages, newMessage];
+    let streamingResponse = '';
+    const streamingId = (Date.now() + 1).toString();
+    const handleChunk = (chunk: StreamChunk) => {
+      if (chunk.type === 'chunk' && chunk.content) {
+        streamingResponse += chunk.content;
+        setStreamingMessage(() => streamingResponse);
+      } else if (chunk.type === 'complete') {
+        const finalMessage: Message = {
+          id: streamingId,
+          content: chunk.fullMessage || streamingResponse,
+          isUser: false,
+          timestamp: new Date()
+        };
+        setMessages(prev => [...prev, finalMessage]);
+        setStreamingMessage('');
+        setIsTyping(false);
+      } else if (chunk.type === 'error') {
+        const errorMessage: Message = {
+          id: streamingId,
+          content: chunk.fallbackMessage || chunk.error || 'Une erreur est survenue.',
+          isUser: false,
+          timestamp: new Date()
+        };
+        setMessages(prev => [...prev, errorMessage]);
+        setStreamingMessage('');
+        setIsTyping(false);
+      }
+    };
+    await chatService.sendMessageStream(currentMessages, handleChunk);
+  };
+
+  const copyMessage = (messageId: string, content: string) => {
+    navigator.clipboard.writeText(content);
+    setCopiedMessageId(messageId);
+    setTimeout(() => setCopiedMessageId(null), 2000);
+  };
+
+  return (
+    <>
+      <SideNavButtons />
+      <ChatLayout>
+        <ChatMessages
+          messages={messages}
+          streamingMessage={streamingMessage}
+          isTyping={isTyping}
+          copiedMessageId={copiedMessageId}
+          onCopy={copyMessage}
+          messagesEndRef={messagesEndRef}
+        />
+        <ChatInputBar
+          inputValue={inputValue}
+          setInputValue={setInputValue}
+          onSend={handleSendMessage}
+          isTyping={isTyping}
+        />
+      </ChatLayout>
+    </>
+  );
+};
+
+export default ChatPage;

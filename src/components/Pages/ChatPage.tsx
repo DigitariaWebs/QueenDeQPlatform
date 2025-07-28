@@ -5,16 +5,41 @@ import { chatService, type Message, type StreamChunk } from '../../services/chat
 
 // ChatLayout: full height, flex column, input fixed at bottom
 const ChatLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [starPositions, setStarPositions] = useState<Array<{x: number, y: number, delay: number}>>([]);
+
+  useEffect(() => {
+    // Generate random star positions for background
+    const stars = Array.from({ length: 15 }, (_, _index) => ({
+      x: Math.random() * 100,
+      y: Math.random() * 100,
+      delay: Math.random() * 2
+    }));
+    setStarPositions(stars);
+  }, []);
+
   return (
-    <div
-      className="min-h-screen w-full flex flex-col z-0 mb"
-      style={{
-        background: 'linear-gradient(135deg, #3B1E50 0%, #5A2A6D 50%, #4B2E43 100%)'
-      }}
-    >
-      <div className="flex items-center justify-center w-full h-full min-h-screen">
-        <div className="w-full max-w-2xl h-full min-h-screen flex flex-col flex-1">
-          {children}
+    <div className="relative min-h-screen w-full flex flex-col z-0 mb">
+      {/* Animated Background Stars */}
+      {starPositions.map((star, i) => (
+        <motion.div
+          key={i}
+          className="absolute w-1 h-1 bg-white rounded-full pointer-events-none"
+          style={{ left: `${star.x}%`, top: `${star.y}%` }}
+          animate={{ opacity: [0.3, 1, 0.3], scale: [1, 1.5, 1] }}
+          transition={{ duration: 3, repeat: Infinity, delay: star.delay }}
+        />
+      ))}
+
+      <div
+        className="min-h-screen w-full flex flex-col mb relative z-10"
+        style={{
+          background: 'linear-gradient(135deg, #3B1E50 0%, #5A2A6D 50%, #4B2E43 100%)'
+        }}
+      >
+        <div className="flex items-center justify-center w-full h-full min-h-screen">
+          <div className="w-full max-w-2xl h-full min-h-screen flex flex-col flex-1">
+            {children}
+          </div>
         </div>
       </div>
     </div>

@@ -151,6 +151,7 @@ const CardsPage = () => {
   const [spreadCards, setSpreadCards] = useState<Card[]>([]);
   const [isSharing, setIsSharing] = useState(false);
   const [showToast, setShowToast] = useState<string | null>(null);
+  const [starPositions, setStarPositions] = useState<Array<{x: number, y: number, delay: number}>>([]);
   
   const [progress, setProgress] = useState<ProgressState>(() => {
     try {
@@ -171,6 +172,16 @@ const CardsPage = () => {
   const cardRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
   const containerRef = useRef<HTMLDivElement>(null);
   const modalPanelRef = useRef<HTMLDivElement>(null);
+
+  // Generate random star positions for background
+  useEffect(() => {
+    const stars = Array.from({ length: 15 }, (_, _index) => ({
+      x: Math.random() * 100,
+      y: Math.random() * 100,
+      delay: Math.random() * 2
+    }));
+    setStarPositions(stars);
+  }, []);
 
   // Save progress to localStorage
   const saveProgress = useCallback((newProgress: ProgressState) => {
@@ -375,12 +386,24 @@ const CardsPage = () => {
   }, [prefersReducedMotion, filteredCards]);
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.6 }}
-      className="first:pt-0 last:pb-0 relative"
-    >
+    <div className="relative min-h-screen">
+      {/* Animated Background Stars */}
+      {starPositions.map((star, i) => (
+        <motion.div
+          key={i}
+          className="absolute w-1 h-1 bg-white rounded-full pointer-events-none"
+          style={{ left: `${star.x}%`, top: `${star.y}%` }}
+          animate={{ opacity: [0.3, 1, 0.3], scale: [1, 1.5, 1] }}
+          transition={{ duration: 3, repeat: Infinity, delay: star.delay }}
+        />
+      ))}
+
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.6 }}
+        className="first:pt-0 last:pb-0 relative z-10"
+      >
       {/* Progress Ring - Top Right */}
       <div className="fixed top-24 right-6 z-40">
         <div className="relative w-16 h-16">
@@ -917,6 +940,7 @@ const CardsPage = () => {
       {/* Instructions Carousel */}
       <CardInstructionCarousel />
     </motion.div>
+    </div>
   );
 };
 

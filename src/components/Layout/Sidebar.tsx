@@ -8,15 +8,14 @@ import {
   ShoppingBagIcon,
   ClipboardDocumentListIcon,
   XMarkIcon,
-  // MusicalNoteIcon, 
-  // SpeakerXMarkIcon,
+
   SparklesIcon,
   UserCircleIcon,
   PowerIcon
 } from '@heroicons/react/24/outline';
 import { useEffect, useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
-// import { useMusicPlayer } from '../../hooks/useMusicPlayer';
+
 
 interface SidebarProps {
   isOpen: boolean;
@@ -67,14 +66,8 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
   const location = useLocation();
   const [isLargeScreen, setIsLargeScreen] = useState(false);
   const { user, logout } = useAuth();
-  // const { isPlaying, isLoading, controls} = useMusicPlayer('/audio/Roie Shpigler - Marbles.mp3', { 
-  //   targetVolume: 0.10 
-  // });
-  const [spotsData] = useState({
-    available: 7,
-    total: 20,
-    nextEvent: "Tea Time — 13 juillet 19h GMT+1"
-  });
+
+
 
   useEffect(() => {
     const checkScreenSize = () => {
@@ -184,56 +177,6 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
           <div className="p-6 border-t border-royal-gold/20 space-y-4">
             {/* Enhanced Sidebar Widgets */}
             <div className="flex flex-col gap-4 mt-2">
-              {/* Spots Left Badge */}
-              <motion.div
-                initial={{ scale: 0.9, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                transition={{ duration: 0.3 }}
-                className="flex items-center gap-3 bg-royal-purple/70 rounded-xl px-4 py-2 border border-royal-gold/40 shadow-golden hover:shadow-royal transition-all duration-200"
-              >
-                <SparklesIcon className="w-5 h-5 text-royal-gold" />
-                <span className="text-royal-gold font-sans font-semibold text-base tracking-wide">
-                  {spotsData.available} spots left
-                </span>
-              </motion.div>
-
-              {/* Music Toggle (commented out) */}
-              {/**
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.97 }}
-                onClick={() => controls.toggle()}
-                className={`flex items-center justify-center gap-2 p-3 rounded-xl border transition-all duration-200 shadow-inner-soft focus:outline-none focus:ring-2 focus:ring-royal-gold/60 focus:ring-offset-2 focus:ring-offset-royal-purple/80 ${
-                  isPlaying 
-                    ? 'bg-royal-gold text-royal-purple border-royal-gold/40' 
-                    : 'bg-royal-purple/10 text-royal-pearl border-royal-pearl/10 hover:bg-royal-purple/20'
-                }`}
-                title={isPlaying ? 'Pause music' : 'Play music'}
-                aria-pressed={isPlaying}
-                aria-label={isPlaying ? 'Music on' : 'Music off'}
-                disabled={isLoading}
-              >
-                {isLoading ? (
-                  <svg className="animate-spin h-5 w-5 text-royal-gold" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
-                  </svg>
-                ) : isPlaying ? (
-                  <motion.div
-                    animate={{ scale: [1, 1.1, 1] }}
-                    transition={{ duration: 2, repeat: Infinity }}
-                  >
-                    <MusicalNoteIcon className="w-5 h-5" />
-                  </motion.div>
-                ) : (
-                  <SpeakerXMarkIcon className="w-5 h-5" />
-                )}
-                <span className="font-sans text-sm font-medium">
-                  {isLoading ? 'Chargement...' : isPlaying ? 'Musique active' : 'Activer la musique'}
-                </span>
-              </motion.button>
-              */}
-
               {/* User Menu */}
               <div className="relative group w-full flex flex-col items-stretch">
                 <button className="flex items-center gap-2 w-full p-3 rounded-xl bg-royal-purple/20 hover:bg-royal-gold/10 transition-colors border border-royal-gold/20 shadow-soft focus:outline-none focus:ring-2 focus:ring-royal-gold/60 focus:ring-offset-2 focus:ring-offset-royal-purple/80">
@@ -262,7 +205,7 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
                     "Révèle ta reine intérieure"
                   </p>
                   <p className="text-royal-pearl/60 text-xs mt-1">
-                    © 2024 Queen de Q
+                    © 2025 Queen de Q
                   </p>
                 </div>
               </div>
