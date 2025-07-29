@@ -27,7 +27,7 @@ const ClientDashboard = ({ onLogout, userEmail }: ClientDashboardProps) => {
   const menuItems = [
     { id: 'dashboard', label: 'Mon Royaume', icon: CrownIcon },
     { id: 'cards', label: 'Ta pioche', icon: CardsIcon },
-    { id: 'mirror', label: 'Miroir, Miroir', icon: MirrorIcon },
+    { id: 'mirror', label: 'Miroir, Miroir!', icon: MirrorIcon },
     { id: 'tea', label: 'Salon de thé', icon: TeaIcon },
     { id: 'shop', label: 'Boutique Royale', icon: BoutiqueIcon },
     { id: 'journal', label: 'Journal Intime', icon: JournalIcon },
@@ -100,7 +100,7 @@ const ClientDashboard = ({ onLogout, userEmail }: ClientDashboardProps) => {
               >
                 <div className="flex items-center mb-4">
                   <MirrorIcon className="h-8 w-8 text-cabinet-powder group-hover:text-royal-gold transition-colors animate-float" />
-                  <h3 className="text-lg font-title font-semibold text-royal-purple ml-3">Miroir, Miroir</h3>
+                  <h3 className="text-lg font-title font-semibold text-royal-purple ml-3">Miroir, Miroir!</h3>
                 </div>
                 <p className="text-cabinet-aubergine font-body text-sm">Révèle ton archétype féminin avec notre quiz mystique</p>
               </motion.div>

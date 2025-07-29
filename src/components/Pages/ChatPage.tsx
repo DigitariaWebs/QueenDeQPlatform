@@ -134,7 +134,7 @@ const ChatInputBar: React.FC<{
   };
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-royal-purple/20 backdrop-blur-sm border-t border-royal-gold/20 p-4 z-50">
+    <div className="fixed bottom-0 left-0 right-0 lg:left-[300px] bg-royal-purple/20 backdrop-blur-sm border-t border-royal-gold/20 p-4 z-50">
       <div className="max-w-2xl mx-auto flex items-end gap-3">
         <div className="flex-1 relative">
           <textarea

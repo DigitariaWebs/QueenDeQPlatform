@@ -1,5 +1,4 @@
 import { motion } from 'framer-motion';
-import { useState, useEffect } from 'react';
 import { 
   RectangleStackIcon, 
   HeartIcon,
@@ -14,21 +13,21 @@ const mysteryFeatures = [
   {
     icon: <RectangleStackIcon className="w-12 h-12" />,
     title: 'Ta pioche',
-    description: 'Découvre les archétypes masculins que tu attires. 10 cartes gratuites pour commencer ton voyage de découverte.',
+    description: 'Découvre les archétypes masculins que tu attires pour commencer ton voyage de découverte.',
     chatPrompt: "Tu veux qu'on parle de tes cartes?",
     path: '/cards'
   },
   {
     icon: <HeartIcon className="w-12 h-12" />,
     title: 'Miroir, Miroir!',
-    description: 'Révèle ton type de Queen : Cœur, Carreau, Trèfle ou Pique. Découvre ton style relationnel et tes forces.',
+    description: 'Découvre ton type de Queen : coeur, carreau, trèfle ou pique, tes forces, tes défis, ton langage de l\'amour et plus encore',
     chatPrompt: "T'es quel genre de Queen, toi, vraiment?",
     path: '/quiz'
   },
   {
     icon: <UserGroupIcon className="w-12 h-12" />,
     title: 'Salon de thé',
-    description: 'Converse avec la Reine-Mère, ta guide bienveillante et complice pour une discussion chaleureuse et éclairante.',
+    description: 'Découvre des rituels qui pourront te faire déconnecter de relations toxiques et te reconnecter à la Queen en toi.',
     chatPrompt: "Et si on mettait les cartes sur table?",
     path: '/chat'
   }

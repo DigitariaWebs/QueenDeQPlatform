@@ -86,7 +86,7 @@ export const MysteryCard: React.FC<MysteryCardProps> = ({ icon, title, descripti
             tabIndex={0}
             aria-label={`Commencer sur ${title}`}
           >
-            Commencer
+            {title}
           </Link>
           <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-30 pointer-events-none" />
           <div className="absolute inset-0 rounded-2xl border-2 border-royal-gold/70 animate-pulse" />

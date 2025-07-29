@@ -21,7 +21,7 @@ async function testOpenAI() {
     ];
 
     console.log('📨 Sending test message to OpenAI...');
-    const response = await callOpenAI(messages, 'default', false);
+    const response = await callOpenAI(messages, false);
     
     console.log('\n✅ Response received:');
     console.log('Status: Success');

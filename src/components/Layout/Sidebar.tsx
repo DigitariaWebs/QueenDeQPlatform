@@ -33,7 +33,7 @@ const navItems = [
     name: 'Quiz',
     path: '/quiz',
     icon: ClipboardDocumentListIcon,
-    label: 'Miroir, miroir,'
+    label: 'Miroir, Miroir!'
   },
   {
     name: 'Chat',
@@ -46,7 +46,7 @@ const navItems = [
     external: true,
     url: 'https://le-royaume-de-queen-de-q.mn.co/',
     icon: SparklesIcon,
-    label: 'Le Royaume Queen de Q'
+    label: 'Le Royaume de Queen de Q'
   },
   {
     name: 'Journal',
