@@ -1,5 +1,4 @@
 import { motion } from 'framer-motion';
-import { useState, useEffect } from 'react';
 import { BookOpenIcon } from '@heroicons/react/24/outline';
 
 const JournalPage = () => {

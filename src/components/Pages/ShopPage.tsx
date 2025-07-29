@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Star, Heart, Sparkles, Crown, ShoppingBag, Shirt, Shield, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
