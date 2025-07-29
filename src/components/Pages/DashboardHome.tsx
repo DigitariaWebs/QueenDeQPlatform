@@ -10,7 +10,6 @@ import {
 import { MysteryCard } from '../MysteryCard';
 
 
-
 const mysteryFeatures = [
   {
     icon: <RectangleStackIcon className="w-12 h-12" />,
@@ -37,37 +36,14 @@ const mysteryFeatures = [
 
 const DashboardHome = () => {
   // const { user } = useAuth(); // Temporarily commented out until auth is implemented
-  const [starPositions, setStarPositions] = useState<Array<{x: number, y: number, delay: number}>>([]);
-
-  useEffect(() => {
-    // Generate random star positions for background
-    const stars = Array.from({ length: 15 }, (_, _index) => ({
-      x: Math.random() * 100,
-      y: Math.random() * 100,
-      delay: Math.random() * 2
-    }));
-    setStarPositions(stars);
-  }, []);
 
   return (
-    <div className="relative min-h-screen">
-      {/* Animated Background Stars */}
-      {starPositions.map((star, i) => (
-        <motion.div
-          key={i}
-          className="absolute w-1 h-1 bg-white rounded-full pointer-events-none"
-          style={{ left: `${star.x}%`, top: `${star.y}%` }}
-          animate={{ opacity: [0.3, 1, 0.3], scale: [1, 1.5, 1] }}
-          transition={{ duration: 3, repeat: Infinity, delay: star.delay }}
-        />
-      ))}
-
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-        className="first:pt-0 last:pb-0 relative z-10"
-      >
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6 }}
+      className="first:pt-0 last:pb-0 relative z-10"
+    >
       {/* Welcome Message (left-aligned) */}
       <div className="mb-16 flex flex-col items-start">
         <h2 className="text-3xl font-serif font-bold text-royal-gold mb-5">
@@ -139,27 +115,46 @@ const DashboardHome = () => {
             <h2 className="text-2xl font-serif font-bold text-royal-pearl mb-2">
               Boutique Royal
             </h2>
-            <p className="text-royal-pearl/70 font-sans">
-              Découvrez notre collection exclusive
+            <p className="text-royal-pearl/70 text-sm">
+              Découvre nos produits exclusifs
             </p>
+          </div>
+          <div className="w-12 h-12 bg-royal-gold rounded-full flex items-center justify-center">
+            <SparklesIcon className="w-6 h-6 text-royal-purple" />
+          </div>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="bg-royal-purple/40 rounded-lg p-4">
+            <h3 className="font-sans font-medium text-royal-pearl mb-2">
+              Jeu de Cartes Queen de Q
+            </h3>
+            <p className="text-royal-pearl/70 text-sm mb-3">
+              Édition physique premium
+            </p>
+            <div className="flex items-center justify-between">
+              <span className="text-royal-gold font-bold">29.99€</span>
+              <button className="bg-royal-gold text-royal-purple px-3 py-1 rounded-full text-sm font-medium hover:bg-royal-gold/90 transition-colors">
+                Voir
+              </button>
+            </div>
+          </div>
+          <div className="bg-royal-purple/40 rounded-lg p-4">
+            <h3 className="font-sans font-medium text-royal-pearl mb-2">
+              T-Shirt "Je suis une Queen"
+            </h3>
+            <p className="text-royal-pearl/70 text-sm mb-3">
+              100% coton bio
+            </p>
+            <div className="flex items-center justify-between">
+              <span className="text-royal-gold font-bold">34.99€</span>
+              <button className="bg-royal-gold text-royal-purple px-3 py-1 rounded-full text-sm font-medium hover:bg-royal-gold/90 transition-colors">
+                Voir
+              </button>
+            </div>
           </div>
         </div>
       </div>
-
-      {/* Mighty Network Button */}
-      <div className="flex justify-center my-4">
-        <a
-          href="https://le-royaume-de-queen-de-q.mn.co/" target="_blank" rel="noopener noreferrer"
-          className="inline-flex items-center space-x-2 bg-[#C8A96B] text-royal-purple font-bold font-sans rounded-full px-8 py-4 shadow-lg border border-royal-gold/40 hover:bg-[#E2C88F] hover:text-royal-purple transition-all duration-200 text-lg"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M12 2L14.5 8.5L21 9.5L16 14.5L17.5 21L12 17.5L6.5 21L8 14.5L3 9.5L9.5 8.5L12 2Z" />
-          </svg>
-          <span>Accéder au Royaume de Queen de Q</span>
-        </a>
-      </div>
     </motion.div>
-    </div>
   );
 };
 

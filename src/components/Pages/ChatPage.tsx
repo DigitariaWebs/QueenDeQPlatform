@@ -3,49 +3,6 @@ import type { RefObject } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { chatService, type Message, type StreamChunk } from '../../services/chatService';
 
-// ChatLayout: full height, flex column, input fixed at bottom
-const ChatLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [starPositions, setStarPositions] = useState<Array<{x: number, y: number, delay: number}>>([]);
-
-  useEffect(() => {
-    // Generate random star positions for background
-    const stars = Array.from({ length: 15 }, (_, _index) => ({
-      x: Math.random() * 100,
-      y: Math.random() * 100,
-      delay: Math.random() * 2
-    }));
-    setStarPositions(stars);
-  }, []);
-
-  return (
-    <div className="relative min-h-screen w-full flex flex-col z-0 mb">
-      {/* Animated Background Stars */}
-      {starPositions.map((star, i) => (
-        <motion.div
-          key={i}
-          className="absolute w-1 h-1 bg-white rounded-full pointer-events-none"
-          style={{ left: `${star.x}%`, top: `${star.y}%` }}
-          animate={{ opacity: [0.3, 1, 0.3], scale: [1, 1.5, 1] }}
-          transition={{ duration: 3, repeat: Infinity, delay: star.delay }}
-        />
-      ))}
-
-      <div
-        className="min-h-screen w-full flex flex-col mb relative z-10"
-        style={{
-          background: 'linear-gradient(135deg, #3B1E50 0%, #5A2A6D 50%, #4B2E43 100%)'
-        }}
-      >
-        <div className="flex items-center justify-center w-full h-full min-h-screen">
-          <div className="w-full max-w-2xl h-full min-h-screen flex flex-col flex-1">
-            {children}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
-
 interface ChatMessagesProps {
   messages: Message[];
   streamingMessage: string;
@@ -64,7 +21,7 @@ const ChatMessages: React.FC<ChatMessagesProps> = ({
   messagesEndRef 
 }) => {
   return (
-    <div className="flex-1 overflow-y-auto px-3 sm:px-6 md:px-8 pb-4" style={{scrollbarGutter:'stable', maxHeight: 'calc(100vh - 90px)'}}>
+    <div className="flex-1 overflow-y-auto px-3 sm:px-6 md:px-8 pb-32" style={{scrollbarGutter:'stable', height: 'calc(100vh - 200px)'}}>
       <div className="max-w-2xl mx-auto flex flex-col gap-4 py-6">
         <AnimatePresence initial={false}>
           {messages.map((message) => (
@@ -105,6 +62,32 @@ const ChatMessages: React.FC<ChatMessagesProps> = ({
               </div>
             </motion.div>
           ))}
+          
+          {/* Typing indicator */}
+          {isTyping && (
+            <motion.div
+              key="typing-indicator"
+              initial={{ opacity: 0, translateY: 20 }}
+              animate={{ opacity: 1, translateY: 0 }}
+              exit={{ opacity: 0, translateY: 20 }}
+              transition={{ duration: 0.25 }}
+              className="flex w-full justify-start"
+            >
+              <div className="flex items-end gap-2">
+                <div className="w-8 h-8 bg-royal-gold rounded-full flex items-center justify-center shadow-sm">
+                  <img src="/assets/icons/teacup.svg" alt="Tasse de Thé Royal" className="w-5 h-5" />
+                </div>
+                <div className="rounded-2xl px-4 py-2 font-raleway text-base text-royal-purple max-w-[80vw] md:max-w-lg flex items-center gap-2 bg-gradient-to-r from-royal-champagne/80 to-royal-gold/40 border-2 border-royal-gold/30 shadow-royal">
+                  <span className="flex gap-1">
+                    <span className="w-2 h-2 bg-royal-gold rounded-full animate-bounce" style={{animationDelay:'0s'}}></span>
+                    <span className="w-2 h-2 bg-royal-gold rounded-full animate-bounce" style={{animationDelay:'0.2s'}}></span>
+                    <span className="w-2 h-2 bg-royal-gold rounded-full animate-bounce" style={{animationDelay:'0.4s'}}></span>
+                  </span>
+                </div>
+              </div>
+            </motion.div>
+          )}
+          
           {/* Streaming message */}
           {streamingMessage && (
             <motion.div
@@ -119,34 +102,9 @@ const ChatMessages: React.FC<ChatMessagesProps> = ({
                 <div className="w-8 h-8 bg-royal-gold rounded-full flex items-center justify-center shadow-sm">
                   <img src="/assets/icons/teacup.svg" alt="Tasse de Thé Royal" className="w-5 h-5" />
                 </div>
-                <div className="rounded-2xl px-4 py-2 font-raleway text-base text-royal-purple max-w-[80vw] md:max-w-lg">
+                <div className="rounded-2xl px-4 py-2 font-raleway text-base text-royal-purple max-w-[80vw] md:max-w-lg bg-gradient-to-r from-royal-champagne/80 to-royal-gold/40 border-2 border-royal-gold/30 shadow-royal">
                   {streamingMessage}
                   <span className="ml-2 animate-pulse text-royal-gold">...</span>
-                </div>
-              </div>
-            </motion.div>
-          )}
-          {/* Typing indicator */}
-          {isTyping && !streamingMessage && (
-            <motion.div
-              key="typing-indicator"
-              initial={{ opacity: 0, translateY: 20 }}
-              animate={{ opacity: 1, translateY: 0 }}
-              exit={{ opacity: 0, translateY: 20 }}
-              transition={{ duration: 0.25 }}
-              className="flex w-full justify-start"
-            >
-              <div className="flex items-end gap-2">
-                <div className="w-8 h-8 bg-royal-gold rounded-full flex items-center justify-center shadow-sm">
-                  <img src="/assets/icons/teacup.svg" alt="Tasse de Thé Royal" className="w-5 h-5" />
-                </div>
-                <div className="rounded-2xl px-4 py-2 font-raleway text-base text-royal-purple max-w-[80vw] md:max-w-lg flex items-center gap-2">
-                  <span className="flex gap-1">
-                    <span className="w-2 h-2 bg-royal-gold rounded-full animate-bounce" style={{animationDelay:'0s'}}></span>
-                    <span className="w-2 h-2 bg-royal-gold rounded-full animate-bounce" style={{animationDelay:'0.2s'}}></span>
-                    <span className="w-2 h-2 bg-royal-gold rounded-full animate-bounce" style={{animationDelay:'0.4s'}}></span>
-                  </span>
-                  <span className="text-xs text-royal-gold/80">La Reine-Mère écrit...</span>
                 </div>
               </div>
             </motion.div>
@@ -158,83 +116,60 @@ const ChatMessages: React.FC<ChatMessagesProps> = ({
   );
 };
 
-// ChatInputBar: fixed at bottom, shadow divider
 const ChatInputBar: React.FC<{
   inputValue: string;
   setInputValue: (v: string) => void;
   onSend: () => void;
   isTyping: boolean;
 }> = ({ inputValue, setInputValue, onSend, isTyping }) => {
-  const inputRef = React.useRef<HTMLInputElement>(null);
-  React.useEffect(() => {
-    if (!isTyping) {
-      inputRef.current?.focus();
-    }
-  }, [isTyping]);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
+
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
-      onSend();
-      // focus will be restored by useEffect after isTyping becomes false
+      if (!isTyping && inputValue.trim()) {
+        onSend();
+      }
     }
   };
+
   return (
-    <div className="sticky bottom-0 left-0 w-full bg-white backdrop-blur-lg border-t rounded-full border-royal-gold/10 shadow-lg mb-3 z-20">
-      <div className="max-w-2xl mx-auto px-4 py-3 flex items-end gap-2">
-        <input
-          ref={inputRef}
-          type="text"
-          value={inputValue}
-          onChange={e => setInputValue(e.target.value)}
-          onKeyDown={handleKeyDown}
-          placeholder="Décris ton rêve à la Reine-Mère..."
-          className="chat-input-field flex-1 py-3 px-4 rounded-full bg-white text-royal-purple placeholder-royal-purple/60 font-raleway focus:outline-none focus:ring-2 focus:ring-royal-gold/40 transition-all duration-200 shadow-sm"
-          disabled={isTyping}
-        />
+    <div className="fixed bottom-0 left-0 right-0 bg-royal-purple/20 backdrop-blur-sm border-t border-royal-gold/20 p-4 z-50">
+      <div className="max-w-2xl mx-auto flex items-end gap-3">
+        <div className="flex-1 relative">
+          <textarea
+            ref={inputRef}
+            value={inputValue}
+            onChange={(e) => setInputValue(e.target.value)}
+            onKeyDown={handleKeyDown}
+            placeholder="Écris ton message ici..."
+            className="w-full px-4 py-3 pr-12 rounded-2xl bg-royal-purple/40 border-2 border-royal-gold/30 text-royal-pearl placeholder-royal-pearl/50 font-raleway resize-none focus:outline-none focus:border-royal-gold focus:ring-2 focus:ring-royal-gold/20 transition-all duration-200"
+            rows={1}
+            style={{ minHeight: '48px', maxHeight: '120px' }}
+          />
+        </div>
         <button
           onClick={onSend}
-          disabled={!inputValue.trim() || isTyping}
-          className="w-12 h-12 bg-gradient-to-r from-royal-gold to-royal-champagne hover:from-royal-gold/90 hover:to-royal-champagne/90 disabled:opacity-50 disabled:cursor-not-allowed rounded-full flex items-center justify-center transition-all duration-200 shadow-lg hover:shadow-xl"
+          disabled={isTyping || !inputValue.trim()}
+          className="px-6 py-3 bg-royal-gold text-royal-purple rounded-2xl font-bold font-raleway hover:bg-royal-gold/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-golden"
         >
-          <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-          </svg>
+          {isTyping ? 'Envoi...' : 'Envoyer'}
         </button>
       </div>
     </div>
   );
 };
 
-import { useNavigate } from 'react-router-dom';
-
 const SideNavButtons: React.FC = () => {
-  const navigate = useNavigate();
-  // Sidebar width: Tailwind w-70 = 280px (see Sidebar.tsx)
-  // Responsive: on mobile, sidebar is hidden, so use left-4
-  // On desktop, sidebar is visible, so offset by 280px + 16px
-  // Use CSS clamp for safety
   return (
-    <>
-      {/* Left button: Ta Pauch, offset to not overlap sidebar (desktop) */}
-      <button
-        onClick={() => navigate('/ta-pauch')}
-        className="fixed top-1/2 -translate-y-1/2 z-30 bg-gradient-to-b from-royal-gold to-royal-champagne hover:from-royal-gold/90 hover:to-royal-champagne/90 text-royal-purple shadow-lg hover:shadow-xl rounded-full w-36 h-14 flex items-center justify-center border-2 border-royal-gold/60 transition-all duration-200 group left-4 lg:left-[296px] px-4"
-        aria-label="Aller à Ta Pauch"
-        style={{ left: undefined }}
-      >
-        <span className="text-lg font-bold group-hover:scale-110 transition-transform mr-2">👜</span>
-        <span className="font-semibold text-base hidden sm:inline">Ta Pauch</span>
+    <div className="flex justify-center gap-4 mb-4">
+      <button className="px-4 py-2 bg-royal-purple/60 text-royal-pearl rounded-lg font-medium hover:bg-royal-purple/80 transition-colors border border-royal-gold/30">
+        Nouvelle conversation
       </button>
-      {/* Right button: Mirroire */}
-      <button
-        onClick={() => navigate('/mirroire')}
-        className="fixed right-4 top-1/2 -translate-y-1/2 z-30 bg-gradient-to-b from-royal-gold to-royal-champagne hover:from-royal-gold/90 hover:to-royal-champagne/90 text-royal-purple shadow-lg hover:shadow-xl rounded-full w-36 h-14 flex items-center justify-center border-2 border-royal-gold/60 transition-all duration-200 group px-4"
-        aria-label="Aller à Mirroire"
-      >
-        <span className="font-semibold text-base hidden sm:inline mr-2">Mirroire</span>
-        <span className="text-lg font-bold group-hover:scale-110 transition-transform">🪞</span>
+      <button className="px-4 py-2 bg-royal-purple/60 text-royal-pearl rounded-lg font-medium hover:bg-royal-purple/80 transition-colors border border-royal-gold/30">
+        Historique
       </button>
-    </>
+    </div>
   );
 };
 
@@ -249,57 +184,83 @@ const ChatPage: React.FC = () => {
   ]);
   const [inputValue, setInputValue] = useState('');
   const [isTyping, setIsTyping] = useState(false);
-  const [copiedMessageId, setCopiedMessageId] = useState<string | null>(null);
   const [streamingMessage, setStreamingMessage] = useState('');
+  const [copiedMessageId, setCopiedMessageId] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // Scroll to bottom on new message
-  useEffect(() => {
+  const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
   }, [messages, streamingMessage]);
 
   const handleSendMessage = async () => {
     if (!inputValue.trim() || isTyping) return;
-    const newMessage: Message = {
+
+    const userMessage: Message = {
       id: Date.now().toString(),
       content: inputValue,
       isUser: true,
       timestamp: new Date()
     };
-    setMessages(prev => [...prev, newMessage]);
+
+    setMessages(prev => [...prev, userMessage]);
     setInputValue('');
     setIsTyping(true);
     setStreamingMessage('');
-    const currentMessages = [...messages, newMessage];
-    let streamingResponse = '';
-    const streamingId = (Date.now() + 1).toString();
-    const handleChunk = (chunk: StreamChunk) => {
-      if (chunk.type === 'chunk' && chunk.content) {
-        streamingResponse += chunk.content;
-        setStreamingMessage(() => streamingResponse);
-      } else if (chunk.type === 'complete') {
-        const finalMessage: Message = {
-          id: streamingId,
-          content: chunk.fullMessage || streamingResponse,
-          isUser: false,
-          timestamp: new Date()
-        };
-        setMessages(prev => [...prev, finalMessage]);
-        setStreamingMessage('');
-        setIsTyping(false);
-      } else if (chunk.type === 'error') {
-        const errorMessage: Message = {
-          id: streamingId,
-          content: chunk.fallbackMessage || chunk.error || 'Une erreur est survenue.',
-          isUser: false,
-          timestamp: new Date()
-        };
-        setMessages(prev => [...prev, errorMessage]);
-        setStreamingMessage('');
-        setIsTyping(false);
-      }
-    };
-    await chatService.sendMessageStream(currentMessages, handleChunk);
+
+    try {
+      const currentMessages = [...messages, userMessage];
+      let streamingResponse = '';
+      
+      const handleChunk = (chunk: StreamChunk) => {
+        if (chunk.type === 'chunk' && chunk.content) {
+          streamingResponse += chunk.content;
+          // Add a small delay before showing streaming to make typing indicator visible
+          setTimeout(() => {
+            setStreamingMessage(streamingResponse);
+          }, 500);
+        } else if (chunk.type === 'complete') {
+          const botMessage: Message = {
+            id: Date.now().toString(),
+            content: chunk.fullMessage || streamingResponse,
+            isUser: false,
+            timestamp: new Date()
+          };
+          setMessages(prev => [...prev, botMessage]);
+          setStreamingMessage('');
+          setIsTyping(false);
+        } else if (chunk.type === 'error') {
+          const errorMessage: Message = {
+            id: Date.now().toString(),
+            content: chunk.fallbackMessage || chunk.error || 'Une erreur est survenue.',
+            isUser: false,
+            timestamp: new Date()
+          };
+          setMessages(prev => [...prev, errorMessage]);
+          setStreamingMessage('');
+          setIsTyping(false);
+        }
+      };
+
+      await chatService.sendMessageStream(currentMessages, handleChunk);
+    } catch (error) {
+      console.error('Error sending message:', error);
+      
+      // Add fallback message when chat bot isn't working
+      const fallbackMessage: Message = {
+        id: Date.now().toString(),
+        content: "Désolée, ma chère. Il semble que je sois temporairement indisponible. Je suis en train de me reposer pour mieux te servir. Reviens bientôt, et nous pourrons continuer notre conversation royale. En attendant, tu peux explorer tes cartes ou faire le quiz pour découvrir ton type de Queen ! ✨👑",
+        isUser: false,
+        timestamp: new Date()
+      };
+      
+      setMessages(prev => [...prev, fallbackMessage]);
+      setIsTyping(false);
+      setStreamingMessage('');
+    }
   };
 
   const copyMessage = (messageId: string, content: string) => {
@@ -309,25 +270,23 @@ const ChatPage: React.FC = () => {
   };
 
   return (
-    <>
+    <div className="flex flex-col h-full w-full max-w-4xl mx-auto">
       <SideNavButtons />
-      <ChatLayout>
-        <ChatMessages
-          messages={messages}
-          streamingMessage={streamingMessage}
-          isTyping={isTyping}
-          copiedMessageId={copiedMessageId}
-          onCopy={copyMessage}
-          messagesEndRef={messagesEndRef}
-        />
-        <ChatInputBar
-          inputValue={inputValue}
-          setInputValue={setInputValue}
-          onSend={handleSendMessage}
-          isTyping={isTyping}
-        />
-      </ChatLayout>
-    </>
+      <ChatMessages
+        messages={messages}
+        streamingMessage={streamingMessage}
+        isTyping={isTyping}
+        copiedMessageId={copiedMessageId}
+        onCopy={copyMessage}
+        messagesEndRef={messagesEndRef}
+      />
+      <ChatInputBar
+        inputValue={inputValue}
+        setInputValue={setInputValue}
+        onSend={handleSendMessage}
+        isTyping={isTyping}
+      />
+    </div>
   );
 };
 

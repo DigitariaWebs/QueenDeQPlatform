@@ -33,6 +33,24 @@ body {
   font-family: "Raleway", sans-serif;
 }
 
+/* Global margin for main content areas */
+.royal-wrapper {
+  padding: 1rem;
+  width: 100%;
+}
+
+@media (min-width: 640px) {
+  .royal-wrapper {
+    padding: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .royal-wrapper {
+    padding: 2rem;
+  }
+}
+
 /* Enforce text color for all text on dark backgrounds */
 body, body * {
   color: var(--royal-pearl) !important;
