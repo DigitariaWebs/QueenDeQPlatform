@@ -45,7 +45,7 @@ router.post('/chat', validateChatMessage, async (req, res) => {
     const { messages } = req.body;
 
     // Call OpenAI with Reine-Mère configuration
-    const response = await callOpenAI(messages, undefined, false);
+    const response = await callOpenAI(messages, false);
     const aiMessage = response.choices[0].message.content;
     console.log('OpenAI response received, length:', aiMessage.length);
 
@@ -109,7 +109,7 @@ router.post('/chat/stream', validateChatMessage, async (req, res) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
 
     // Call OpenAI with streaming
-    const stream = await callOpenAI(messages, undefined, true);
+    const stream = await callOpenAI(messages, true);
 
     let fullResponse = '';
 

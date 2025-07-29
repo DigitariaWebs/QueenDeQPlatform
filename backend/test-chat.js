@@ -1,4 +1,4 @@
-require('dotenv').config();
+require('dotenv').config({ path: '.env.local' });
 const { callOpenAI } = require('./src/config/ai');
 
 async function testOpenAI() {

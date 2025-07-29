@@ -160,13 +160,22 @@ const ChatInputBar: React.FC<{
   );
 };
 
-const SideNavButtons: React.FC = () => {
+const SideNavButtons: React.FC<{
+  onNewConversation: () => void;
+  onShowHistory: () => void;
+}> = ({ onNewConversation, onShowHistory }) => {
   return (
     <div className="flex justify-center gap-4 mb-4">
-      <button className="px-4 py-2 bg-royal-purple/60 text-royal-pearl rounded-lg font-medium hover:bg-royal-purple/80 transition-colors border border-royal-gold/30">
+      <button 
+        onClick={onNewConversation}
+        className="px-4 py-2 bg-royal-purple/60 text-royal-pearl rounded-lg font-medium hover:bg-royal-purple/80 transition-colors border border-royal-gold/30"
+      >
         Nouvelle conversation
       </button>
-      <button className="px-4 py-2 bg-royal-purple/60 text-royal-pearl rounded-lg font-medium hover:bg-royal-purple/80 transition-colors border border-royal-gold/30">
+      <button 
+        onClick={onShowHistory}
+        className="px-4 py-2 bg-royal-purple/60 text-royal-pearl rounded-lg font-medium hover:bg-royal-purple/80 transition-colors border border-royal-gold/30"
+      >
         Historique
       </button>
     </div>
@@ -187,6 +196,7 @@ const ChatPage: React.FC = () => {
   const [streamingMessage, setStreamingMessage] = useState('');
   const [copiedMessageId, setCopiedMessageId] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const streamingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -195,6 +205,15 @@ const ChatPage: React.FC = () => {
   useEffect(() => {
     scrollToBottom();
   }, [messages, streamingMessage]);
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (streamingTimeoutRef.current) {
+        clearTimeout(streamingTimeoutRef.current);
+      }
+    };
+  }, []);
 
   const handleSendMessage = async () => {
     if (!inputValue.trim() || isTyping) return;
@@ -218,11 +237,24 @@ const ChatPage: React.FC = () => {
       const handleChunk = (chunk: StreamChunk) => {
         if (chunk.type === 'chunk' && chunk.content) {
           streamingResponse += chunk.content;
+          // Clear any existing timeout
+          if (streamingTimeoutRef.current) {
+            clearTimeout(streamingTimeoutRef.current);
+          }
           // Add a small delay before showing streaming to make typing indicator visible
-          setTimeout(() => {
+          streamingTimeoutRef.current = setTimeout(() => {
             setStreamingMessage(streamingResponse);
           }, 500);
         } else if (chunk.type === 'complete') {
+          // Clear any pending timeout
+          if (streamingTimeoutRef.current) {
+            clearTimeout(streamingTimeoutRef.current);
+            streamingTimeoutRef.current = null;
+          }
+          // Clear streaming message first to avoid duplication
+          setStreamingMessage('');
+          setIsTyping(false);
+          
           const botMessage: Message = {
             id: Date.now().toString(),
             content: chunk.fullMessage || streamingResponse,
@@ -230,9 +262,12 @@ const ChatPage: React.FC = () => {
             timestamp: new Date()
           };
           setMessages(prev => [...prev, botMessage]);
-          setStreamingMessage('');
-          setIsTyping(false);
         } else if (chunk.type === 'error') {
+          // Clear any pending timeout
+          if (streamingTimeoutRef.current) {
+            clearTimeout(streamingTimeoutRef.current);
+            streamingTimeoutRef.current = null;
+          }
           const errorMessage: Message = {
             id: Date.now().toString(),
             content: chunk.fallbackMessage || chunk.error || 'Une erreur est survenue.',
@@ -269,9 +304,39 @@ const ChatPage: React.FC = () => {
     setTimeout(() => setCopiedMessageId(null), 2000);
   };
 
+  const handleNewConversation = () => {
+    // Clear any ongoing streaming
+    if (streamingTimeoutRef.current) {
+      clearTimeout(streamingTimeoutRef.current);
+      streamingTimeoutRef.current = null;
+    }
+    
+    // Reset all state
+    setMessages([
+      {
+        id: '1',
+        content: "Bienvenue, ma chère âme. Je suis la Reine-Mère, ta confidente et guide spirituelle. Je suis là pour t'écouter, partager ma sagesse, et t'accompagner dans ton cheminement. Qu'aimerais-tu explorer aujourd'hui ?",
+        isUser: false,
+        timestamp: new Date()
+      }
+    ]);
+    setInputValue('');
+    setIsTyping(false);
+    setStreamingMessage('');
+    setCopiedMessageId(null);
+  };
+
+  const handleShowHistory = () => {
+    // For now, just show an alert. This can be expanded later to show conversation history
+    alert('Fonctionnalité d\'historique à venir ! 👑');
+  };
+
   return (
     <div className="flex flex-col h-full w-full max-w-4xl mx-auto">
-      <SideNavButtons />
+      <SideNavButtons 
+        onNewConversation={handleNewConversation}
+        onShowHistory={handleShowHistory}
+      />
       <ChatMessages
         messages={messages}
         streamingMessage={streamingMessage}
