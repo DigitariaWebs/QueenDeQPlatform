@@ -10,29 +10,29 @@ const slideData = [
   {
     id: 'explore',
     illustration: '/assets/illustrations/explore.svg',
-    title: 'Explorer / Explore',
-    caption: 'Clique sur une carte pour révéler ton message / Click a card to reveal your message.',
+    title: 'Explorer',
+    caption: 'Clique sur une carte pour révéler ton message.',
     ariaLabel: 'Explorer - découvre comment explorer ta carte'
   },
   {
     id: 'spread',
     illustration: '/assets/illustrations/spread.svg',
-    title: 'Tirage / Spread',
-    caption: 'Utilise le tirage 3 cartes pour une méditation guidée / Use the 3-card spread for guided reflection.',
+    title: 'Tirage',
+    caption: 'Utilise le tirage 3 cartes pour une méditation guidée.',
     ariaLabel: 'Tirage - découvre comment faire un tirage de carte'
   },
   {
     id: 'journal',
     illustration: '/assets/illustrations/journal.svg',
     title: 'Le journal du Royaume',
-    caption: 'Ajoute la question miroir à ton journal / Add the mirror question to your journal.',
+    caption: 'Ajoute la question miroir à ton journal.',
     ariaLabel: 'Journaler - découvre comment utiliser ton journal'
   },
   {
     id: 'progress',
     illustration: '/assets/illustrations/progress.svg',
-    title: 'Progresser / Progress',
-    caption: 'Débloque des célébrations en découvrant plus de cartes / Unlock celebrations as you reveal more cards.',
+    title: 'Progresser',
+    caption: 'Débloque des célébrations en découvrant plus de cartes.',
     ariaLabel: 'Progresser - découvre comment suivre ta progression'
   }
 ];

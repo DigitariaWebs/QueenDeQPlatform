@@ -17,13 +17,13 @@ const JournalPage = () => {
           Journal du Royaume
         </h1>
         <p className="text-royal-pearl/70 font-sans text-lg">
-          Discover the latest news from the kingdom here.
+          Découvre les dernières nouvelles du royaume ici.
         </p>
         <div className="mt-8">
           <div className="inline-flex items-center space-x-2 bg-royal-purple/60 rounded-full px-6 py-3 border border-royal-gold/30">
             <div className="w-3 h-3 bg-royal-gold rounded-full animate-pulse"></div>
             <span className="text-royal-pearl font-sans font-medium">
-              Coming Soon / Bientôt disponible
+              Bientôt disponible
             </span>
           </div>
         </div>

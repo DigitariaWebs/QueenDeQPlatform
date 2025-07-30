@@ -8,13 +8,12 @@ import {
 } from '@heroicons/react/24/outline';
 
 // Import des modules Queen de Q
-import RoyalShop from '../Modules/RoyalShop';
 import RoyalJournal from '../Modules/RoyalJournal';
 import CardsPage from '../Pages/PoicheChatPage';
 import TarotQuiz from '../Modules/TarotQuiz';
 import ChatPage from '../Pages/SalonChatPage';
 import GoldenParticles from '../Effects/GoldenParticles';
-import { CardsIcon, MirrorIcon, TeaIcon, BoutiqueIcon, JournalIcon, CrownIcon } from '../Icons/ArtDecoIcons';
+import { CardsIcon, MirrorIcon, TeaIcon, JournalIcon, CrownIcon } from '../Icons/ArtDecoIcons';
 
 interface ClientDashboardProps {
   onLogout: () => void;
@@ -29,7 +28,6 @@ const ClientDashboard = ({ onLogout, userEmail }: ClientDashboardProps) => {
     { id: 'cards', label: 'Ta pioche', icon: CardsIcon },
     { id: 'mirror', label: 'Miroir, Miroir!', icon: MirrorIcon },
     { id: 'tea', label: 'Salon de thé', icon: TeaIcon },
-    { id: 'shop', label: 'Boutique Royale', icon: BoutiqueIcon },
     { id: 'journal', label: 'Journal Intime', icon: JournalIcon },
   ];
 
@@ -118,18 +116,7 @@ const ClientDashboard = ({ onLogout, userEmail }: ClientDashboardProps) => {
                 <p className="text-cabinet-aubergine font-body text-sm">Converse avec la Reine-Mère pour des conseils avisés</p>
               </motion.div>
 
-              <motion.div 
-                onClick={() => setActiveSection('shop')} 
-                className="bg-white/90 backdrop-blur-sm rounded-lg p-6 shadow-soft border border-royal-champagne/20 hover:shadow-royal transition-all duration-300 cursor-pointer group"
-                whileHover={{ scale: 1.02, y: -5 }}
-                whileTap={{ scale: 0.98 }}
-              >
-                <div className="flex items-center mb-4">
-                  <BoutiqueIcon className="h-8 w-8 text-cabinet-patina group-hover:text-royal-gold transition-colors animate-float" />
-                  <h3 className="text-lg font-title font-semibold text-royal-purple ml-3">Boutique Royale</h3>
-                </div>
-                <p className="text-cabinet-aubergine font-body text-sm">Cartes physiques et objets mystiques pour ta collection</p>
-              </motion.div>
+
 
               <motion.div 
                 onClick={() => setActiveSection('journal')} 
@@ -156,8 +143,7 @@ const ClientDashboard = ({ onLogout, userEmail }: ClientDashboardProps) => {
       case 'tea':
         return <ChatPage />;
       
-      case 'shop':
-        return <RoyalShop />;
+
       
       case 'journal':
         return <RoyalJournal />;

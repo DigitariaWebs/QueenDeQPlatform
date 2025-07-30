@@ -107,52 +107,7 @@ const DashboardHome = () => {
         </div>
       </div>
 
-      {/* Boutique Preview */}
-      <div className="bg-royal-purple/60 rounded-2xl p-8 border border-royal-gold/20 mb-8">
-        <div className="flex items-center justify-between mb-6">
-          <div>
-            <h2 className="text-2xl font-serif font-bold text-royal-pearl mb-2">
-              Boutique Royal
-            </h2>
-            <p className="text-royal-pearl/70 text-sm">
-              Découvre nos produits exclusifs
-            </p>
-          </div>
-          <div className="w-12 h-12 bg-royal-gold rounded-full flex items-center justify-center">
-            <SparklesIcon className="w-6 h-6 text-royal-purple" />
-          </div>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="bg-royal-purple/40 rounded-lg p-4">
-            <h3 className="font-sans font-medium text-royal-pearl mb-2">
-              Jeu de Cartes Queen de Q
-            </h3>
-            <p className="text-royal-pearl/70 text-sm mb-3">
-              Édition physique premium
-            </p>
-            <div className="flex items-center justify-between">
-              <span className="text-royal-gold font-bold">29.99€</span>
-              <button className="bg-royal-gold text-royal-purple px-3 py-1 rounded-full text-sm font-medium hover:bg-royal-gold/90 transition-colors">
-                Voir
-              </button>
-            </div>
-          </div>
-          <div className="bg-royal-purple/40 rounded-lg p-4">
-            <h3 className="font-sans font-medium text-royal-pearl mb-2">
-              T-Shirt "Je suis une Queen"
-            </h3>
-            <p className="text-royal-pearl/70 text-sm mb-3">
-              100% coton bio
-            </p>
-            <div className="flex items-center justify-between">
-              <span className="text-royal-gold font-bold">34.99€</span>
-              <button className="bg-royal-gold text-royal-purple px-3 py-1 rounded-full text-sm font-medium hover:bg-royal-gold/90 transition-colors">
-                Voir
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
+
     </motion.div>
   );
 };

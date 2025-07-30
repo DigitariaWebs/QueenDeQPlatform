@@ -10,12 +10,9 @@ import {
   XMarkIcon,
 
   SparklesIcon,
-  UserCircleIcon,
-  PowerIcon
+  UserCircleIcon
 } from '@heroicons/react/24/outline';
 import { useEffect, useState } from 'react';
-import { useAuth } from '../../contexts/AuthContext';
-
 
 interface SidebarProps {
   isOpen: boolean;
@@ -66,9 +63,6 @@ const navItems = [
 const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
   const location = useLocation();
   const [isLargeScreen, setIsLargeScreen] = useState(false);
-  const { user, logout } = useAuth();
-
-
 
   useEffect(() => {
     const checkScreenSize = () => {
@@ -178,26 +172,21 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
           <div className="p-6 border-t border-royal-gold/20 space-y-4">
             {/* Enhanced Sidebar Widgets */}
             <div className="flex flex-col gap-4 mt-2">
-              {/* User Menu */}
+              {/* Profile Menu */}
               <div className="relative group w-full flex flex-col items-stretch">
-                <button className="flex items-center gap-2 w-full p-3 rounded-xl bg-royal-purple/20 hover:bg-royal-gold/10 transition-colors border border-royal-gold/20 shadow-soft focus:outline-none focus:ring-2 focus:ring-royal-gold/60 focus:ring-offset-2 focus:ring-offset-royal-purple/80">
+                <button className="flex items-center justify-center w-full p-3 rounded-xl bg-royal-purple/20 hover:bg-royal-gold/10 transition-colors border border-royal-gold/20 shadow-soft focus:outline-none focus:ring-2 focus:ring-royal-gold/60 focus:ring-offset-2 focus:ring-offset-royal-purple/80">
                   <UserCircleIcon className="w-6 h-6 text-royal-gold" />
-                  <span className="text-royal-gold font-sans font-semibold text-base">
-                    {user?.firstName}
+                  <span className="text-royal-gold font-sans font-semibold text-base ml-2">
+                    Profile
                   </span>
                 </button>
                 {/* Dropdown menu (opens upwards, themed colors, matches button width) */}
                 <div className="absolute left-0 bottom-full mb-2 min-w-full bg-royal-purple rounded-xl shadow-royal border border-royal-gold/20 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
-                  <div className="p-4 border-b border-royal-gold/20">
-                    <p className="text-royal-gold font-sans font-semibold text-base">{user?.firstName} {user?.lastName}</p>
-                    <p className="text-royal-pearl/80 text-xs">{user?.email}</p>
-                  </div>
-                  <button
-                    onClick={logout}
-                    className="w-full flex items-center gap-2 px-4 py-3 text-left text-royal-pearl hover:bg-royal-gold/10 hover:text-royal-purple transition-colors rounded-t-xl font-sans text-base"
-                  >
-                    <PowerIcon className="w-4 h-4" />
-                    <span>Se déconnecter</span>
+                  <button className="w-full flex items-center justify-center px-4 py-3 text-center text-royal-pearl hover:bg-royal-gold/10 hover:text-royal-purple transition-colors rounded-t-xl font-sans text-base border-b border-royal-gold/20">
+                    <span>Se connecter</span>
+                  </button>
+                  <button className="w-full flex items-center justify-center px-4 py-3 text-center text-royal-pearl hover:bg-royal-gold/10 hover:text-royal-purple transition-colors rounded-b-xl font-sans text-base border-t border-royal-gold/20">
+                    <span>S'inscrire</span>
                   </button>
                 </div>
                 {/* Centered quote and copyright under profile */}
@@ -211,8 +200,6 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
                 </div>
               </div>
             </div>
-
-            
           </div>
         </div>
       </motion.div>
