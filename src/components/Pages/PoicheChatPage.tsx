@@ -160,13 +160,22 @@ const ChatInputBar: React.FC<{
   );
 };
 
-const SideNavButtons: React.FC = () => {
+const SideNavButtons: React.FC<{
+  onNewConversation: () => void;
+  onShowHistory: () => void;
+}> = ({ onNewConversation, onShowHistory }) => {
   return (
     <div className="flex justify-center gap-4 mb-4">
-      <button className="px-4 py-2 bg-royal-purple/60 text-royal-pearl rounded-lg font-medium hover:bg-royal-purple/80 transition-colors border border-royal-gold/30">
+      <button 
+        onClick={onNewConversation}
+        className="px-4 py-2 bg-royal-purple/60 text-royal-pearl rounded-lg font-medium hover:bg-royal-purple/80 transition-colors border border-royal-gold/30"
+      >
         Nouvelle conversation
       </button>
-      <button className="px-4 py-2 bg-royal-purple/60 text-royal-pearl rounded-lg font-medium hover:bg-royal-purple/80 transition-colors border border-royal-gold/30">
+      <button 
+        onClick={onShowHistory}
+        className="px-4 py-2 bg-royal-purple/60 text-royal-pearl rounded-lg font-medium hover:bg-royal-purple/80 transition-colors border border-royal-gold/30"
+      >
         Historique
       </button>
     </div>
@@ -296,9 +305,39 @@ const ChatPage: React.FC = () => {
     setTimeout(() => setCopiedMessageId(null), 2000);
   };
 
+  const handleNewConversation = () => {
+    // Clear any ongoing streaming
+    if (streamingTimeoutRef.current) {
+      clearTimeout(streamingTimeoutRef.current);
+      streamingTimeoutRef.current = null;
+    }
+    
+    // Reset all state
+    setMessages([
+      {
+        id: '1',
+        content: "Tire pas tout de suite, ma Queen. On regarde d'abord la texture du jeu. Je suis la Reine Mère, ta grande sœur intuitive. Je vais te poser des questions pour lire la carte de ton mec. Plus tes réponses sont développées, plus le portrait sera précis. Prête pour une lecture qui va te réveiller ?",
+        isUser: false,
+        timestamp: new Date()
+      }
+    ]);
+    setInputValue('');
+    setIsTyping(false);
+    setStreamingMessage('');
+    setCopiedMessageId(null);
+  };
+
+  const handleShowHistory = () => {
+    // For now, just show an alert. This can be expanded later to show conversation history
+    alert('Fonctionnalité d\'historique à venir ! 👑');
+  };
+
   return (
     <div className="flex flex-col h-full w-full max-w-4xl mx-auto">
-      <SideNavButtons />
+      <SideNavButtons 
+        onNewConversation={handleNewConversation}
+        onShowHistory={handleShowHistory}
+      />
       <ChatMessages
         messages={messages}
         streamingMessage={streamingMessage}
