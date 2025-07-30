@@ -21,14 +21,19 @@ const validateChatMessage = [
         }
       }
       return true;
-    })
+    }),
+  body('chatType')
+    .optional()
+    .isIn(['reine_mere', 'poiche'])
+    .withMessage('Chat type must be either reine_mere or poiche')
 ];
 
 // Standard chat endpoint
 router.post('/chat', validateChatMessage, async (req, res) => {
   try {
     console.log('Received chat request:', {
-      messagesCount: req.body.messages?.length
+      messagesCount: req.body.messages?.length,
+      chatType: req.body.chatType || 'reine_mere'
     });
 
     // Check for validation errors
@@ -42,10 +47,10 @@ router.post('/chat', validateChatMessage, async (req, res) => {
       });
     }
 
-    const { messages } = req.body;
+    const { messages, chatType = 'reine_mere' } = req.body;
 
-    // Call OpenAI with Reine-Mère configuration
-    const response = await callOpenAI(messages, false);
+    // Call OpenAI with appropriate configuration
+    const response = await callOpenAI(messages, false, chatType);
     const aiMessage = response.choices[0].message.content;
     console.log('OpenAI response received, length:', aiMessage.length);
 
@@ -61,7 +66,8 @@ router.post('/chat', validateChatMessage, async (req, res) => {
 
     console.log('Sending response:', {
       success: true,
-      messageLength: aiMessage.length
+      messageLength: aiMessage.length,
+      chatType: chatType
     });
 
     res.json(responseData);
@@ -86,7 +92,8 @@ router.post('/chat', validateChatMessage, async (req, res) => {
 router.post('/chat/stream', validateChatMessage, async (req, res) => {
   try {
     console.log('Received streaming request:', {
-      messagesCount: req.body.messages?.length
+      messagesCount: req.body.messages?.length,
+      chatType: req.body.chatType || 'reine_mere'
     });
 
     // Check for validation errors
@@ -100,7 +107,7 @@ router.post('/chat/stream', validateChatMessage, async (req, res) => {
       });
     }
 
-    const { messages } = req.body;
+    const { messages, chatType = 'reine_mere' } = req.body;
 
     // Set headers for streaming
     res.setHeader('Content-Type', 'text/plain; charset=utf-8');
@@ -108,8 +115,8 @@ router.post('/chat/stream', validateChatMessage, async (req, res) => {
     res.setHeader('Connection', 'keep-alive');
     res.setHeader('Access-Control-Allow-Origin', '*');
 
-    // Call OpenAI with streaming
-    const stream = await callOpenAI(messages, true);
+    // Call OpenAI with streaming and appropriate chat type
+    const stream = await callOpenAI(messages, true, chatType);
 
     let fullResponse = '';
 
@@ -157,9 +164,5 @@ router.post('/chat/stream', validateChatMessage, async (req, res) => {
     res.end();
   }
 });
-
-// Removed /modes endpoint
-
-// Removed /test endpoint
 
 module.exports = router; 

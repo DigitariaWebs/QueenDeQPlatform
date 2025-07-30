@@ -8,10 +8,11 @@ export interface Message {
 }
 
 export interface ChatRequest {
-  messages: Array<{
+  messages: {
     role: 'user' | 'assistant';
     content: string;
-  }>;
+  }[];
+  chatType?: 'reine_mere' | 'poiche';
 }
 
 export interface ChatResponse {
@@ -21,6 +22,7 @@ export interface ChatResponse {
     content: string;
     timestamp: string;
   };
+  usage?: any;
   error?: string;
   fallbackMessage?: string;
 }
@@ -31,7 +33,7 @@ export interface StreamChunk {
   fullMessage?: string;
   error?: string;
   fallbackMessage?: string;
-  timestamp: string;
+  timestamp?: string;
 }
 
 const API_BASE = '/api/ai';
@@ -40,16 +42,17 @@ class ChatService {
   // Convert frontend messages to API format
   private convertMessagesToAPIFormat(messages: Message[]): ChatRequest['messages'] {
     return messages.map(msg => ({
-      role: msg.isUser ? 'user' as const : 'assistant' as const,
+      role: msg.isUser ? 'user' : 'assistant',
       content: msg.content
     }));
   }
 
   // Standard chat (non-streaming)
-  async sendMessage(messages: Message[]): Promise<ChatResponse> {
+  async sendMessage(messages: Message[], chatType: 'reine_mere' | 'poiche' = 'reine_mere'): Promise<ChatResponse> {
     try {
       console.log('Sending chat request:', {
-        messages: this.convertMessagesToAPIFormat(messages)
+        messages: this.convertMessagesToAPIFormat(messages),
+        chatType: chatType
       });
 
       const response = await fetch(`${API_BASE}/chat`, {
@@ -58,7 +61,8 @@ class ChatService {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          messages: this.convertMessagesToAPIFormat(messages)
+          messages: this.convertMessagesToAPIFormat(messages),
+          chatType: chatType
         })
       });
 
@@ -84,11 +88,13 @@ class ChatService {
   // Streaming chat
   async sendMessageStream(
     messages: Message[],
-    onChunk: (chunk: StreamChunk) => void
+    onChunk: (chunk: StreamChunk) => void,
+    chatType: 'reine_mere' | 'poiche' = 'reine_mere'
   ): Promise<void> {
     try {
       console.log('Sending streaming request:', {
-        messages: this.convertMessagesToAPIFormat(messages)
+        messages: this.convertMessagesToAPIFormat(messages),
+        chatType: chatType
       });
 
       const response = await fetch(`${API_BASE}/chat/stream`, {
@@ -97,7 +103,8 @@ class ChatService {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          messages: this.convertMessagesToAPIFormat(messages)
+          messages: this.convertMessagesToAPIFormat(messages),
+          chatType: chatType
         })
       });
 
@@ -141,8 +148,6 @@ class ChatService {
       });
     }
   }
-
-  // Removed getModes and all mode logic
 }
 
 export const chatService = new ChatService(); 

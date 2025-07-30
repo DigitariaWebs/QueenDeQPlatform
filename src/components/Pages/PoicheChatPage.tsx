@@ -177,7 +177,7 @@ const ChatPage: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
-      content: "Bienvenue, ma chère âme. Je suis la Reine-Mère, ta confidente et guide spirituelle. Je suis là pour t'écouter, partager ma sagesse, et t'accompagner dans ton cheminement. Qu'aimerais-tu explorer aujourd'hui ?",
+      content: "Tire pas tout de suite, ma Queen. On regarde d'abord la texture du jeu. Je suis la Reine Mère, ta grande sœur intuitive. Je vais te poser des questions pour lire la carte de ton mec. Plus tes réponses sont développées, plus le portrait sera précis. Prête pour une lecture qui va te réveiller ?",
       isUser: false,
       timestamp: new Date()
     }
@@ -187,6 +187,7 @@ const ChatPage: React.FC = () => {
   const [streamingMessage, setStreamingMessage] = useState('');
   const [copiedMessageId, setCopiedMessageId] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const streamingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -195,6 +196,15 @@ const ChatPage: React.FC = () => {
   useEffect(() => {
     scrollToBottom();
   }, [messages, streamingMessage]);
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (streamingTimeoutRef.current) {
+        clearTimeout(streamingTimeoutRef.current);
+      }
+    };
+  }, []);
 
   const handleSendMessage = async () => {
     if (!inputValue.trim() || isTyping) return;
@@ -218,11 +228,24 @@ const ChatPage: React.FC = () => {
       const handleChunk = (chunk: StreamChunk) => {
         if (chunk.type === 'chunk' && chunk.content) {
           streamingResponse += chunk.content;
+          // Clear any existing timeout
+          if (streamingTimeoutRef.current) {
+            clearTimeout(streamingTimeoutRef.current);
+          }
           // Add a small delay before showing streaming to make typing indicator visible
-          setTimeout(() => {
+          streamingTimeoutRef.current = setTimeout(() => {
             setStreamingMessage(streamingResponse);
           }, 500);
         } else if (chunk.type === 'complete') {
+          // Clear any pending timeout
+          if (streamingTimeoutRef.current) {
+            clearTimeout(streamingTimeoutRef.current);
+            streamingTimeoutRef.current = null;
+          }
+          // Clear streaming message first to avoid duplication
+          setStreamingMessage('');
+          setIsTyping(false);
+          
           const botMessage: Message = {
             id: Date.now().toString(),
             content: chunk.fullMessage || streamingResponse,
@@ -230,9 +253,12 @@ const ChatPage: React.FC = () => {
             timestamp: new Date()
           };
           setMessages(prev => [...prev, botMessage]);
-          setStreamingMessage('');
-          setIsTyping(false);
         } else if (chunk.type === 'error') {
+          // Clear any pending timeout
+          if (streamingTimeoutRef.current) {
+            clearTimeout(streamingTimeoutRef.current);
+            streamingTimeoutRef.current = null;
+          }
           const errorMessage: Message = {
             id: Date.now().toString(),
             content: chunk.fallbackMessage || chunk.error || 'Une erreur est survenue.',
@@ -245,14 +271,15 @@ const ChatPage: React.FC = () => {
         }
       };
 
-      await chatService.sendMessageStream(currentMessages, handleChunk);
+      // Use poiche chat type for this page
+      await chatService.sendMessageStream(currentMessages, handleChunk, 'poiche');
     } catch (error) {
       console.error('Error sending message:', error);
       
       // Add fallback message when chat bot isn't working
       const fallbackMessage: Message = {
         id: Date.now().toString(),
-        content: "Désolée, ma chère. Il semble que je sois temporairement indisponible. Je suis en train de me reposer pour mieux te servir. Reviens bientôt, et nous pourrons continuer notre conversation royale. En attendant, tu peux explorer tes cartes ou faire le quiz pour découvrir ton type de Queen ! ✨👑",
+        content: "Pardonne-moi, ma Queen. Il semble que je sois temporairement indisponible. Mon intuition a besoin de se reposer. Reviens bientôt, et nous pourrons reprendre ta lecture royale. En attendant, tu peux explorer tes cartes ou faire le quiz pour découvrir ton type de Queen ! ✨👑",
         isUser: false,
         timestamp: new Date()
       };

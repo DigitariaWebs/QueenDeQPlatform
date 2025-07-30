@@ -10,9 +10,9 @@ import {
 // Import des modules Queen de Q
 import RoyalShop from '../Modules/RoyalShop';
 import RoyalJournal from '../Modules/RoyalJournal';
-import CardsPage from '../Pages/CardsPage';
+import CardsPage from '../Pages/PoicheChatPage';
 import TarotQuiz from '../Modules/TarotQuiz';
-import ChatPage from '../Pages/ChatPage';
+import ChatPage from '../Pages/SalonChatPage';
 import GoldenParticles from '../Effects/GoldenParticles';
 import { CardsIcon, MirrorIcon, TeaIcon, BoutiqueIcon, JournalIcon, CrownIcon } from '../Icons/ArtDecoIcons';
 

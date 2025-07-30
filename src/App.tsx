@@ -3,11 +3,11 @@ import { AuthProvider, useAuth } from './contexts/AuthContext';
 import AuthPage from './components/Auth/AuthPage';
 import DashboardLayout from './components/Layout/DashboardLayout';
 import DashboardHome from './components/Pages/DashboardHome';
-import CardsPage from './components/Pages/CardsPage';
-import QuizPage from './components/Pages/QuizPage';
+import CardsPage from './components/Pages/PoicheChatPage';
+import QuizPage from './components/Pages/MiroirChatPage';
 import JournalPage from './components/Pages/JournalPage';
 import RoyaumePage from './components/Pages/RoyaumePage';
-import ChatPage from './components/Pages/ChatPage';
+import ChatPage from './components/Pages/SalonChatPage';
 
 import ShopPage from './components/Pages/ShopPage';
 

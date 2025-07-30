@@ -1,4 +1,4 @@
-import QuizPage from '../Pages/QuizPage';
+import QuizPage from '../Pages/MiroirChatPage';
 
 const TarotQuiz = () => {
   return <QuizPage />;
