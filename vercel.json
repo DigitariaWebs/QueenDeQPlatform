@@ -2,7 +2,7 @@
   "version": 2,
   "builds": [
     {
-      "src": "backend/src/index-chat-only.js",
+      "src": "backend/src/index.js",
       "use": "@vercel/node",
       "config": {
         "maxDuration": 30
@@ -20,7 +20,7 @@
   "routes": [
     {
       "src": "/api/(.*)",
-      "dest": "backend/src/index-chat-only.js"
+      "dest": "backend/src/index.js"
     },
     {
       "src": "/(.*)",

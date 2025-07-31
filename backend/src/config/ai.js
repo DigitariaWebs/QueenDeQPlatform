@@ -1,6 +1,11 @@
-const OpenAI = require('openai');
-const fs = require('fs');
-const path = require('path');
+import OpenAI from 'openai';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+// Get __dirname equivalent for ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Validate API key presence
 if (!process.env.OPENAI_API_KEY) {
@@ -316,7 +321,7 @@ const callOpenAI = async (messages, streaming = false, chatType = 'reine_mere') 
   }
 };
 
-module.exports = {
+export {
   openai,
   SYSTEM_PROMPTS,
   getSystemPromptConfig,

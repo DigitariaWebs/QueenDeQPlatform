@@ -1,7 +1,9 @@
-const express = require('express');
+import express from 'express';
+import { body, validationResult } from 'express-validator';
+import { callOpenAI } from '../config/ai.js';
+
+
 const router = express.Router();
-const { body, validationResult } = require('express-validator');
-const { callOpenAI } = require('../config/ai');
 
 // Validation middleware for chat messages
 const validateChatMessage = [
@@ -165,4 +167,4 @@ router.post('/chat/stream', validateChatMessage, async (req, res) => {
   }
 });
 
-module.exports = router; 
+export default router; 

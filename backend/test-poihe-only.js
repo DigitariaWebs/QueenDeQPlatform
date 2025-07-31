@@ -1,4 +1,4 @@
-const fetch = require('node-fetch');
+import fetch from 'node-fetch';
 
 async function testPoicheOnly() {
   console.log('🎴 Testing Poiche System Only...\n');

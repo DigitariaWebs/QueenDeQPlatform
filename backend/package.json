@@ -1,10 +1,11 @@
 {
   "name": "queendeq-backend",
   "version": "1.0.0",
-  "main": "src/index-chat-only.js",
+  "type": "module",
+  "main": "src/index.js",
   "scripts": {
-    "start": "node src/index-chat-only.js",
-    "dev": "nodemon src/index-chat-only.js",
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js",
     "test-chat": "node test-chat.js",
     "full-dev": "nodemon src/index.js"
   },
@@ -33,6 +34,7 @@
     "winston": "^3.17.0"
   },
   "devDependencies": {
+    "@types/dotenv": "^6.1.1",
     "cross-env": "^7.0.3",
     "eslint": "^9.31.0",
     "eslint-config-prettier": "^10.1.8",
