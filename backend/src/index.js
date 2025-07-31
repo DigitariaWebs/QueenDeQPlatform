@@ -2,57 +2,20 @@ import 'dotenv/config';
 import 'express-async-errors';
 
 import express from 'express';
-import helmet from 'helmet';
-import cors from 'cors';
-import rateLimit from 'express-rate-limit';
-import compression from 'compression';
-import morgan from 'morgan';
-
-import chatRoutes from './routes/chatRoutes.js';
+import { setupMiddleware } from './config/middleware.js';
+import { setupRoutes } from './config/routes.js';
 import notFound from './middleware/notFound.js';
 import errorHandler from './middleware/errorHandler.js';
 
 const app = express();
 
-//–– global middlewares
-app.use(helmet());
-app.use(cors({
-  origin: process.env.CORS_ORIGIN || 'http://localhost:3000',
-  credentials: true
-}));
-app.use(compression());
-app.use(rateLimit({ windowMs: 15 * 60 * 1000, max: 100 }));
-app.use(express.json({ limit: '10kb' }));
-app.use(morgan('dev'));
+// Setup middleware
+setupMiddleware(app);
 
-//–– API routes
-app.use('/api/ai', chatRoutes);
+// Setup routes
+setupRoutes(app);
 
-//–– Health check endpoint
-app.get('/api/health', (req, res) => {
-  res.json({ 
-    status: 'ok', 
-    message: 'Queen de Q Chat Backend is running! 👑',
-    timestamp: new Date().toISOString(),
-    version: '1.0.0',
-    features: ['OpenAI Chat', 'Streaming', 'Multiple Personas']
-  });
-});
-
-//–– Root endpoint
-app.get('/', (req, res) => {
-  res.json({
-    message: '👑 Queen de Q Chat API',
-    endpoints: {
-      health: '/api/health',
-      chat: '/api/ai/chat',
-      stream: '/api/ai/chat/stream',
-      modes: '/api/ai/modes'
-    }
-  });
-});
-
-//–– 404 + error handler
+// Error handling
 app.use(notFound);
 app.use(errorHandler);
 
