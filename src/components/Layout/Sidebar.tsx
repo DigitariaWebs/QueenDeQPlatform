@@ -73,10 +73,32 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
     return () => window.removeEventListener('resize', checkScreenSize);
   }, []);
 
+  // Handle escape key to close sidebar on mobile
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isOpen && !isLargeScreen) {
+        onClose();
+      }
+    };
+    
+    if (isOpen && !isLargeScreen) {
+      document.addEventListener('keydown', handleEscape);
+      // Prevent body scroll when sidebar is open on mobile
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    
+    return () => {
+      document.removeEventListener('keydown', handleEscape);
+      document.body.style.overflow = 'unset';
+    };
+  }, [isOpen, isLargeScreen, onClose]);
+
   const sidebarAnimation = {
-    initial: { x: isLargeScreen ? 0 : -280 },
+    initial: { x: isLargeScreen ? 0 : -320 },
     animate: { 
-      x: isLargeScreen ? 0 : (isOpen ? 0 : -280)
+      x: isLargeScreen ? 0 : (isOpen ? 0 : -320)
     },
     transition: { duration: 0.3, ease: easeInOut }
   };
@@ -85,8 +107,11 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
     <>
       {/* Mobile backdrop */}
       {isOpen && !isLargeScreen && (
-        <div 
-          className="fixed inset-0 bg-royal-velvet/50 z-20 lg:hidden"
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-20 lg:hidden"
           onClick={onClose}
         />
       )}
@@ -96,7 +121,7 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
         initial={sidebarAnimation.initial}
         animate={sidebarAnimation.animate}
         transition={sidebarAnimation.transition}
-        className="fixed lg:static inset-y-0 left-0 z-30 w-70 bg-royal-purple shadow-royal"
+        className="fixed lg:static inset-y-0 left-0 z-30 w-80 lg:w-70 bg-royal-purple shadow-royal lg:shadow-none border-r border-royal-gold/20"
       >
         <div className="flex flex-col h-screen overflow-hidden">
           {/* Header */}
@@ -117,7 +142,8 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
               </Link>
               <button
                 onClick={onClose}
-                className="lg:hidden text-royal-pearl hover:text-royal-champagne transition-colors"
+                className="lg:hidden text-royal-pearl hover:text-royal-champagne transition-colors p-1 rounded-lg hover:bg-royal-gold/10"
+                aria-label="Close menu"
               >
                 <XMarkIcon className="w-6 h-6" />
               </button>

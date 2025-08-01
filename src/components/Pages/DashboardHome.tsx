@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { 
   RectangleStackIcon, 
@@ -35,6 +36,11 @@ const mysteryFeatures = [
 
 const DashboardHome = () => {
   // const { user } = useAuth(); // Temporarily commented out until auth is implemented
+  const [flippedCardIndex, setFlippedCardIndex] = useState<number | null>(null);
+
+  const handleCardFlip = (index: number) => {
+    setFlippedCardIndex(flippedCardIndex === index ? null : index);
+  };
 
   return (
     <motion.div
@@ -68,7 +74,8 @@ const DashboardHome = () => {
           </p>
         </motion.div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-12 max-w-7xl mx-auto">
+        {/* Responsive Grid: Mobile single column, Tablet 2 cols, Desktop 3 cols */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 max-w-7xl mx-auto">
           {mysteryFeatures.map((feature, index) => (
             <div key={index} className="flex justify-center">
               <MysteryCard
@@ -77,6 +84,8 @@ const DashboardHome = () => {
                 description={feature.description}
                 index={index}
                 path={feature.path}
+                isFlipped={flippedCardIndex === index}
+                onFlip={() => handleCardFlip(index)}
               />
             </div>
           ))}
@@ -86,20 +95,20 @@ const DashboardHome = () => {
       
 
       {/* Le journal du Royaume */}
-      <div className="bg-royal-purple/60 rounded-2xl p-8 border border-royal-gold/20 mb-12 lg:mb-16">
-        <h2 className="text-2xl font-serif font-bold text-royal-pearl mb-6">
+      <div className="bg-royal-purple/60 rounded-2xl p-4 sm:p-6 lg:p-8 border border-royal-gold/20 mb-8 sm:mb-12 lg:mb-16">
+        <h2 className="text-xl sm:text-2xl lg:text-3xl font-serif font-bold text-royal-pearl mb-4 sm:mb-6 text-center sm:text-left">
           Le journal du Royaume
         </h2>
-        <div className="space-y-4">
-          <div className="flex items-center space-x-4 p-4 bg-royal-purple/40 rounded-lg">
-            <div className="w-10 h-10 bg-royal-gold rounded-full flex items-center justify-center">
-              <SparklesIcon className="w-5 h-5 text-royal-purple" />
+        <div className="space-y-3 sm:space-y-4">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-3 sm:space-y-0 sm:space-x-4 p-3 sm:p-4 bg-royal-purple/40 rounded-lg">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 bg-royal-gold rounded-full flex items-center justify-center flex-shrink-0 mx-auto sm:mx-0">
+              <SparklesIcon className="w-4 h-4 sm:w-5 sm:h-5 text-royal-purple" />
             </div>
-            <div>
-              <p className="font-sans font-medium text-royal-pearl">
+            <div className="text-center sm:text-left flex-1">
+              <p className="font-sans font-medium text-royal-pearl text-sm sm:text-base">
                 Bienvenue dans ton royaume !
               </p>
-              <p className="text-royal-pearl/70 text-sm">
+              <p className="text-royal-pearl/70 text-xs sm:text-sm mt-1">
                 Explore tes premières cartes pour commencer ton voyage royal
               </p>
             </div>

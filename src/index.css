@@ -82,20 +82,20 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Scrollbar personnalisée Queen de Q */
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--cabinet-parchment);
+  background: rgba(0, 0, 0, 0.1);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--royal-gold);
-  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--cabinet-patina);
+  background: rgba(255, 255, 255, 0.3);
 }
 
 /* Sélection de texte */
@@ -295,11 +295,18 @@ h1, h2, h3, h4, h5, h6 {
 @layer base {
   html {
     scroll-behavior: smooth;
-    overflow-x: hidden;
+    overflow: hidden;
+    height: 100%;
   }
   
   body {
-    overflow-x: hidden;
+    overflow: hidden;
+    height: 100%;
+  }
+  
+  #root {
+    height: 100%;
+    overflow: hidden;
   }
 
   /* Focus visible styles for better accessibility */
@@ -549,15 +556,21 @@ h1, h2, h3, h4, h5, h6 {
 
   /* Custom scrollbar */
   .custom-scrollbar::-webkit-scrollbar {
-    width: 8px;
+    width: 6px;
   }
   
   .custom-scrollbar::-webkit-scrollbar-track {
-    @apply bg-royal-pearl/50 rounded-full;
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 3px;
   }
   
   .custom-scrollbar::-webkit-scrollbar-thumb {
-    @apply bg-royal-gold/40 rounded-full hover:bg-royal-gold/60;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 3px;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.3);
   }
 
   /* Button hover effects */
@@ -675,6 +688,16 @@ h1, h2, h3, h4, h5, h6 {
   
   .text-pretty {
     text-wrap: pretty;
+  }
+
+  /* Hide scrollbar utility */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
   }
 
   /* Line clamp utilities for card content */

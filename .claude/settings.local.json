@@ -1,4 +1,5 @@
 {
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
   "permissions": {
     "allow": [
       "Bash(rm:*)",
@@ -22,7 +23,10 @@
       "Bash(cd:*)",
       "Bash(cd:*)",
       "Bash(npx tsc:*)",
-      "Bash(timeout 10s npm run dev)"
+      "Bash(timeout 10s npm run dev)",
+      "Bash(npm cache clean:*)",
+      "Bash(./node_modules/.bin/tsc:*)",
+      "Bash(find:*)"
     ],
     "deny": []
   }

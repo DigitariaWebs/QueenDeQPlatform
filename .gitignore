@@ -31,3 +31,7 @@ yarn-error.log*
 /backend/.env
 /backend/.env.local
 /backend/.env.*.local
+
+# .claude
+/.claude
+/.claude/

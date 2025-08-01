@@ -21,7 +21,7 @@ const ChatMessages: React.FC<ChatMessagesProps> = ({
   messagesEndRef 
 }) => {
   return (
-    <div className="flex-1 overflow-y-auto px-3 sm:px-6 md:px-8 pb-32" style={{scrollbarGutter:'stable', height: 'calc(100vh - 200px)'}}>
+    <div className="flex-1 overflow-y-auto custom-scrollbar px-3 sm:px-6 md:px-8 pb-32" style={{scrollbarGutter:'stable', height: 'calc(100vh - 200px)'}}>
       <div className="max-w-2xl mx-auto flex flex-col gap-4 py-6">
         <AnimatePresence initial={false}>
           {messages.map((message) => (
