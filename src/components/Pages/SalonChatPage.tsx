@@ -196,7 +196,7 @@ const ChatPage: React.FC = () => {
   const [streamingMessage, setStreamingMessage] = useState('');
   const [copiedMessageId, setCopiedMessageId] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const streamingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const streamingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });

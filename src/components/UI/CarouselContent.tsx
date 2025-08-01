@@ -23,7 +23,7 @@ const CarouselContent = ({ slideData, KeenSlider, prefersReducedMotion, classNam
   const [sliderRef, setSliderRef] = useState<any>(null);
   
   const containerRef = useRef<HTMLDivElement>(null);
-  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   // Setup keen-slider
   const { useKeenSlider } = KeenSlider;
