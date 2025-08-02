@@ -195,7 +195,7 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
           </nav>
 
           {/* Footer + TopBar widgets */}
-          <div className="p-6 border-t border-royal-gold/20 space-y-4">
+          <div className="p-6 pb-20 lg:pb-6 border-t border-royal-gold/20 space-y-4" style={{ paddingBottom: 'max(5rem, env(safe-area-inset-bottom, 5rem))' }}>
             {/* Enhanced Sidebar Widgets */}
             <div className="flex flex-col gap-4 mt-2">
               {/* Profile Menu */}
@@ -216,7 +216,7 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
                   </button>
                 </div>
                 {/* Centered quote and copyright under profile */}
-                <div className="bg-royal-purple/60 rounded-lg p-4 mt-4 flex flex-col items-center text-center">
+                <div className="bg-royal-purple/60 rounded-lg p-4 pb-8 lg:pb-4 lg:mt-4 mt-1 flex flex-col items-center text-center">
                   <p className="text-royal-champagne text-sm font-sans">
                     "Révèle ta reine intérieure"
                   </p>

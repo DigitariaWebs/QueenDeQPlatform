@@ -60,7 +60,7 @@ const DashboardLayout = () => {
         </div>
         
         {/* Page Content */}
-        <main className="flex-1 overflow-x-hidden overflow-y-auto custom-scrollbar p-4 sm:p-6 lg:p-8">
+        <main className="flex-1 overflow-x-hidden overflow-y-auto custom-scrollbar p-4 sm:p-6 lg:p-8 pb-20 lg:pb-8" style={{ paddingBottom: 'max(5rem, env(safe-area-inset-bottom, 5rem))' }}>
           <div className="royal-wrapper max-w-none">
             <Outlet />
           </div>
