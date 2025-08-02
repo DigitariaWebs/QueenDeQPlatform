@@ -2,12 +2,11 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { AuthProvider } from './contexts/AuthContext';
 import DashboardLayout from './components/Layout/DashboardLayout';
 import DashboardHome from './components/Pages/DashboardHome';
-// import CardsPage from './components/Pages/PoicheChatPage';
+import PoicheChatPage from './components/Pages/PoicheChatPage';
 import QuizPage from './components/Pages/MiroirChatPage';
 import JournalPage from './components/Pages/JournalPage';
 import RoyaumePage from './components/Pages/RoyaumePage';
 import ChatPage from './components/Pages/SalonChatPage';
-import TestPage from './components/Pages/DashboardHome copy';
 
 
 
@@ -18,7 +17,7 @@ const AppContent = () => {
     <Routes>
       <Route path="/" element={<DashboardLayout />}>
         <Route index element={<DashboardHome />} />
-        <Route path="/cards" element={<TestPage />} />
+        <Route path="/cards" element={<PoicheChatPage />} />
         <Route path="/quiz" element={<QuizPage />} />
         <Route path="/journal" element={<JournalPage />} />
         <Route path="/royaume" element={<RoyaumePage />} />
