@@ -216,7 +216,7 @@ const PoicheChatPage = () => {
                           className={`rounded-2xl px-4 py-2 font-raleway text-sm md:text-base whitespace-pre-line break-words max-w-[80vw] md:max-w-lg
                             ${message.isUser
                               ? 'bg-gradient-to-r from-royal-purple/90 to-royal-gold/30 text-white border-2 border-royal-gold shadow-golden'
-                              : 'bg-gradient-to-r from-royal-champagne/80 to-royal-gold/40 text-cabinet-ink border-2 border-royal-gold/30 shadow-royal'}
+                              : 'bg-[#8c8db3] text-white border-2 border-royal-gold/30 shadow-royal'}
                           `}
                         >
                           {message.content}
@@ -224,7 +224,7 @@ const PoicheChatPage = () => {
                           {!message.isUser && (
                             <button
                               onClick={() => copyMessage(message.id, message.content)}
-                              className="ml-2 px-2 py-0.5 rounded-full text-xs bg-royal-gold/80 hover:bg-royal-gold text-cabinet-ink font-semibold border border-royal-gold/60 shadow-golden transition-colors"
+                              className="ml-2 px-2 py-0.5 rounded-full text-xs bg-royal-purple hover:bg-royal-purple/90 text-white font-semibold border border-royal-gold/60 shadow-golden transition-colors"
                             >
                               {copiedMessageId === message.id ? 'Copié' : 'Copier'}
                             </button>

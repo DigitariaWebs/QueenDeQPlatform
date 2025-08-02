@@ -1,188 +1,12 @@
-import React, { useState, useRef, useEffect } from 'react';
-import type { RefObject } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { PaperAirplaneIcon } from '@heroicons/react/24/outline';
 import { chatService, type Message, type StreamChunk } from '../../services/chatService';
 
-interface ChatMessagesProps {
-  messages: Message[];
-  streamingMessage: string;
-  isTyping: boolean;
-  copiedMessageId: string | null;
-  onCopy: (id: string, content: string) => void;
-  messagesEndRef: RefObject<HTMLDivElement | null>;
-}
 
-const ChatMessages: React.FC<ChatMessagesProps> = ({ 
-  messages, 
-  streamingMessage, 
-  isTyping, 
-  copiedMessageId, 
-  onCopy, 
-  messagesEndRef 
-}) => {
-  return (
-    <div className="flex-1 overflow-y-auto custom-scrollbar px-3 sm:px-6 md:px-8 pb-32" style={{scrollbarGutter:'stable', height: 'calc(100vh - 200px)'}}>
-      <div className="max-w-2xl mx-auto flex flex-col gap-4 py-6">
-        <AnimatePresence initial={false}>
-          {messages.map((message) => (
-            <motion.div
-              key={message.id}
-              initial={{ opacity: 0, translateY: 20 }}
-              animate={{ opacity: 1, translateY: 0 }}
-              exit={{ opacity: 0, translateY: 20 }}
-              transition={{ duration: 0.25 }}
-              className={`flex w-full ${message.isUser ? 'justify-end' : 'justify-start'}`}
-            >
-              <div className={`flex items-end gap-2 ${message.isUser ? 'flex-row-reverse' : ''}`}> 
-                {/* Avatar */}
-                {!message.isUser && (
-                  <div className="w-8 h-8 bg-royal-gold rounded-full flex items-center justify-center shadow-sm">
-                    <img src="/assets/icons/teacup.svg" alt="Tasse de Thé Royal" className="w-5 h-5" />
-                  </div>
-                )}
-                {/* Bubble */}
-                <div
-                  className={`rounded-2xl px-4 py-2 font-raleway text-base whitespace-pre-line break-words max-w-[80vw] md:max-w-lg
-                    ${message.isUser
-                      ? 'bg-gradient-to-r from-royal-purple/90 to-royal-gold/30 text-white border-2 border-royal-gold shadow-golden'
-                      : 'bg-gradient-to-r from-royal-champagne/80 to-royal-gold/40 text-cabinet-ink border-2 border-royal-gold/30 shadow-royal'}
-                  `}
-                >
-                  {message.content}
-                  {/* Copy button for bot messages */}
-                  {!message.isUser && (
-                    <button
-                      onClick={() => onCopy(message.id, message.content)}
-                      className="ml-2 px-2 py-0.5 rounded-full text-xs bg-royal-gold/80 hover:bg-royal-gold text-cabinet-ink font-semibold border border-royal-gold/60 shadow-golden transition-colors"
-                    >
-                      {copiedMessageId === message.id ? 'Copié' : 'Copier'}
-                    </button>
-                  )}
-                </div>
-              </div>
-            </motion.div>
-          ))}
-          
-          {/* Typing indicator */}
-          {isTyping && (
-            <motion.div
-              key="typing-indicator"
-              initial={{ opacity: 0, translateY: 20 }}
-              animate={{ opacity: 1, translateY: 0 }}
-              exit={{ opacity: 0, translateY: 20 }}
-              transition={{ duration: 0.25 }}
-              className="flex w-full justify-start"
-            >
-              <div className="flex items-end gap-2">
-                <div className="w-8 h-8 bg-royal-gold rounded-full flex items-center justify-center shadow-sm">
-                  <img src="/assets/icons/teacup.svg" alt="Tasse de Thé Royal" className="w-5 h-5" />
-                </div>
-                <div className="rounded-2xl px-4 py-2 font-raleway text-base text-royal-purple max-w-[80vw] md:max-w-lg flex items-center gap-2 bg-gradient-to-r from-royal-champagne/80 to-royal-gold/40 border-2 border-royal-gold/30 shadow-royal">
-                  <span className="flex gap-1">
-                    <span className="w-2 h-2 bg-royal-gold rounded-full animate-bounce" style={{animationDelay:'0s'}}></span>
-                    <span className="w-2 h-2 bg-royal-gold rounded-full animate-bounce" style={{animationDelay:'0.2s'}}></span>
-                    <span className="w-2 h-2 bg-royal-gold rounded-full animate-bounce" style={{animationDelay:'0.4s'}}></span>
-                  </span>
-                </div>
-              </div>
-            </motion.div>
-          )}
-          
-          {/* Streaming message */}
-          {streamingMessage && (
-            <motion.div
-              key="streaming-message"
-              initial={{ opacity: 0, translateY: 20 }}
-              animate={{ opacity: 1, translateY: 0 }}
-              exit={{ opacity: 0, translateY: 20 }}
-              transition={{ duration: 0.25 }}
-              className="flex w-full justify-start"
-            >
-              <div className="flex items-end gap-2">
-                <div className="w-8 h-8 bg-royal-gold rounded-full flex items-center justify-center shadow-sm">
-                  <img src="/assets/icons/teacup.svg" alt="Tasse de Thé Royal" className="w-5 h-5" />
-                </div>
-                <div className="rounded-2xl px-4 py-2 font-raleway text-base text-royal-purple max-w-[80vw] md:max-w-lg bg-gradient-to-r from-royal-champagne/80 to-royal-gold/40 border-2 border-royal-gold/30 shadow-royal">
-                  {streamingMessage}
-                  <span className="ml-2 animate-pulse text-royal-gold">...</span>
-                </div>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-        <div ref={messagesEndRef} />
-      </div>
-    </div>
-  );
-};
-
-const ChatInputBar: React.FC<{
-  inputValue: string;
-  setInputValue: (v: string) => void;
-  onSend: () => void;
-  isTyping: boolean;
-}> = ({ inputValue, setInputValue, onSend, isTyping }) => {
-  const inputRef = useRef<HTMLTextAreaElement>(null);
-
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      if (!isTyping && inputValue.trim()) {
-        onSend();
-      }
-    }
-  };
-
-  return (
-    <div className="fixed bottom-0 left-0 right-0 lg:left-[300px] bg-royal-purple/20 backdrop-blur-sm border-t border-royal-gold/20 p-4 z-50">
-      <div className="max-w-2xl mx-auto flex items-end gap-3">
-        <div className="flex-1 relative">
-          <textarea
-            ref={inputRef}
-            value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
-            onKeyDown={handleKeyDown}
-            placeholder="Écris ton message ici..."
-            className="w-full px-4 py-3 pr-12 rounded-2xl bg-royal-purple/40 border-2 border-royal-gold/30 text-royal-pearl placeholder-royal-pearl/50 font-raleway resize-none focus:outline-none focus:border-royal-gold focus:ring-2 focus:ring-royal-gold/20 transition-all duration-200"
-            rows={1}
-            style={{ minHeight: '48px', maxHeight: '120px' }}
-          />
-        </div>
-        <button
-          onClick={onSend}
-          disabled={isTyping || !inputValue.trim()}
-          className="px-6 py-3 bg-royal-gold text-royal-purple rounded-2xl font-bold font-raleway hover:bg-royal-gold/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-golden"
-        >
-          {isTyping ? 'Envoi...' : 'Envoyer'}
-        </button>
-      </div>
-    </div>
-  );
-};
-
-const SideNavButtons: React.FC<{
-  onNewConversation: () => void;
-  onShowHistory: () => void;
-}> = ({ onNewConversation, onShowHistory }) => {
-  return (
-    <div className="flex justify-center gap-4 mb-4">
-      <button 
-        onClick={onNewConversation}
-        className="px-4 py-2 bg-royal-purple/60 text-royal-pearl rounded-lg font-medium hover:bg-royal-purple/80 transition-colors border border-royal-gold/30"
-      >
-        Nouvelle conversation
-      </button>
-      <button 
-        onClick={onShowHistory}
-        className="px-4 py-2 bg-royal-purple/60 text-royal-pearl rounded-lg font-medium hover:bg-royal-purple/80 transition-colors border border-royal-gold/30"
-      >
-        Historique
-      </button>
-    </div>
-  );
-};
-
-const ChatPage: React.FC = () => {
+const MiroirChatPage = () => {
+  const [inputValue, setInputValue] = useState('');
+  const [isTyping, setIsTyping] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
@@ -191,19 +15,64 @@ const ChatPage: React.FC = () => {
       timestamp: new Date()
     }
   ]);
-  const [inputValue, setInputValue] = useState('');
-  const [isTyping, setIsTyping] = useState(false);
   const [streamingMessage, setStreamingMessage] = useState('');
   const [copiedMessageId, setCopiedMessageId] = useState<string | null>(null);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
-
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  };
+  const messagesEndRef = useRef<HTMLDivElement | null>(null);
+  const streamingTimeoutRef = useRef<number | null>(null);
 
   useEffect(() => {
-    scrollToBottom();
-  }, [messages, streamingMessage]);
+    return () => {
+      if (streamingTimeoutRef.current) {
+        clearTimeout(streamingTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  // const scrollToBottom = () => {
+  //   messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  // };
+
+  const scrollToBottom = () => {
+    // Use requestAnimationFrame to ensure DOM has updated
+    requestAnimationFrame(() => {
+      const chatContainer = document.querySelector('.chat-messages-container');
+      if (chatContainer) {
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+      }
+    });
+  };
+
+  const handleNewConversation = () => {
+    // Clear any ongoing streaming
+    if (streamingTimeoutRef.current) {
+      clearTimeout(streamingTimeoutRef.current);
+      streamingTimeoutRef.current = null;
+    }
+    
+    // Reset all state
+    setMessages([
+      {
+        id: '1',
+        content: "Bienvenue, ma chère âme. Je suis la Reine-Mère, ta confidente et guide spirituelle. Je suis là pour t'écouter, partager ma sagesse, et t'accompagner dans ton cheminement. Qu'aimerais-tu explorer aujourd'hui ?",
+        isUser: false,
+        timestamp: new Date()
+      }
+    ]);
+    setInputValue('');
+    setIsTyping(false);
+    setStreamingMessage('');
+    setCopiedMessageId(null);
+  };
+
+  const handleShowHistory = () => {
+    console.log('Showing conversation history');
+  };
+
+  const copyMessage = (messageId: string, content: string) => {
+    navigator.clipboard.writeText(content);
+    setCopiedMessageId(messageId);
+    setTimeout(() => setCopiedMessageId(null), 2000);
+  };
 
   const handleSendMessage = async () => {
     if (!inputValue.trim() || isTyping) return;
@@ -219,6 +88,7 @@ const ChatPage: React.FC = () => {
     setInputValue('');
     setIsTyping(true);
     setStreamingMessage('');
+    setTimeout(scrollToBottom, 200); // Increased delay for layout settling
 
     try {
       const currentMessages = [...messages, userMessage];
@@ -227,11 +97,24 @@ const ChatPage: React.FC = () => {
       const handleChunk = (chunk: StreamChunk) => {
         if (chunk.type === 'chunk' && chunk.content) {
           streamingResponse += chunk.content;
+          // Clear any existing timeout
+          if (streamingTimeoutRef.current) {
+            window.clearTimeout(streamingTimeoutRef.current);
+          }
           // Add a small delay before showing streaming to make typing indicator visible
-          setTimeout(() => {
+          streamingTimeoutRef.current = window.setTimeout(() => {
             setStreamingMessage(streamingResponse);
           }, 500);
         } else if (chunk.type === 'complete') {
+          // Clear any pending timeout
+          if (streamingTimeoutRef.current) {
+            window.clearTimeout(streamingTimeoutRef.current);
+            streamingTimeoutRef.current = null;
+          }
+          // Clear streaming message first to avoid duplication
+          setStreamingMessage('');
+          setIsTyping(false);
+          
           const botMessage: Message = {
             id: Date.now().toString(),
             content: chunk.fullMessage || streamingResponse,
@@ -239,9 +122,13 @@ const ChatPage: React.FC = () => {
             timestamp: new Date()
           };
           setMessages(prev => [...prev, botMessage]);
-          setStreamingMessage('');
-          setIsTyping(false);
+          setTimeout(scrollToBottom, 200); // Increased delay for layout settling
         } else if (chunk.type === 'error') {
+          // Clear any pending timeout
+          if (streamingTimeoutRef.current) {
+            window.clearTimeout(streamingTimeoutRef.current);
+            streamingTimeoutRef.current = null;
+          }
           const errorMessage: Message = {
             id: Date.now().toString(),
             content: chunk.fallbackMessage || chunk.error || 'Une erreur est survenue.',
@@ -254,7 +141,8 @@ const ChatPage: React.FC = () => {
         }
       };
 
-      await chatService.sendMessageStream(currentMessages, handleChunk);
+      // Use reine_mere chat type for the miroir experience
+      await chatService.sendMessageStream(currentMessages, handleChunk, 'reine_mere');
     } catch (error) {
       console.error('Error sending message:', error);
       
@@ -272,55 +160,167 @@ const ChatPage: React.FC = () => {
     }
   };
 
-  const copyMessage = (messageId: string, content: string) => {
-    navigator.clipboard.writeText(content);
-    setCopiedMessageId(messageId);
-    setTimeout(() => setCopiedMessageId(null), 2000);
-  };
-
-  const handleNewConversation = () => {
-    // Reset all state
-    setMessages([
-      {
-        id: '1',
-        content: "Bienvenue, ma chère âme. Je suis la Reine-Mère, ta confidente et guide spirituelle. Je suis là pour t'écouter, partager ma sagesse, et t'accompagner dans ton cheminement. Qu'aimerais-tu explorer aujourd'hui ?",
-        isUser: false,
-        timestamp: new Date()
-      }
-    ]);
-    setInputValue('');
-    setIsTyping(false);
-    setStreamingMessage('');
-    setCopiedMessageId(null);
-  };
-
-  const handleShowHistory = () => {
-    // For now, just show an alert. This can be expanded later to show conversation history
-    alert('Fonctionnalité d\'historique à venir ! 👑');
-  };
-
   return (
-    <div className="flex flex-col h-full w-full max-w-4xl mx-auto">
-      <SideNavButtons 
-        onNewConversation={handleNewConversation}
-        onShowHistory={handleShowHistory}
-      />
-      <ChatMessages
-        messages={messages}
-        streamingMessage={streamingMessage}
-        isTyping={isTyping}
-        copiedMessageId={copiedMessageId}
-        onCopy={copyMessage}
-        messagesEndRef={messagesEndRef}
-      />
-      <ChatInputBar
-        inputValue={inputValue}
-        setInputValue={setInputValue}
-        onSend={handleSendMessage}
-        isTyping={isTyping}
-      />
-    </div>
+    <div className="-mt-16 -mx-6 -mb-32  lg:-mt-16 lg:-mr-16 lg:-mb-32 lg:-ml-16 overflow-hidden">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        className="flex flex-col pt-12 lg:pt-1 overflow-hidden h-[93dvh] lg:h-dvh"
+      >
+      {/* Top buttons section - Always visible */}
+      <div className="flex-shrink-0 p-1 mt-1">
+        <div className="max-w-2xl mx-auto">
+          <div className="flex flex-row justify-center gap-2">
+            <button 
+              onClick={handleNewConversation}
+              className="flex-1 min-w-0 px-3 sm:px-6 py-2.5 sm:py-3 bg-royal-purple/60 text-royal-pearl rounded-xl 
+                font-medium hover:bg-royal-purple/80 transition-all duration-200 border border-royal-gold/30 
+                backdrop-blur-sm shadow-soft text-sm sm:text-base whitespace-nowrap overflow-hidden text-ellipsis"
+            >
+              <span className="hidden sm:inline">Nouvelle conversation</span>
+              <span className="sm:hidden">Nouveau</span>
+            </button>
+            <button 
+              onClick={handleShowHistory}
+              className="flex-1 min-w-0 px-3 sm:px-6 py-2.5 sm:py-3 bg-royal-purple/60 text-royal-pearl rounded-xl 
+                font-medium hover:bg-royal-purple/80 transition-all duration-200 border border-royal-gold/30 
+                backdrop-blur-sm shadow-soft text-sm sm:text-base whitespace-nowrap overflow-hidden text-ellipsis"
+            >
+              Historique
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Chat content area */}
+      <div className="flex-1 overflow-hidden p-1">
+        <div className="max-w-5xl mx-auto h-full">
+          <div className="h-full backdrop-blur-sm">
+            {/* Chat Messages */}
+            <div className="h-full px-3 sm:px-6 md:px-8 overflow-y-auto scrollbar-hide chat-messages-container">
+              <div className="max-w-2xl mx-auto flex flex-col gap-4 py-4">
+                <AnimatePresence initial={false}>
+                  {messages.map((message) => (
+                    <motion.div
+                      key={message.id}
+                      initial={{ opacity: 0, translateY: 20 }}
+                      animate={{ opacity: 1, translateY: 0 }}
+                      exit={{ opacity: 0, translateY: 20 }}
+                      transition={{ duration: 0.25 }}
+                      className={`flex w-full ${message.isUser ? 'justify-end' : 'justify-start'}`}
+                    >
+                      <div className={`flex items-end gap-2 ${message.isUser ? 'flex-row-reverse' : ''}`}> 
+                        {/* Bubble */}
+                        <div
+                          className={`rounded-2xl px-4 py-2 font-raleway text-sm md:text-base whitespace-pre-line break-words max-w-[80vw] md:max-w-lg
+                            ${message.isUser
+                              ? 'bg-gradient-to-r from-royal-purple/90 to-royal-gold/30 text-white border-2 border-royal-gold shadow-golden'
+                              : 'bg-[#e8c5c1] text-cabinet-ink border-2 border-royal-gold/30 shadow-royal'}
+                          `}
+                        >
+                          {message.content}
+                          {/* Copy button for bot messages */}
+                          {!message.isUser && (
+                            <button
+                              onClick={() => copyMessage(message.id, message.content)}
+                              className="ml-2 px-2 py-0.5 rounded-full text-xs bg-royal-purple hover:bg-royal-purple/90 text-white font-semibold border border-royal-gold/60 shadow-golden transition-colors"
+                            >
+                              {copiedMessageId === message.id ? 'Copié' : 'Copier'}
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    </motion.div>
+                  ))}
+                  
+                  {/* Typing indicator */}
+                  {isTyping && (
+                    <motion.div
+                      key="typing-indicator"
+                      initial={{ opacity: 0, translateY: 20 }}
+                      animate={{ opacity: 1, translateY: 0 }}
+                      exit={{ opacity: 0, translateY: 20 }}
+                      transition={{ duration: 0.25 }}
+                      className="flex w-full justify-start"
+                    >
+                      <div className="flex items-end">
+                        <div className="rounded-2xl px-4 py-2 font-raleway text-sm md:text-base text-royal-purple max-w-[80vw] md:max-w-lg flex items-center gap-2 bg-[#e8c5c1] border-2 border-royal-gold/30 shadow-royal">
+                          <span className="flex gap-1">
+                            <span className="w-2 h-2 bg-royal-purple rounded-full animate-bounce" style={{animationDelay:'0s'}}></span>
+                            <span className="w-2 h-2 bg-royal-purple rounded-full animate-bounce" style={{animationDelay:'0.2s'}}></span>
+                            <span className="w-2 h-2 bg-royal-purple rounded-full animate-bounce" style={{animationDelay:'0.4s'}}></span>
+                          </span>
+                        </div>
+                      </div>
+                    </motion.div>
+                  )}
+                  
+                  {/* Streaming message */}
+                  {streamingMessage && (
+                    <motion.div
+                      key="streaming-message"
+                      initial={{ opacity: 0, translateY: 20 }}
+                      animate={{ opacity: 1, translateY: 0 }}
+                      exit={{ opacity: 0, translateY: 20 }}
+                      transition={{ duration: 0.25 }}
+                      className="flex w-full justify-start"
+                    >
+                      <div className="flex items-end">
+                        <div className="rounded-2xl px-4 py-2 font-raleway text-sm md:text-base text-royal-purple max-w-[80vw] md:max-w-lg bg-[#e8c5c1] border-2 border-royal-gold/30 shadow-royal">
+                          {streamingMessage}
+                          <span className="ml-2 animate-pulse text-royal-purple">...</span>
+                        </div>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+                <div ref={messagesEndRef} />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      {/* Message Input Component - Always visible */}
+      <div className="flex-shrink-0 m-1 bg-royal-purple/20 backdrop-blur-sm border-t border-royal-gold/20 p-2 rounded-2xl shadow-soft">
+        <div className="max-w-2xl mx-auto flex items-stretch gap-3">
+          <div className="flex-1 relative">
+            <textarea
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                  e.preventDefault();
+                  handleSendMessage();
+                }
+              }}
+              placeholder="Ton message..."
+              className="w-full h-12 px-4 py-3 pr-12 rounded-2xl bg-royal-purple/40 border-2
+                border-royal-gold/30 text-royal-pearl placeholder-royal-pearl/50 font-raleway resize-none
+                focus:outline-none focus:border-royal-gold focus:ring-2 focus:ring-royal-gold/20 transition-all
+                duration-200 overflow-hidden scrollbar-hide flex items-center text-sm md:text-base"
+              rows={1}
+              style={{ lineHeight: '1.2' }}
+            />
+          </div>
+          <button
+            onClick={handleSendMessage}
+            disabled={isTyping || !inputValue.trim()}
+            className="px-4 lg:px-6 h-12 bg-royal-gold text-royal-purple rounded-2xl font-bold font-raleway
+              hover:bg-royal-gold/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200
+              shadow-golden flex items-center justify-center"
+          >
+            <span className="hidden lg:inline">
+              {isTyping ? 'Envoi...' : 'Envoyer'}
+            </span>
+            <PaperAirplaneIcon className="w-5 h-5 lg:hidden" />
+          </button>
+        </div>
+      </div>
+    </motion.div>
+  </div>
   );
 };
 
-export default ChatPage;
+export default MiroirChatPage;

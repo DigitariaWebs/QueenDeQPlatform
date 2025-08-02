@@ -22,19 +22,19 @@ interface SidebarProps {
 const navItems = [
   {
     name: 'Cards',
-    path: '/cards',
+    path: '/poiche',
     icon: RectangleStackIcon,
     label: 'Ta pioche'
   },
   {
     name: 'Quiz',
-    path: '/quiz',
+    path: '/miroir',
     icon: ClipboardDocumentListIcon,
     label: 'Miroir, Miroir!'
   },
   {
     name: 'Chat',
-    path: '/chat',
+    path: '/salon',
     icon: ChatBubbleLeftRightIcon,
     label: 'Salon de thé'
   },

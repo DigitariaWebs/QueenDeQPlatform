@@ -3,10 +3,10 @@ import { AuthProvider } from './contexts/AuthContext';
 import DashboardLayout from './components/Layout/DashboardLayout';
 import DashboardHome from './components/Pages/DashboardHome';
 import PoicheChatPage from './components/Pages/PoicheChatPage';
-import QuizPage from './components/Pages/MiroirChatPage';
+import MiroirChatPage from './components/Pages/MiroirChatPage';
 import JournalPage from './components/Pages/JournalPage';
 import RoyaumePage from './components/Pages/RoyaumePage';
-import ChatPage from './components/Pages/SalonChatPage';
+import SalonChatPage from './components/Pages/SalonChatPage';
 
 
 
@@ -17,11 +17,11 @@ const AppContent = () => {
     <Routes>
       <Route path="/" element={<DashboardLayout />}>
         <Route index element={<DashboardHome />} />
-        <Route path="/cards" element={<PoicheChatPage />} />
-        <Route path="/quiz" element={<QuizPage />} />
+        <Route path="/poiche" element={<PoicheChatPage />} />
+        <Route path="/miroir" element={<MiroirChatPage />} />
         <Route path="/journal" element={<JournalPage />} />
         <Route path="/royaume" element={<RoyaumePage />} />
-        <Route path="/chat" element={<ChatPage />} />
+        <Route path="/salon" element={<SalonChatPage />} />
         
 
       </Route>
