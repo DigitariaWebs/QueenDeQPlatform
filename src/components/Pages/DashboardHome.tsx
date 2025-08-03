@@ -16,21 +16,24 @@ const mysteryFeatures = [
     title: 'Ta pioche',
     description: 'Découvre les archétypes masculins que tu attires pour commencer ton voyage de découverte.',
     chatPrompt: "Tu veux qu'on parle de tes cartes?",
-    path: '/cards'
+    path: '/cards',
+    image: '/assets/cards/TaPioche.svg'
   },
   {
     icon: <HeartIcon className="w-12 h-12" />,
     title: 'Miroir, Miroir!',
     description: 'Découvre ton type de Queen : coeur, carreau, trèfle ou pique, tes forces, tes défis, ton langage de l\'amour et plus encore',
     chatPrompt: "T'es quel genre de Queen, toi, vraiment?",
-    path: '/quiz'
+    path: '/quiz',
+    image: '/assets/cards/MiroirMiroir.svg'
   },
   {
     icon: <UserGroupIcon className="w-12 h-12" />,
     title: 'Salon de thé',
     description: 'Découvre des rituels qui pourront te faire déconnecter de relations toxiques et te reconnecter à la Queen en toi.',
     chatPrompt: "Et si on mettait les cartes sur table?",
-    path: '/chat'
+    path: '/chat',
+    image: '/assets/cards/SalonDeThe.svg'
   }
 ];
 
@@ -86,6 +89,7 @@ const DashboardHome = () => {
                 path={feature.path}
                 isFlipped={flippedCardIndex === index}
                 onFlip={() => handleCardFlip(index)}
+                image={feature.image}
               />
             </div>
           ))}

@@ -10,9 +10,10 @@ interface MysteryCardProps {
   path: string;
   isFlipped: boolean;
   onFlip: () => void;
+  image: string;
 }
 
-export const MysteryCard: React.FC<MysteryCardProps> = ({ icon, title, description, index, path, isFlipped, onFlip }) => {
+export const MysteryCard: React.FC<MysteryCardProps> = ({ icon, title, description, index, path, isFlipped, onFlip, image }) => {
   const [isTouchDevice, setIsTouchDevice] = useState(false);
 
   const handleClick = () => {
@@ -64,25 +65,16 @@ export const MysteryCard: React.FC<MysteryCardProps> = ({ icon, title, descripti
       >
         {/* Front Face */}
         <div 
-          className="absolute inset-0 w-full h-full bg-gradient-to-br from-royal-gold/90 via-rose-champagne/90 to-royal-gold/90 backdrop-blur-md rounded-2xl p-6 sm:p-8 lg:p-10 flex flex-col justify-center items-center text-center backface-hidden border border-royal-gold/30 shadow-2xl"
+          className="absolute inset-0 w-full h-full rounded-2xl backface-hidden border border-royal-gold/30 shadow-2xl overflow-hidden"
           style={{ 
+            backgroundImage: `url('${image}')`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
             backfaceVisibility: 'hidden',
             WebkitBackfaceVisibility: 'hidden',
             transform: 'rotateY(0deg)'
           }}
         >
-          <div className="text-royal-purple mb-6 sm:mb-8 lg:mb-10 transform transition-all duration-300 hover:scale-110 hover:text-royal-gold drop-shadow-[0_2px_6px_rgba(0,0,0,0.10)] flex justify-center items-center">
-            <div className="w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 flex items-center justify-center">
-              {icon}
-            </div>
-          </div>
-          <h4 className="font-serif text-xl sm:text-2xl lg:text-3xl font-bold text-royal-purple mb-6 sm:mb-8 lg:mb-10 transition-colors duration-300 drop-shadow-[0_2px_6px_rgba(0,0,0,0.10)] leading-tight text-center px-2">
-            {title}
-          </h4>
-          <div className="text-royal-purple/80 text-sm sm:text-base font-sans italic drop-shadow-[0_2px_6px_rgba(0,0,0,0.10)] text-center">
-            <span className="hidden sm:inline">Survole pour découvrir</span>
-            <span className="sm:hidden">Touche pour découvrir</span>
-          </div>
           <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-transparent via-royal-gold/10 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
         </div>
         {/* Back Face */}
