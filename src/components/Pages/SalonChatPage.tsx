@@ -168,6 +168,18 @@ const SalonChatPage = () => {
         transition={{ duration: 0.6 }}
         className="flex flex-col pt-12 lg:pt-1 overflow-hidden h-[93dvh] lg:h-dvh"
       >
+      {/* Bot identifier banner */}
+      <div className="flex-shrink-0 p-2">
+        <div className="max-w-2xl mx-auto">
+          <div className="flex items-center justify-center py-2 px-4 bg-[#4b2e43] border-2 border-royal-gold/30 rounded-2xl shadow-royal">
+            <div className="flex flex-col items-center [&_*]:!text-[#d6ae60]">
+              <span className="text-lg md:text-xl font-bold">Salon de Thé</span>
+              <span className="text-xs md:text-sm opacity-80">Rituel de reprise de pouvoir</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Top buttons section - Always visible */}
       <div className="flex-shrink-0 p-1 mt-1">
         <div className="max-w-2xl mx-auto">
