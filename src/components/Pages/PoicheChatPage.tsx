@@ -196,7 +196,7 @@ const PoicheChatPage = () => {
       {/* Chat content area */}
       <div className="flex-1 overflow-hidden p-1">
         <div className="max-w-5xl mx-auto h-full">
-          <div className="h-full backdrop-blur-sm">
+          <div className="h-full">
             {/* Chat Messages */}
             <div className="h-full px-3 sm:px-6 md:px-8 overflow-y-auto scrollbar-hide chat-messages-container">
               <div className="max-w-2xl mx-auto flex flex-col gap-4 py-4">

@@ -41,8 +41,8 @@ export const MysteryCard: React.FC<MysteryCardProps> = ({ icon, title, descripti
   return (
     <motion.div 
       className="relative aspect-[3/5] w-full max-w-48 sm:max-w-60 lg:max-w-72 mx-auto cursor-pointer mystery-card-particles rounded-2xl overflow-hidden touch-manipulation select-none"
-      initial={{ opacity: 0, y: 50, rotateZ: (index - 1) * 5 }}
-      whileInView={{ opacity: 1, y: 0, rotateZ: (index - 1) * 2 }}
+      initial={{ opacity: 1, y: 0, rotateZ: (index - 1) * 2 }}
+      animate={{ opacity: 1, y: 0, rotateZ: (index - 1) * 2 }}
       whileHover={{ 
         y: -10, 
         scale: 1.05, 
@@ -50,8 +50,7 @@ export const MysteryCard: React.FC<MysteryCardProps> = ({ icon, title, descripti
         boxShadow: "0 20px 40px rgba(214, 174, 96, 0.3)"
       }}
       whileTap={{ scale: 0.98 }}
-      viewport={{ once: true, amount: 0.5 }}
-      transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1], delay: index * 0.1 }}
+      transition={{ duration: 0, delay: 0 }}
       onClick={handleClick}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}

@@ -52,8 +52,8 @@ const DashboardHome = () => {
       transition={{ duration: 0.6 }}
       className="first:pt-0 last:pb-0 relative z-10"
     >
-      {/* Welcome Message (left-aligned) */}
-      <div className="mb-16 flex flex-col items-start">
+      {/* Welcome Message (left-aligned) - Hidden on mobile */}
+      <div className="mb-16 flex-col items-start hidden lg:flex">
         <h2 className="text-3xl font-serif font-bold text-royal-gold mb-5">
           Bonjour, Client
         </h2>

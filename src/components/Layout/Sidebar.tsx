@@ -8,7 +8,7 @@ import {
   ShoppingBagIcon,
   ClipboardDocumentListIcon,
   XMarkIcon,
-
+  InformationCircleIcon,
   SparklesIcon,
   UserCircleIcon
 } from '@heroicons/react/24/outline';
@@ -57,6 +57,13 @@ const navItems = [
     url: 'https://www.redbubble.com/fr/people/QueensdeQ/shop?asc=u',
     icon: ShoppingBagIcon,
     label: 'La boutique'
+  },
+  {
+    name: 'About',
+    external: true,
+    url: 'https://queen-de-q.vercel.app',
+    icon: InformationCircleIcon,
+    label: 'À propos'
   }
 ];
 
@@ -135,9 +142,8 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
                     className="h-8 w-auto drop-shadow-md"
                   />
                 </div>
-                <div>
+                <div >
                   <h1 className="text-royal-pearl font-serif text-xl font-bold">Queen de Q</h1>
-                  <p className="text-royal-champagne text-sm">Dashboard</p>
                 </div>
               </Link>
               <button
@@ -216,14 +222,14 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
                   </button>
                 </div>
                 {/* Centered quote and copyright under profile */}
-                <div className="bg-royal-purple/60 rounded-lg p-4 pb-8 lg:pb-4 lg:mt-4 mt-1 flex flex-col items-center text-center">
+                {/* <div className="bg-royal-purple/60 rounded-lg p-4 pb-8 lg:pb-4 lg:mt-4 mt-1 flex flex-col items-center text-center">
                   <p className="text-royal-champagne text-sm font-sans">
-                    "Révèle ta reine intérieure"
+                    "Révèle ta puissance intérieure"
                   </p>
                   <p className="text-royal-pearl/60 text-xs mt-1">
                     © 2025 Queen de Q
                   </p>
-                </div>
+                </div> */}
               </div>
             </div>
           </div>
