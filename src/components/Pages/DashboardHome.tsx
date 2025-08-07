@@ -16,7 +16,7 @@ const mysteryFeatures = [
     title: 'Ta pioche',
     description: 'Découvre les archétypes masculins que tu attires pour commencer ton voyage de découverte.',
     chatPrompt: "Tu veux qu'on parle de tes cartes?",
-    path: '/cards',
+    path: '/poiche',
     image: '/assets/cards/TaPioche.svg'
   },
   {
@@ -24,7 +24,7 @@ const mysteryFeatures = [
     title: 'Miroir, Miroir!',
     description: 'Découvre ton type de Queen : coeur, carreau, trèfle ou pique, tes forces, tes défis, ton langage de l\'amour et plus encore',
     chatPrompt: "T'es quel genre de Queen, toi, vraiment?",
-    path: '/quiz',
+    path: '/salon',
     image: '/assets/cards/MiroirMiroir.svg'
   },
   {
