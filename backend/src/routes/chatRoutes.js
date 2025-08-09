@@ -1,9 +1,112 @@
 import express from 'express';
 import { body, validationResult } from 'express-validator';
-import { callOpenAI } from '../config/ai.js';
+import { callOpenAI, extractSelectedArchetypeName, getArchetypeByName } from '../config/ai.js';
 
 
 const router = express.Router();
+
+// Render a readable, sectioned portrait using only JSON fields (no paraphrasing)
+const renderArchetypePortrait = (a) => {
+  if (!a) return '';
+
+  const get = (k) => (a[k] !== undefined && a[k] !== null ? String(a[k]) : '');
+  const has = (k) => a[k] !== undefined && a[k] !== null && String(a[k]).trim().length > 0;
+  const title = `${get('nom')}${has('surnom') ? ` — ${get('surnom')}` : ''}`;
+  const type = [a.niveau, 'de', a.famille].filter(Boolean).join(' ');
+
+  const sections = [];
+  sections.push(`🎴 ${title}`);
+  sections.push(`Type: ${type}`);
+  if (has('surnom_complementaire')) sections.push(`Alias: ${get('surnom_complementaire')}`);
+
+  if (has('ce_quil_donne_au_debut') || has('ce_quil_veut_vraiment')) {
+    sections.push('');
+    sections.push('📝 Profil');
+    if (has('ce_quil_donne_au_debut')) sections.push(`• Ce qu'il donne au début: ${get('ce_quil_donne_au_debut')}`);
+    if (has('ce_quil_veut_vraiment')) sections.push(`• Ce qu'il veut vraiment: ${get('ce_quil_veut_vraiment')}`);
+  }
+
+  if (has('comportement_relationnel_typique')) {
+    sections.push('');
+    sections.push('🎮 Comportements typiques');
+    sections.push(get('comportement_relationnel_typique'));
+  }
+
+  if (has('besoin_de_controle') || has('perte_de_controle')) {
+    sections.push('');
+    sections.push('🎚 Contrôle');
+    if (has('besoin_de_controle')) sections.push(`• Besoin de contrôle: ${get('besoin_de_controle')}`);
+    if (has('perte_de_controle')) sections.push(`• Perte de contrôle: ${get('perte_de_controle')}`);
+  }
+
+  if (Array.isArray(a.red_flags_recurrents) && a.red_flags_recurrents.length) {
+    sections.push('');
+    sections.push('🚩 Red flags récurrents');
+    for (const rf of a.red_flags_recurrents) sections.push(`• ${rf}`);
+  }
+
+  if (has('leurres_ou_illusions')) {
+    sections.push('');
+    sections.push('🎭 Leurres / illusions');
+    sections.push(get('leurres_ou_illusions'));
+  }
+
+  if (has('pourquoi_difficile_a_quitter')) {
+    sections.push('');
+    sections.push('🧲 Pourquoi difficile à quitter');
+    sections.push(get('pourquoi_difficile_a_quitter'));
+  }
+
+  if (has('ce_que_ca_fait_vivre_a_la_queen')) {
+    sections.push('');
+    sections.push('💥 Ce que ça te fait vivre');
+    sections.push(get('ce_que_ca_fait_vivre_a_la_queen'));
+  }
+
+  if (has('talon_dachille')) {
+    sections.push('');
+    sections.push("🕳 Talon d'Achille");
+    sections.push(get('talon_dachille'));
+  }
+
+  if (has('face_cachee')) {
+    sections.push('');
+    sections.push('🫥 Face cachée');
+    sections.push(get('face_cachee'));
+  }
+
+  if (has('evolution_possible')) {
+    sections.push('');
+    sections.push('🌱 Évolution possible');
+    sections.push(get('evolution_possible'));
+  }
+
+  if (has('carte_miroir')) {
+    sections.push('');
+    sections.push('🪞 Carte miroir');
+    sections.push(get('carte_miroir'));
+  }
+
+  if (has('conseil_reine_mere')) {
+    sections.push('');
+    sections.push('👑 Conseil Reine-Mère');
+    sections.push(get('conseil_reine_mere'));
+  }
+
+  if (has('phrase_flush_royal')) {
+    sections.push('');
+    sections.push('🚽 Phrase Flush Royal');
+    sections.push(get('phrase_flush_royal'));
+  }
+
+  if (has('verdict_final')) {
+    sections.push('');
+    sections.push('⚖️ Verdict final');
+    sections.push(get('verdict_final'));
+  }
+
+  return sections.join('\n');
+};
 
 // Validation middleware for chat messages
 const validateChatMessage = [
@@ -49,21 +152,42 @@ router.post('/chat', validateChatMessage, async (req, res) => {
       });
     }
 
-    const { messages, chatType = 'reine_mere' } = req.body;
+  const { messages, chatType = 'reine_mere' } = req.body;
 
     // Call OpenAI with appropriate configuration
     const response = await callOpenAI(messages, false, chatType);
     const aiMessage = response.choices[0].message.content;
     console.log('OpenAI response received, length:', aiMessage.length);
 
+    // If Poiche, try to capture the selected archetype name from the model output
+    let selectionName = null;
+    let selectedArchetype = null;
+    if (chatType === 'poiche') {
+      const parsed = extractSelectedArchetypeName(aiMessage) || null;
+      if (parsed) {
+        selectedArchetype = getArchetypeByName(parsed) || null;
+        // Use canonical name from JSON for display if found
+        selectionName = selectedArchetype?.nom || parsed;
+        console.log('Poiche selection parsed:', selectionName, 'found:', !!selectedArchetype);
+      }
+    }
+
+    // If we have a selected archetype, append a server-rendered portrait to the assistant message
+    const finalContent = selectedArchetype
+      ? `${aiMessage}\n\n—\n${renderArchetypePortrait(selectedArchetype)}`
+      : aiMessage;
+
     const responseData = {
       success: true,
       message: {
         role: 'assistant',
-        content: aiMessage,
+        content: finalContent,
         timestamp: new Date().toISOString()
       },
-      usage: response.usage
+      usage: response.usage,
+      // Non-breaking extras for Poiche selection flow
+      selectionName,
+      archetype: selectedArchetype
     };
 
     console.log('Sending response:', {
@@ -120,7 +244,7 @@ router.post('/chat/stream', validateChatMessage, async (req, res) => {
     // Call OpenAI with streaming and appropriate chat type
     const stream = await callOpenAI(messages, true, chatType);
 
-    let fullResponse = '';
+  let fullResponse = '';
 
     for await (const chunk of stream) {
       const content = chunk.choices[0]?.delta?.content;
@@ -137,10 +261,27 @@ router.post('/chat/stream', validateChatMessage, async (req, res) => {
       }
     }
 
-    // Send completion signal
+    // If Poiche, try to capture the selected archetype from the full streamed message
+    let selectionName = null;
+    let selectedArchetype = null;
+    if (chatType === 'poiche') {
+      const parsed = extractSelectedArchetypeName(fullResponse) || null;
+      if (parsed) {
+        selectedArchetype = getArchetypeByName(parsed) || null;
+        selectionName = selectedArchetype?.nom || parsed;
+        if (selectedArchetype) {
+          // Append a server-rendered portrait to the final message for clients that only read the completion
+          fullResponse = `${fullResponse}\n\n—\n${renderArchetypePortrait(selectedArchetype)}`;
+        }
+      }
+    }
+
+    // Send completion signal (with optional selection metadata)
     const completionData = {
       type: 'complete',
       fullMessage: fullResponse,
+      selectionName,
+      archetype: selectedArchetype,
       timestamp: new Date().toISOString()
     };
     console.log('Stream complete, total length:', fullResponse.length);
