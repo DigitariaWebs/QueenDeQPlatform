@@ -16,7 +16,7 @@ const slideData = [
   },
   {
     id: 'spread',
-    illustration: '/assets/illustrations/spread.svg',
+    illustration: '/assets/illustrations/explore.svg',
     title: 'Tirage',
     caption: 'Utilise le tirage 3 cartes pour une méditation guidée.',
     ariaLabel: 'Tirage - découvre comment faire un tirage de carte'
@@ -177,7 +177,7 @@ const CardInstructionCarousel = ({ className = '' }: CardInstructionCarouselProp
                 {/* Icon Container */}
                 <div className="relative mb-4 flex justify-center flex-shrink-0">
                   <div className="w-20 h-20 bg-gradient-to-br from-royal-gold/20 to-royal-champagne/20 rounded-full flex items-center justify-center group-hover:scale-110 transition-all duration-300">
-                    <div className="w-16 h-16 bg-gradient-to-br from-royal-gold/80 to-royal-champagne/80 rounded-full flex items-center justify-center shadow-lg">
+                    <div className="w-16 h-16 bg-royal-gold rounded-full flex items-center justify-center shadow-lg">
                       <img 
                         src={slide.illustration} 
                         alt="" 

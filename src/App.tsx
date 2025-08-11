@@ -1,11 +1,9 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { AuthProvider } from './contexts/AuthContext';
 import DashboardLayout from './components/Layout/DashboardLayout';
 import DashboardHome from './components/Pages/DashboardHome';
 import PoicheChatPage from './components/Pages/PoicheChatPage';
 import MiroirChatPage from './components/Pages/MiroirChatPage';
 import JournalPage from './components/Pages/JournalPage';
-import RoyaumePage from './components/Pages/RoyaumePage';
 import SalonChatPage from './components/Pages/SalonChatPage';
 
 
@@ -20,7 +18,6 @@ const AppContent = () => {
         <Route path="/poiche" element={<PoicheChatPage />} />
         <Route path="/miroir" element={<MiroirChatPage />} />
         <Route path="/journal" element={<JournalPage />} />
-        <Route path="/royaume" element={<RoyaumePage />} />
         <Route path="/salon" element={<SalonChatPage />} />
         
 
@@ -32,11 +29,9 @@ const AppContent = () => {
 
 function App() {
   return (
-    <AuthProvider>
-      <Router>
-        <AppContent />
-      </Router>
-    </AuthProvider>
+    <Router>
+      <AppContent />
+    </Router>
   );
 }
 
