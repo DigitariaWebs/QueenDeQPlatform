@@ -13,6 +13,7 @@ export interface ChatRequest {
     content: string;
   }[];
   chatType?: 'reine_mere' | 'poiche';
+  sessionId?: string;
 }
 
 export interface ChatResponse {
@@ -25,6 +26,30 @@ export interface ChatResponse {
   usage?: any;
   error?: string;
   fallbackMessage?: string;
+}
+
+export interface ChatSessionSummary {
+  _id?: string;
+  id?: string;
+  title: string;
+  chatType?: 'reine_mere' | 'poiche';
+  messageCount?: number;
+  createdAt?: string;
+  updatedAt?: string;
+  lastMessageAt?: string;
+}
+
+export interface ChatSessionWithMessages {
+  _id?: string;
+  id?: string;
+  title: string;
+  chatType?: 'reine_mere' | 'poiche';
+  messages: Array<{
+    _id?: string;
+    content: string;
+    sender: 'user' | 'assistant';
+    createdAt?: string;
+  }>;
 }
 
 export interface StreamChunk {
@@ -63,12 +88,46 @@ class ChatService {
     }));
   }
 
+  async createSession(chatType: 'reine_mere' | 'poiche', title?: string): Promise<ChatSessionSummary> {
+    const response = await fetch(`/api/ai/sessions`, {
+      method: 'POST',
+      headers: getAuthHeaders(),
+      body: JSON.stringify({ title, chatType })
+    });
+    const data = await response.json();
+    if (!response.ok || !data.success) throw new Error(data.error || 'Failed to create session');
+    return data.session as ChatSessionSummary;
+  }
+
+  async listSessions(): Promise<ChatSessionSummary[]> {
+    const response = await fetch(`/api/ai/sessions`, {
+      headers: getAuthHeaders()
+    });
+    const data = await response.json();
+    if (!response.ok || !data.success) throw new Error(data.error || 'Failed to fetch sessions');
+    return data.sessions as ChatSessionSummary[];
+  }
+
+  async getSession(sessionId: string): Promise<ChatSessionWithMessages> {
+    const response = await fetch(`/api/ai/sessions/${sessionId}`, {
+      headers: getAuthHeaders()
+    });
+    const data = await response.json();
+    if (!response.ok || !data.success) throw new Error(data.error || 'Failed to fetch session');
+    return data.session as ChatSessionWithMessages;
+  }
+
   // Standard chat (non-streaming)
-  async sendMessage(messages: Message[], chatType: 'reine_mere' | 'poiche' = 'reine_mere'): Promise<ChatResponse> {
+  async sendMessage(
+    messages: Message[],
+    chatType: 'reine_mere' | 'poiche' = 'reine_mere',
+    sessionId?: string
+  ): Promise<ChatResponse> {
     try {
       console.log('Sending chat request:', {
         messages: this.convertMessagesToAPIFormat(messages),
-        chatType: chatType
+        chatType: chatType,
+        sessionId
       });
 
       const response = await fetch(`${API_BASE}/chat`, {
@@ -76,7 +135,8 @@ class ChatService {
         headers: getAuthHeaders(),
         body: JSON.stringify({
           messages: this.convertMessagesToAPIFormat(messages),
-          chatType: chatType
+          chatType: chatType,
+          sessionId
         })
       });
 
@@ -104,12 +164,14 @@ class ChatService {
   async sendMessageStream(
     messages: Message[],
     onChunk: (chunk: StreamChunk) => void,
-    chatType: 'reine_mere' | 'poiche' = 'reine_mere'
+    chatType: 'reine_mere' | 'poiche' = 'reine_mere',
+    sessionId?: string
   ): Promise<void> {
     try {
       console.log('Sending streaming request:', {
         messages: this.convertMessagesToAPIFormat(messages),
-        chatType: chatType
+        chatType: chatType,
+        sessionId
       });
 
       const response = await fetch(`${API_BASE}/chat/stream`, {
@@ -117,7 +179,8 @@ class ChatService {
         headers: getAuthHeaders(),
         body: JSON.stringify({
           messages: this.convertMessagesToAPIFormat(messages),
-          chatType: chatType
+          chatType: chatType,
+          sessionId
         })
       });
 

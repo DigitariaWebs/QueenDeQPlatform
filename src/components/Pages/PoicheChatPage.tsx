@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { PaperAirplaneIcon } from '@heroicons/react/24/outline';
-import { chatService, type Message, type StreamChunk } from '../../services/chatService';
+import { chatService, type Message, type StreamChunk, type ChatSessionSummary, type ChatSessionWithMessages } from '../../services/chatService';
 
 
 const PoicheChatPage = () => {
@@ -19,6 +19,9 @@ const PoicheChatPage = () => {
   const [copiedMessageId, setCopiedMessageId] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const streamingTimeoutRef = useRef<number | null>(null);
+  const [currentSessionId, setCurrentSessionId] = useState<string | null>(null);
+  const [showHistory, setShowHistory] = useState(false);
+  const [sessions, setSessions] = useState<ChatSessionSummary[]>([]);
 
   useEffect(() => {
     return () => {
@@ -42,7 +45,7 @@ const PoicheChatPage = () => {
     });
   };
 
-  const handleNewConversation = () => {
+  const handleNewConversation = async () => {
     // Clear any ongoing streaming
     if (streamingTimeoutRef.current) {
       clearTimeout(streamingTimeoutRef.current);
@@ -62,10 +65,42 @@ const PoicheChatPage = () => {
     setIsTyping(false);
     setStreamingMessage('');
     setCopiedMessageId(null);
+    try {
+      const session = await chatService.createSession('poiche');
+      const id = (session._id || (session as any).id) as string;
+      setCurrentSessionId(id);
+    } catch (e) {
+      console.error('Failed to create session', e);
+    }
   };
 
-  const handleShowHistory = () => {
-    console.log('Showing conversation history');
+  const handleShowHistory = async () => {
+    try {
+      const all = await chatService.listSessions();
+      const onlyPoiche = all.filter(s => s.chatType === 'poiche');
+      setSessions(onlyPoiche);
+      setShowHistory(true);
+    } catch (e) {
+      console.error('Failed to load sessions', e);
+    }
+  };
+
+  const loadSession = async (sessionId: string) => {
+    try {
+      const session = await chatService.getSession(sessionId) as ChatSessionWithMessages;
+      setCurrentSessionId(sessionId);
+      const converted: Message[] = session.messages.map((m, idx) => ({
+        id: String(idx + 1),
+        content: m.content,
+        isUser: m.sender === 'user',
+        timestamp: new Date(m.createdAt || Date.now())
+      }));
+      setMessages(converted);
+      setShowHistory(false);
+      setTimeout(scrollToBottom, 200);
+    } catch (e) {
+      console.error('Failed to load session messages', e);
+    }
   };
 
   const copyMessage = (messageId: string, content: string) => {
@@ -142,7 +177,7 @@ const PoicheChatPage = () => {
       };
 
       // Use poiche chat type for this page
-      await chatService.sendMessageStream(currentMessages, handleChunk, 'poiche');
+      await chatService.sendMessageStream(currentMessages, handleChunk, 'poiche', currentSessionId || undefined);
     } catch (error) {
       console.error('Error sending message:', error);
       
@@ -177,6 +212,30 @@ const PoicheChatPage = () => {
               <span className="text-xs md:text-sm opacity-80">La lecture intuitive de ta carte</span>
             </div>
           </div>
+          {showHistory && (
+            <div className="mt-3 bg-royal-purple/30 border border-royal-gold/30 rounded-xl p-3 max-h-60 overflow-y-auto">
+              {sessions.length === 0 ? (
+                <div className="text-sm text-royal-pearl/70">Aucune conversation</div>
+              ) : (
+                <ul className="space-y-2">
+                  {sessions.map((s) => {
+                    const id = (s._id || (s as any).id) as string;
+                    return (
+                      <li key={id}>
+                        <button
+                          onClick={() => loadSession(id)}
+                          className="w-full text-left px-3 py-2 rounded-lg bg-royal-purple/40 hover:bg-royal-purple/60 border border-royal-gold/30 text-sm"
+                        >
+                          {s.title || 'Conversation'}
+                          <span className="ml-2 text-xs opacity-70">{new Date(s.updatedAt || s.createdAt || Date.now()).toLocaleString()}</span>
+                        </button>
+                      </li>
+                    );
+                  })}
+                </ul>
+              )}
+            </div>
+          )}
         </div>
       </div>
 
