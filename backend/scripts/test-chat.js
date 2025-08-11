@@ -1,5 +1,5 @@
 import 'dotenv/config';
-import { callOpenAI } from './src/config/ai.js';
+import { callOpenAI } from '../src/config/ai.js';
 
 async function testOpenAI() {
   try {

@@ -16,9 +16,13 @@ async function testBothChatSystems() {
   };
   
   try {
-    const ritualResponse = await fetch('http://localhost:5000/api/ai/chat', {
+    const ritualResponse = await fetch('http://localhost:5001/api/ai/chat', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer test-token',
+        'x-user-id': '68989ac1a5af8810fb2ae4c2'
+      },
       body: JSON.stringify(ritualTest)
     });
     
@@ -54,9 +58,13 @@ async function testBothChatSystems() {
   };
   
   try {
-    const poicheResponse = await fetch('http://localhost:5000/api/ai/chat', {
+    const poicheResponse = await fetch('http://localhost:5001/api/ai/chat', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer test-token',
+        'x-user-id': '68989ac1a5af8810fb2ae4c2'
+      },
       body: JSON.stringify(poicheTest)
     });
     

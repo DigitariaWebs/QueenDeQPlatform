@@ -2,12 +2,16 @@ import 'dotenv/config';
 import 'express-async-errors';
 
 import express from 'express';
+import connectDB from './config/database.js';
 import { setupMiddleware } from './config/middleware.js';
 import { setupRoutes } from './config/routes.js';
 import notFound from './middleware/notFound.js';
 import errorHandler from './middleware/errorHandler.js';
 
 const app = express();
+
+// Connect to MongoDB
+await connectDB();
 
 // Setup middleware
 setupMiddleware(app);

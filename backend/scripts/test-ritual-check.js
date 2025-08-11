@@ -1,11 +1,16 @@
 import fs from 'fs';
 import path from 'path';
+import { fileURLToPath } from 'url';
+
+// Get __dirname equivalent for ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 console.log('🔍 Testing Ritual Data Loading...\n');
 
 // Test 1: Check if rituals file exists and can be loaded
 try {
-  const ritualsPath = path.join(__dirname, 'rituels_salon_de_the_beta.json');
+  const ritualsPath = path.join(__dirname, '..', 'src', 'data', 'rituels_salon_de_the_beta.json');
   console.log('📁 Looking for rituals file at:', ritualsPath);
   
   if (fs.existsSync(ritualsPath)) {

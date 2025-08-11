@@ -7,7 +7,9 @@
     "start": "node src/index.js",
     "dev": "nodemon src/index.js",
     "test-chat": "node test-chat.js",
-    "full-dev": "nodemon src/index.js"
+    "full-dev": "nodemon src/index.js",
+    "seed": "node scripts/seedDatabase.js",
+    "seed:dev": "cross-env NODE_ENV=development node scripts/seedDatabase.js"
   },
   "dependencies": {
     "axios": "^0.21.1",
@@ -31,6 +33,7 @@
     "openai": "^4.104.0",
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",
+    "stripe": "^18.4.0",
     "winston": "^3.17.0"
   },
   "devDependencies": {
