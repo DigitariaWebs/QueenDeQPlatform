@@ -3,48 +3,12 @@ import { body, validationResult } from 'express-validator';
 import { callOpenAI, extractSelectedArchetypeName, getArchetypeByName } from '../config/ai.js';
 import ChatService from '../services/ChatService.js';
 import { User, ChatSession, Message } from '../models/index.js';
+import authenticate from '../middleware/auth.js';
 
 const router = express.Router();
 
-// Middleware to extract user from token (you'll need to implement your auth middleware)
-const authenticateUser = async (req, res, next) => {
-  try {
-    // This is a placeholder - replace with your actual auth logic
-    const token = req.headers.authorization?.replace('Bearer ', '');
-    if (!token) {
-      return res.status(401).json({ 
-        success: false, 
-        error: 'Authentication required' 
-      });
-    }
-    
-    // Decode token and get user (implement according to your auth system)
-    // For now, we'll assume userId is passed in headers for testing
-    const userId = req.headers['x-user-id'];
-    if (!userId) {
-      return res.status(401).json({ 
-        success: false, 
-        error: 'User ID required' 
-      });
-    }
-    
-    const user = await User.findById(userId);
-    if (!user || !user.isActive) {
-      return res.status(401).json({ 
-        success: false, 
-        error: 'User not found or inactive' 
-      });
-    }
-    
-    req.user = user;
-    next();
-  } catch (error) {
-    res.status(401).json({ 
-      success: false, 
-      error: 'Invalid authentication' 
-    });
-  }
-};
+// Use real JWT-based middleware
+const authenticateUser = authenticate;
 
 // Render a readable, sectioned portrait using only JSON fields (no paraphrasing)
 const renderArchetypePortrait = (a) => {

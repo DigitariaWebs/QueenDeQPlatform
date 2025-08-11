@@ -38,6 +38,22 @@ export interface StreamChunk {
 
 const API_BASE = '/api/ai';
 
+function getAuthHeaders(): Record<string, string> {
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+  };
+  try {
+    const token = localStorage.getItem('auth_token');
+    if (token) headers['Authorization'] = `Bearer ${token}`;
+    const userJson = localStorage.getItem('auth_user');
+    if (userJson) {
+      const user = JSON.parse(userJson);
+      if (user?.id) headers['x-user-id'] = String(user.id);
+    }
+  } catch {}
+  return headers;
+}
+
 class ChatService {
   // Convert frontend messages to API format
   private convertMessagesToAPIFormat(messages: Message[]): ChatRequest['messages'] {
@@ -57,16 +73,15 @@ class ChatService {
 
       const response = await fetch(`${API_BASE}/chat`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: getAuthHeaders(),
         body: JSON.stringify({
           messages: this.convertMessagesToAPIFormat(messages),
           chatType: chatType
         })
       });
 
-      const data = await response.json();
+      let data: ChatResponse;
+      try { data = await response.json(); } catch { data = { success: false, error: 'Invalid server response' }; }
       console.log('Chat response:', data);
 
       if (!response.ok) {
@@ -99,9 +114,7 @@ class ChatService {
 
       const response = await fetch(`${API_BASE}/chat/stream`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: getAuthHeaders(),
         body: JSON.stringify({
           messages: this.convertMessagesToAPIFormat(messages),
           chatType: chatType

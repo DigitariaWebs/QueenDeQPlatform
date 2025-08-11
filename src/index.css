@@ -5,6 +5,11 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Auth page fine-tuning to match theme */
+.auth-glow {
+  box-shadow: 0 0 60px rgba(214, 174, 96, 0.15), inset 0 0 40px rgba(214, 174, 96, 0.06);
+}
+
 /* Queen de Q - Styles globaux */
 :root {
   font-family: "Raleway", system-ui, Avenir, Helvetica, Arial, sans-serif;
@@ -51,10 +56,7 @@ body {
   }
 }
 
-/* Enforce text color for all text on dark backgrounds */
-body, body * {
-  color: var(--royal-pearl) !important;
-}
+/* Removed overly aggressive global color override to improve contrast on light elements (e.g., buttons) */
 
 /* Headings always gold for contrast */
 h1, h2, h3, h4, h5, h6 {

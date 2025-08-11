@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import { Outlet } from 'react-router-dom';
+import { useAuth } from '@/context/AuthContext';
 import { Bars3Icon } from '@heroicons/react/24/outline';
 import Sidebar from './Sidebar';
 import { ParticleCanvas } from '../Effects/ParticleCanvas';
 const DashboardLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const { user, loading } = useAuth();
 
   return (
     <div className="flex h-screen bg-gradient-to-br from-[#2d133e] via-[#130926] to-black/95 relative overflow-hidden">
@@ -41,7 +43,7 @@ const DashboardLayout = () => {
         {/* Page Content */}
         <main className="flex-1 overflow-x-hidden overflow-y-auto custom-scrollbar p-4 sm:p-6 lg:p-8 pb-20 lg:pb-8" style={{ paddingBottom: 'max(5rem, env(safe-area-inset-bottom, 5rem))' }}>
           <div className="royal-wrapper max-w-none">
-            <Outlet />
+            {loading ? null : user ? <Outlet /> : null}
           </div>
         </main>
       </div>

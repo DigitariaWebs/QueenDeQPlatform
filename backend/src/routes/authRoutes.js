@@ -2,6 +2,7 @@ import express from 'express';
 import { body, validationResult } from 'express-validator';
 import jwt from 'jsonwebtoken';
 import { User } from '../models/index.js';
+import { OAuth2Client } from 'google-auth-library';
 
 const router = express.Router();
 
@@ -170,6 +171,95 @@ router.post('/login', validateLogin, async (req, res) => {
       success: false,
       error: 'Login failed',
       message: error.message
+    });
+  }
+});
+
+// Google Sign-In (using Google Identity Services ID token)
+router.post('/google', async (req, res) => {
+  try {
+    const { idToken, credential } = req.body || {};
+    const tokenToVerify = idToken || credential;
+
+    if (!tokenToVerify) {
+      return res.status(400).json({
+        success: false,
+        error: 'Google ID token is required'
+      });
+    }
+
+    const clientId = process.env.GOOGLE_CLIENT_ID;
+    if (!clientId) {
+      return res.status(500).json({
+        success: false,
+        error: 'Server Google client configuration missing'
+      });
+    }
+
+    const client = new OAuth2Client(clientId);
+    const ticket = await client.verifyIdToken({ idToken: tokenToVerify, audience: clientId });
+    const payload = ticket.getPayload();
+
+    const email = payload?.email?.toLowerCase();
+    const providerId = payload?.sub;
+    const name = payload?.name || (email ? email.split('@')[0] : 'User');
+
+    if (!email || !providerId) {
+      return res.status(400).json({
+        success: false,
+        error: 'Invalid Google token payload'
+      });
+    }
+
+    // Find existing user by provider or email
+    let user = await User.findOne({ authProvider: 'google', providerId });
+    if (!user) {
+      // If a local account exists with same email, link it to Google
+      user = await User.findByEmail(email);
+      if (user) {
+        user.authProvider = 'google';
+        user.providerId = providerId;
+        if (!user.name) user.name = name;
+      } else {
+        user = new User({
+          email,
+          name,
+          authProvider: 'google',
+          providerId
+        });
+      }
+      await user.save();
+    }
+
+    if (!user.isActive) {
+      return res.status(403).json({
+        success: false,
+        error: 'Account is deactivated. Please contact support.'
+      });
+    }
+
+    user.lastLoginAt = new Date();
+    await user.save();
+
+    const token = generateToken(user._id);
+    res.json({
+      success: true,
+      message: 'Login with Google successful',
+      user: {
+        id: user._id,
+        email: user.email,
+        name: user.name,
+        role: user.role,
+        isPremium: user.isPremium,
+        lastLoginAt: user.lastLoginAt
+      },
+      token
+    });
+  } catch (error) {
+    console.error('Google auth error:', error);
+    res.status(401).json({
+      success: false,
+      error: 'Google authentication failed'
     });
   }
 });

@@ -1,4 +1,4 @@
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { easeInOut } from 'framer-motion';
 import { 
@@ -13,10 +13,13 @@ import {
   UserCircleIcon
 } from '@heroicons/react/24/outline';
 import { useEffect, useState } from 'react';
+import { logout } from '@/services/authService';
+import { useAuth } from '@/context/AuthContext';
 
 interface SidebarProps {
   isOpen: boolean;
   onClose: () => void;
+  showInscriptionLink?: boolean;
 }
 
 const navItems = [
@@ -67,8 +70,9 @@ const navItems = [
   }
 ];
 
-const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
+const Sidebar = ({ isOpen, onClose, showInscriptionLink = false }: SidebarProps) => {
   const location = useLocation();
+  const navigate = useNavigate();
   const [isLargeScreen, setIsLargeScreen] = useState(false);
 
   useEffect(() => {
@@ -110,6 +114,7 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
     transition: { duration: 0.3, ease: easeInOut }
   };
 
+  const { user } = useAuth();
   return (
     <>
       {/* Mobile backdrop */}
@@ -198,6 +203,15 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
                 ) : null
               );
             })}
+            {showInscriptionLink && (
+              <Link
+                to="/auth?mode=signup"
+                onClick={onClose}
+                className="mt-4 flex items-center justify-center px-4 py-3 rounded-lg transition-all duration-200 group text-royal-purple bg-royal-gold hover:bg-royal-champagne font-medium"
+              >
+                Inscription
+              </Link>
+            )}
           </nav>
 
           {/* Footer + TopBar widgets */}
@@ -206,21 +220,27 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
             <div className="flex flex-col gap-4 mt-2">
               {/* Profile Menu */}
               <div className="relative group w-full flex flex-col items-stretch">
-                <button className="flex items-center justify-center w-full p-3 rounded-xl bg-royal-purple/20 hover:bg-royal-gold/10 transition-colors border border-royal-gold/20 shadow-soft focus:outline-none focus:ring-2 focus:ring-royal-gold/60 focus:ring-offset-2 focus:ring-offset-royal-purple/80">
-                  <UserCircleIcon className="w-6 h-6 text-royal-gold" />
-                  <span className="text-royal-gold font-sans font-semibold text-base ml-2">
-                    Profile
-                  </span>
-                </button>
+                {user ? (
+                  <div className="flex items-center justify-between w-full p-3 rounded-xl bg-royal-purple/20 border border-royal-gold/20">
+                    <div className="flex items-center gap-2 text-royal-pearl">
+                      <UserCircleIcon className="w-6 h-6 text-royal-gold" />
+                      <span className="font-sans text-sm">{user.name}</span>
+                    </div>
+                    <button
+                      onClick={() => { logout(); navigate('/auth', { replace: true }); onClose(); }}
+                      className="text-royal-gold hover:text-royal-champagne text-sm"
+                    >Logout</button>
+                  </div>
+                ) : (
+                  <button className="flex items-center justify-center w-full p-3 rounded-xl bg-royal-purple/20 hover:bg-royal-gold/10 transition-colors border border-royal-gold/20 shadow-soft focus:outline-none focus:ring-2 focus:ring-royal-gold/60 focus:ring-offset-2 focus:ring-offset-royal-purple/80" onClick={() => { navigate('/auth'); onClose(); }}>
+                    <UserCircleIcon className="w-6 h-6 text-royal-gold" />
+                    <span className="text-royal-gold font-sans font-semibold text-base ml-2">
+                      Se connecter / S'inscrire
+                    </span>
+                  </button>
+                )}
                 {/* Dropdown menu (opens upwards, themed colors, matches button width) */}
-                <div className="absolute left-0 bottom-full mb-2 min-w-full bg-royal-purple rounded-xl shadow-royal border border-royal-gold/20 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
-                  <button className="w-full flex items-center justify-center px-4 py-3 text-center text-royal-pearl hover:bg-royal-gold/10 hover:text-royal-purple transition-colors rounded-t-xl font-sans text-base border-b border-royal-gold/20">
-                    <span>Se connecter</span>
-                  </button>
-                  <button className="w-full flex items-center justify-center px-4 py-3 text-center text-royal-pearl hover:bg-royal-gold/10 hover:text-royal-purple transition-colors rounded-b-xl font-sans text-base border-t border-royal-gold/20">
-                    <span>S'inscrire</span>
-                  </button>
-                </div>
+                <div className="hidden" />
                 {/* Centered quote and copyright under profile */}
                 {/* <div className="bg-royal-purple/60 rounded-lg p-4 pb-8 lg:pb-4 lg:mt-4 mt-1 flex flex-col items-center text-center">
                   <p className="text-royal-champagne text-sm font-sans">
