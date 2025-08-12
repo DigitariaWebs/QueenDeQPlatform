@@ -172,8 +172,8 @@ const MiroirChatPage = () => {
       <div className="flex-shrink-0 p-2">
         <div className="max-w-2xl mx-auto">
           <div className="flex items-center justify-center py-2 px-4 bg-[#4b2e43] border-2 border-royal-gold/30 rounded-2xl shadow-royal">
-            <div className="flex items-center gap-3 [&_*]:!text-[#d6ae60]">
-              <ClipboardDocumentIcon className="w-6 h-6 text-[#d6ae60]" />
+            <div className="flex items-center gap-4 [&_*]:!text-[#d6ae60]">
+              <ClipboardDocumentIcon className="w-6 h-6 text-[#d6ae60] flex-shrink-0" />
               <div className="flex flex-col items-center">
                 <span className="text-lg md:text-xl font-bold">Miroir Miroir</span>
                 <span className="text-xs md:text-sm opacity-80">Ton reflet émotionnel</span>
