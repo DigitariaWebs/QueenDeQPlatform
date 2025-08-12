@@ -10,14 +10,19 @@ const __dirname = path.dirname(__filename);
 // Validate API key presence
 if (!process.env.OPENAI_API_KEY) {
   console.error('⚠️ OPENAI_API_KEY is not set in environment variables');
-  process.exit(1);
+  console.log('⚠️ AI features will be disabled - server will continue without OpenAI');
 }
 
-// Initialize OpenAI with API key
-console.log('Initializing OpenAI with API key:', process.env.OPENAI_API_KEY.substring(0, 5) + '...');
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+// Initialize OpenAI with API key (if available)
+let openai = null;
+if (process.env.OPENAI_API_KEY) {
+  console.log('Initializing OpenAI with API key:', process.env.OPENAI_API_KEY.substring(0, 5) + '...');
+  openai = new OpenAI({
+    apiKey: process.env.OPENAI_API_KEY,
+  });
+} else {
+  console.log('⚠️ OpenAI not initialized - AI features disabled');
+}
 
 // Load rituals data
 const loadRituals = () => {

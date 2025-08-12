@@ -10,8 +10,13 @@ import errorHandler from './middleware/errorHandler.js';
 
 const app = express();
 
-// Connect to MongoDB
-await connectDB();
+// Connect to MongoDB (optional for development)
+try {
+  await connectDB();
+} catch (error) {
+  console.log('⚠️  MongoDB connection failed, continuing without database...');
+  console.log('⚠️  Some features may not work properly');
+}
 
 // Setup middleware
 setupMiddleware(app);
