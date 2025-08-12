@@ -176,7 +176,7 @@ const MiroirChatPage = () => {
               <ClipboardDocumentIcon className="w-6 h-6 text-[#d6ae60] flex-shrink-0" />
               <div className="flex flex-col items-center">
                 <span className="text-lg md:text-xl font-bold">Miroir Miroir</span>
-                <span className="text-xs md:text-sm opacity-80">Ton reflet émotionnel</span>
+                <span className="text-xs md:text-sm opacity-80">Découvre la Queen en toi</span>
               </div>
             </div>
           </div>

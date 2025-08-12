@@ -211,7 +211,7 @@ const PoicheChatPage = () => {
               <ShoppingBagIcon className="w-6 h-6 text-[#d6ae60] flex-shrink-0" />
               <div className="flex flex-col items-center">
                 <span className="text-lg md:text-xl font-bold">Ta Pioche</span>
-                <span className="text-xs md:text-sm opacity-80">La lecture intuitive de ta carte</span>
+                <span className="text-xs md:text-sm opacity-80">Est-ce que tu dates un 2 de pique ou un king</span>
               </div>
             </div>
           </div>
