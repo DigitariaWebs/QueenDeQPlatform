@@ -98,10 +98,15 @@ const DashboardHome = () => {
 
       
 
-      {/* Le journal du Royaume */}
-      <div className="bg-royal-purple/60 rounded-2xl p-4 sm:p-6 lg:p-8 border border-royal-gold/20 mb-8 sm:mb-12 lg:mb-16">
+      {/* La gazette du Royaume */}
+      <a 
+        href="https://le-royaume-de-queen-de-q.mn.co/users/onboarding/choose_plan?plan_id=2169923&bundle_token=7210743a158f878eb42b8a48b77331ec"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="block bg-royal-purple/60 rounded-2xl p-4 sm:p-6 lg:p-8 border border-royal-gold/20 mb-8 sm:mb-12 lg:mb-16 hover:bg-royal-purple/70 transition-colors duration-300 cursor-pointer"
+      >
         <h2 className="text-xl sm:text-2xl lg:text-3xl font-serif font-bold text-royal-pearl mb-4 sm:mb-6 text-center sm:text-left">
-          Le journal du Royaume
+          La gazette du Royaume
         </h2>
         <div className="space-y-3 sm:space-y-4">
           <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-3 sm:space-y-0 sm:space-x-4 p-3 sm:p-4 bg-royal-purple/40 rounded-lg">
@@ -118,7 +123,7 @@ const DashboardHome = () => {
             </div>
           </div>
         </div>
-      </div>
+      </a>
 
 
     </motion.div>
