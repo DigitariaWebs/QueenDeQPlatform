@@ -46,7 +46,7 @@ const navItems = [
     external: true,
     url: 'https://le-royaume-de-queen-de-q.mn.co/',
     icon: SparklesIcon,
-    label: 'Le Royaume de Queen de Q'
+    label: 'Queen de Q'
   },
   {
     name: 'Journal',

@@ -70,7 +70,7 @@ const DashboardHome = () => {
           className="text-center mb-8"
         >
             <h2 className="text-3xl font-serif font-bold text-royal-purple mb-4">
-              Ton Royaume Intérieur
+              Ton Expérience Royale
           </h2>
             <p className="text-cabinet-aubergine/70 font-sans text-lg max-w-2xl mx-auto">
               Trois portes s'ouvrent vers ta transformation. Choisis ton chemin de découverte.
