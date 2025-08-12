@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { PaperAirplaneIcon } from '@heroicons/react/24/outline';
+import { PaperAirplaneIcon, ChatBubbleLeftRightIcon } from '@heroicons/react/24/outline';
 import { chatService, type Message, type StreamChunk, type ChatSessionSummary, type ChatSessionWithMessages } from '../../services/chatService';
 
 
@@ -207,9 +207,12 @@ const SalonChatPage = () => {
       <div className="flex-shrink-0 p-2">
         <div className="max-w-2xl mx-auto">
           <div className="flex items-center justify-center py-2 px-4 bg-[#4b2e43] border-2 border-royal-gold/30 rounded-2xl shadow-royal">
-            <div className="flex flex-col items-center [&_*]:!text-[#d6ae60]">
-              <span className="text-lg md:text-xl font-bold">Salon de Thé</span>
-              <span className="text-xs md:text-sm opacity-80">Rituel de reprise de pouvoir</span>
+            <div className="flex items-center gap-4 [&_*]:!text-[#d6ae60]">
+              <ChatBubbleLeftRightIcon className="w-6 h-6 text-[#d6ae60] flex-shrink-0" />
+              <div className="flex flex-col items-center">
+                <span className="text-lg md:text-xl font-bold">Salon de Thé</span>
+                <span className="text-xs md:text-sm opacity-80">Rituel de reprise de pouvoir</span>
+              </div>
             </div>
           </div>
           {showHistory && (
