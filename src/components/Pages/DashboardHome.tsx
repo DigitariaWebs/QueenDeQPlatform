@@ -24,7 +24,7 @@ const mysteryFeatures = [
     title: 'Miroir, Miroir!',
     description: 'Découvre ton type de Queen : coeur, carreau, trèfle ou pique, tes forces, tes défis, ton langage de l\'amour et plus encore',
     chatPrompt: "T'es quel genre de Queen, toi, vraiment?",
-    path: '/salon',
+    path: '/miroir',
     image: '/assets/cards/MiroirMiroir.svg'
   },
   {
@@ -32,7 +32,7 @@ const mysteryFeatures = [
     title: 'Salon de thé',
     description: 'Découvre des rituels qui pourront te faire déconnecter de relations toxiques et te reconnecter à la Queen en toi.',
     chatPrompt: "Et si on mettait les cartes sur table?",
-    path: '/chat',
+    path: '/salon',
     image: '/assets/cards/SalonDeThe.svg'
   }
 ];
