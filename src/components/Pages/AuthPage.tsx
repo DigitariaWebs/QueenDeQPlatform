@@ -134,8 +134,8 @@ export default function AuthPage() {
                 }}
                 className="w-full inline-flex items-center justify-center gap-3 rounded-lg bg-white text-zinc-900 font-medium py-2.5 hover:bg-zinc-100 transition-colors disabled:opacity-60 border border-white/20"
               >
-                <img src="/assets/icons/google.svg" alt="Google" className="h-5 w-5" />
-                <span>Se connecter avec Google</span>
+                {/* <img src="/assets/icons/google.svg" alt="Google" className="h-5 w-5" /> */}
+                <span>Se connecter directement</span>
               </button>
               {/* Google rendered button disabled for testing */}
             </div>

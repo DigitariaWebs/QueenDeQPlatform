@@ -3,6 +3,7 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
+
 // Get __dirname equivalent for ES modules
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -10,19 +11,14 @@ const __dirname = path.dirname(__filename);
 // Validate API key presence
 if (!process.env.OPENAI_API_KEY) {
   console.error('⚠️ OPENAI_API_KEY is not set in environment variables');
-  console.log('⚠️ AI features will be disabled - server will continue without OpenAI');
+  process.exit(1);
 }
 
-// Initialize OpenAI with API key (if available)
-let openai = null;
-if (process.env.OPENAI_API_KEY) {
-  console.log('Initializing OpenAI with API key:', process.env.OPENAI_API_KEY.substring(0, 5) + '...');
-  openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY,
-  });
-} else {
-  console.log('⚠️ OpenAI not initialized - AI features disabled');
-}
+// Initialize OpenAI with API key
+console.log('Initializing OpenAI with API key:', process.env.OPENAI_API_KEY.substring(0, 5) + '...');
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
 
 // Load rituals data
 const loadRituals = () => {

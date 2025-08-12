@@ -20,20 +20,13 @@ const connectDB = async () => {
     return connection;
   } catch (err) {
     console.error('❌ MongoDB connection error:', err);
-    console.log('⚠️  Continuing without database connection...');
-    return null;
+    process.exit(1);
   }
 };
 
 // Function to create additional indexes for optimal performance
 const createIndexes = async () => {
   try {
-    // Check if we have a valid database connection
-    if (!mongoose.connection.db) {
-      console.log('⚠️  No database connection - skipping index creation');
-      return;
-    }
-    
     const db = mongoose.connection.db;
     
     // User collection indexes
