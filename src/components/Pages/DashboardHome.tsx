@@ -73,7 +73,7 @@ const DashboardHome = () => {
               Ton Expérience Royale
           </h2>
             <p className="text-cabinet-aubergine/70 font-sans text-lg max-w-2xl mx-auto">
-              Trois portes s'ouvrent vers ta transformation. Choisis ton chemin de découverte.
+              Choisis ton chemin de découverte.
           </p>
         </motion.div>
         
