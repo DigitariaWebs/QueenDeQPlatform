@@ -1,20 +1,40 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { easeInOut } from 'framer-motion';
-import { 
-  RectangleStackIcon, 
-  ChatBubbleLeftRightIcon, 
-  BookOpenIcon, 
+import {
+  RectangleStackIcon,
+  BookOpenIcon,
   ShoppingBagIcon,
-  ClipboardDocumentListIcon,
   XMarkIcon,
   InformationCircleIcon,
   SparklesIcon,
-  UserCircleIcon
-} from '@heroicons/react/24/outline';
-import { useEffect, useState } from 'react';
-import { logout } from '@/services/authService';
-import { useAuth } from '@/context/AuthContext';
+  UserCircleIcon,
+} from "@heroicons/react/24/outline";
+import { useEffect, useState } from "react";
+import { logout } from "@/services/authService";
+import { useAuth } from "@/context/AuthContext";
+
+// Custom icon component for Unicode U+26E8 (Black Cross On Shield)
+const BlackCrossOnShieldIcon = ({ className = "" }: { className?: string }) => (
+  <span
+    className={`inline-block ${className} text-[20px] leading-[20px]`}
+    role="img"
+    aria-label="Black Cross On Shield"
+  >
+    {"\u26E8"}
+  </span>
+);
+
+// Custom icon component for Unicode U+2655 (White Chess Queen)
+const WhiteChessQueenIcon = ({ className = "" }: { className?: string }) => (
+  <span
+    className={`inline-block ${className} text-[20px] leading-[20px]`}
+    role="img"
+    aria-label="White Chess Queen"
+  >
+    {"\u2655"}
+  </span>
+);
 
 interface SidebarProps {
   isOpen: boolean;
@@ -24,53 +44,57 @@ interface SidebarProps {
 
 const navItems = [
   {
-    name: 'Cards',
-    path: '/poiche',
+    name: "Cards",
+    path: "/poiche",
     icon: RectangleStackIcon,
-    label: 'Ta pioche'
+    label: "Ta pioche",
   },
   {
-    name: 'Quiz',
-    path: '/miroir',
-    icon: ClipboardDocumentListIcon,
-    label: 'Miroir, Miroir!'
+    name: "Quiz",
+    path: "/miroir",
+    icon: BlackCrossOnShieldIcon,
+    label: "Miroir, Miroir!",
   },
   {
-    name: 'Chat',
-    path: '/salon',
-    icon: ChatBubbleLeftRightIcon,
-    label: 'Salon de thé'
+    name: "Chat",
+    path: "/salon",
+    icon: WhiteChessQueenIcon,
+    label: "Salon de thé",
   },
   {
-    name: 'Dashboard',
+    name: "Dashboard",
     external: true,
-    url: 'https://le-royaume-de-queen-de-q.mn.co/',
+    url: "https://le-royaume-de-queen-de-q.mn.co/",
     icon: SparklesIcon,
-    label: 'Queen de Q'
+    label: "Royaume Queen de Q",
   },
   {
-    name: 'Journal',
-    path: '/journal',
+    name: "Journal",
+    path: "/journal",
     icon: BookOpenIcon,
-    label: 'Le journal du Royaume'
+    label: "La Gazette du Royaume",
   },
   {
-    name: 'Shop',
+    name: "Shop",
     external: true,
-    url: 'https://www.redbubble.com/fr/people/QueensdeQ/shop?asc=u',
+    url: "https://www.redbubble.com/fr/people/QueensdeQ/shop?asc=u",
     icon: ShoppingBagIcon,
-    label: 'La boutique'
+    label: "La boutique",
   },
   {
-    name: 'About',
+    name: "About",
     external: true,
-    url: 'https://queen-de-q.vercel.app',
+    url: "https://queen-de-q.vercel.app",
     icon: InformationCircleIcon,
-    label: 'À propos'
-  }
+    label: "À propos",
+  },
 ];
 
-const Sidebar = ({ isOpen, onClose, showInscriptionLink = false }: SidebarProps) => {
+const Sidebar = ({
+  isOpen,
+  onClose,
+  showInscriptionLink = false,
+}: SidebarProps) => {
   const location = useLocation();
   const navigate = useNavigate();
   const [isLargeScreen, setIsLargeScreen] = useState(false);
@@ -80,38 +104,38 @@ const Sidebar = ({ isOpen, onClose, showInscriptionLink = false }: SidebarProps)
       setIsLargeScreen(window.innerWidth >= 1024);
     };
     checkScreenSize();
-    window.addEventListener('resize', checkScreenSize);
-    return () => window.removeEventListener('resize', checkScreenSize);
+    window.addEventListener("resize", checkScreenSize);
+    return () => window.removeEventListener("resize", checkScreenSize);
   }, []);
 
   // Handle escape key to close sidebar on mobile
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && isOpen && !isLargeScreen) {
+      if (e.key === "Escape" && isOpen && !isLargeScreen) {
         onClose();
       }
     };
-    
+
     if (isOpen && !isLargeScreen) {
-      document.addEventListener('keydown', handleEscape);
+      document.addEventListener("keydown", handleEscape);
       // Prevent body scroll when sidebar is open on mobile
-      document.body.style.overflow = 'hidden';
+      document.body.style.overflow = "hidden";
     } else {
-      document.body.style.overflow = 'unset';
+      document.body.style.overflow = "unset";
     }
-    
+
     return () => {
-      document.removeEventListener('keydown', handleEscape);
-      document.body.style.overflow = 'unset';
+      document.removeEventListener("keydown", handleEscape);
+      document.body.style.overflow = "unset";
     };
   }, [isOpen, isLargeScreen, onClose]);
 
   const sidebarAnimation = {
     initial: { x: isLargeScreen ? 0 : -320 },
-    animate: { 
-      x: isLargeScreen ? 0 : (isOpen ? 0 : -320)
+    animate: {
+      x: isLargeScreen ? 0 : isOpen ? 0 : -320,
     },
-    transition: { duration: 0.3, ease: easeInOut }
+    transition: { duration: 0.3, ease: easeInOut },
   };
 
   const { user } = useAuth();
@@ -119,7 +143,7 @@ const Sidebar = ({ isOpen, onClose, showInscriptionLink = false }: SidebarProps)
     <>
       {/* Mobile backdrop */}
       {isOpen && !isLargeScreen && (
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -139,16 +163,22 @@ const Sidebar = ({ isOpen, onClose, showInscriptionLink = false }: SidebarProps)
           {/* Header */}
           <div className="p-6 border-b border-royal-gold/20">
             <div className="flex items-center justify-between">
-              <Link to="/" onClick={onClose} className="flex items-center space-x-3 hover:opacity-80 transition-opacity">
+              <Link
+                to="/"
+                onClick={onClose}
+                className="flex items-center space-x-3 hover:opacity-80 transition-opacity"
+              >
                 <div className="w-10 h-10 flex items-center justify-center">
-                  <img 
-                    src="/assets/images/logo-gold.webp" 
-                    alt="Queen de Q" 
+                  <img
+                    src="/assets/images/logo-gold.webp"
+                    alt="Queen de Q"
                     className="h-8 w-auto drop-shadow-md"
                   />
                 </div>
-                <div >
-                  <h1 className="text-royal-pearl font-serif text-xl font-bold">Queen de Q</h1>
+                <div>
+                  <h1 className="text-royal-pearl font-serif text-xl font-bold">
+                    Queen de Q
+                  </h1>
                 </div>
               </Link>
               <button
@@ -174,7 +204,7 @@ const Sidebar = ({ isOpen, onClose, showInscriptionLink = false }: SidebarProps)
                     target="_blank"
                     rel="noopener noreferrer"
                     className={
-                      'flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 group text-royal-pearl hover:bg-royal-gold/10 hover:text-royal-champagne'
+                      "flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 group text-royal-pearl hover:bg-royal-gold/10 hover:text-royal-champagne"
                     }
                   >
                     <Icon className="w-5 h-5 transition-transform group-hover:scale-110 text-royal-pearl" />
@@ -183,25 +213,25 @@ const Sidebar = ({ isOpen, onClose, showInscriptionLink = false }: SidebarProps)
                 );
               }
               const isActive = location.pathname === item.path;
-              return (
-                item.path ? (
-                  <Link
-                    key={item.path}
-                    to={item.path}
-                    onClick={onClose}
-                    className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 group ${
-                      isActive 
-                        ? 'bg-royal-gold text-royal-purple border-l-4 border-royal-gold' 
-                        : 'text-royal-pearl hover:bg-royal-gold/10 hover:text-royal-champagne'
+              return item.path ? (
+                <Link
+                  key={item.path}
+                  to={item.path}
+                  onClick={onClose}
+                  className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 group ${
+                    isActive
+                      ? "bg-royal-gold text-royal-purple border-l-4 border-royal-gold"
+                      : "text-royal-pearl hover:bg-royal-gold/10 hover:text-royal-champagne"
+                  }`}
+                >
+                  <Icon
+                    className={`w-5 h-5 transition-transform group-hover:scale-110 ${
+                      isActive ? "text-royal-purple" : "text-royal-pearl"
                     }`}
-                  >
-                    <Icon className={`w-5 h-5 transition-transform group-hover:scale-110 ${
-                      isActive ? 'text-royal-purple' : 'text-royal-pearl'
-                    }`} />
-                    <span className="font-sans font-medium">{item.label}</span>
-                  </Link>
-                ) : null
-              );
+                  />
+                  <span className="font-sans font-medium">{item.label}</span>
+                </Link>
+              ) : null;
             })}
             {showInscriptionLink && (
               <Link
@@ -215,7 +245,12 @@ const Sidebar = ({ isOpen, onClose, showInscriptionLink = false }: SidebarProps)
           </nav>
 
           {/* Footer + TopBar widgets */}
-          <div className="p-6 pb-20 lg:pb-6 border-t border-royal-gold/20 space-y-4" style={{ paddingBottom: 'max(5rem, env(safe-area-inset-bottom, 5rem))' }}>
+          <div
+            className="p-6 pb-20 lg:pb-6 border-t border-royal-gold/20 space-y-4"
+            style={{
+              paddingBottom: "max(5rem, env(safe-area-inset-bottom, 5rem))",
+            }}
+          >
             {/* Enhanced Sidebar Widgets */}
             <div className="flex flex-col gap-4 mt-2">
               {/* Profile Menu */}
@@ -227,12 +262,24 @@ const Sidebar = ({ isOpen, onClose, showInscriptionLink = false }: SidebarProps)
                       <span className="font-sans text-sm">{user.name}</span>
                     </div>
                     <button
-                      onClick={() => { logout(); navigate('/auth', { replace: true }); onClose(); }}
+                      onClick={() => {
+                        logout();
+                        navigate("/auth", { replace: true });
+                        onClose();
+                      }}
                       className="text-royal-gold hover:text-royal-champagne text-sm"
-                    >Logout</button>
+                    >
+                      Logout
+                    </button>
                   </div>
                 ) : (
-                  <button className="flex items-center justify-center w-full p-3 rounded-xl bg-royal-purple/20 hover:bg-royal-gold/10 transition-colors border border-royal-gold/20 shadow-soft focus:outline-none focus:ring-2 focus:ring-royal-gold/60 focus:ring-offset-2 focus:ring-offset-royal-purple/80" onClick={() => { navigate('/auth'); onClose(); }}>
+                  <button
+                    className="flex items-center justify-center w-full p-3 rounded-xl bg-royal-purple/20 hover:bg-royal-gold/10 transition-colors border border-royal-gold/20 shadow-soft focus:outline-none focus:ring-2 focus:ring-royal-gold/60 focus:ring-offset-2 focus:ring-offset-royal-purple/80"
+                    onClick={() => {
+                      navigate("/auth");
+                      onClose();
+                    }}
+                  >
                     <UserCircleIcon className="w-6 h-6 text-royal-gold" />
                     <span className="text-royal-gold font-sans font-semibold text-base ml-2">
                       Se connecter / S'inscrire
@@ -240,16 +287,11 @@ const Sidebar = ({ isOpen, onClose, showInscriptionLink = false }: SidebarProps)
                   </button>
                 )}
                 {/* Dropdown menu (opens upwards, themed colors, matches button width) */}
-                <div className="hidden" />
-                {/* Centered quote and copyright under profile */}
-                {/* <div className="bg-royal-purple/60 rounded-lg p-4 pb-8 lg:pb-4 lg:mt-4 mt-1 flex flex-col items-center text-center">
-                  <p className="text-royal-champagne text-sm font-sans">
-                    "Révèle ta puissance intérieure"
+                <div className="mt-2 lg:mt-3 text-center">
+                  <p className="text-royal-champagne font-sans text-xs sm:text-sm lg:text-base leading-snug">
+                    Révèle ta puissance intérieure
                   </p>
-                  <p className="text-royal-pearl/60 text-xs mt-1">
-                    © 2025 Queen de Q
-                  </p>
-                </div> */}
+                </div>
               </div>
             </div>
           </div>

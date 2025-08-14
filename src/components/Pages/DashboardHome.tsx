@@ -52,15 +52,6 @@ const DashboardHome = () => {
       transition={{ duration: 0.6 }}
       className="first:pt-0 last:pb-0 relative z-10"
     >
-      {/* Welcome Message (left-aligned) - Hidden on mobile */}
-      <div className="mb-16 flex-col items-start hidden lg:flex">
-        <h2 className="text-3xl font-serif font-bold text-royal-gold mb-5">
-          Bonjour, Client
-        </h2>
-        <p className="text-royal-pearl/80 text-lg font-sans">
-            Bienvenue dans ton royaume personnel
-        </p>
-      </div>
       {/* Mystery Cards Section */}
       <div className="mb-12 lg:mb-16">
         <motion.div
@@ -69,14 +60,14 @@ const DashboardHome = () => {
           transition={{ duration: 0.8, delay: 0.2 }}
           className="text-center mb-8"
         >
-            <h2 className="text-3xl font-serif font-bold text-royal-purple mb-4">
-              Ton Expérience Royale
+          <h2 className="text-3xl font-serif font-bold text-royal-purple mb-4">
+            Ton Expérience Royale
           </h2>
-            <p className="text-cabinet-aubergine/70 font-sans text-lg max-w-2xl mx-auto">
-              Choisis ton chemin de découverte.
+          <p className="text-cabinet-aubergine/70 font-sans text-lg max-w-2xl mx-auto">
+            Choisis ton chemin de découverte.
           </p>
         </motion.div>
-        
+
         {/* Responsive Grid: Mobile single column, Tablet 2 cols, Desktop 3 cols */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 max-w-7xl mx-auto">
           {mysteryFeatures.map((feature, index) => (
@@ -96,11 +87,9 @@ const DashboardHome = () => {
         </div>
       </div>
 
-      
-
       {/* La gazette du Royaume */}
-      <a 
-        href="https://le-royaume-de-queen-de-q.mn.co/users/onboarding/choose_plan?plan_id=2169923&bundle_token=7210743a158f878eb42b8a48b77331ec"
+      <a
+        href="https://le-royaume-de-queen-de-q.mn.co/users/onboarding/choose_plan?plan_id=2169923&bundle_token=7210743a158f878eb42b8a48b77331ec&utm_source=manual"
         target="_blank"
         rel="noopener noreferrer"
         className="block bg-royal-purple/60 rounded-2xl p-4 sm:p-6 lg:p-8 border border-royal-gold/20 mb-8 sm:mb-12 lg:mb-16 hover:bg-royal-purple/70 transition-colors duration-300 cursor-pointer"
@@ -124,8 +113,6 @@ const DashboardHome = () => {
           </div>
         </div>
       </a>
-
-
     </motion.div>
   );
 };
