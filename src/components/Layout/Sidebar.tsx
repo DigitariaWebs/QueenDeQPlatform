@@ -2,10 +2,10 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { easeInOut } from 'framer-motion';
 import {
-  RectangleStackIcon,
   BookOpenIcon,
   ShoppingBagIcon,
   XMarkIcon,
+  ChatBubbleLeftRightIcon,
   InformationCircleIcon,
   SparklesIcon,
   UserCircleIcon,
@@ -46,19 +46,19 @@ const navItems = [
   {
     name: "Cards",
     path: "/poiche",
-    icon: RectangleStackIcon,
+    icon: BlackCrossOnShieldIcon,
     label: "Ta pioche",
   },
   {
     name: "Quiz",
     path: "/miroir",
-    icon: BlackCrossOnShieldIcon,
+    icon: WhiteChessQueenIcon,
     label: "Miroir, Miroir!",
   },
   {
     name: "Chat",
     path: "/salon",
-    icon: WhiteChessQueenIcon,
+    icon: ChatBubbleLeftRightIcon,
     label: "Salon de thé",
   },
   {

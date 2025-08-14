@@ -2,9 +2,19 @@ import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   PaperAirplaneIcon,
-  RectangleStackIcon,
   EllipsisHorizontalIcon,
 } from "@heroicons/react/24/outline";
+
+// Custom icon component for Unicode U+26E8 (Black Cross On Shield)
+const BlackCrossOnShieldIcon = ({ className = "" }: { className?: string }) => (
+  <span
+    className={`inline-block ${className} text-[20px] leading-[20px]`}
+    role="img"
+    aria-label="Black Cross On Shield"
+  >
+    {"\u26E8"}
+  </span>
+);
 import {
   chatService,
   type Message,
@@ -261,7 +271,7 @@ const PoicheChatPage = () => {
           <div className="max-w-2xl mx-auto">
             <div className="flex items-center justify-center py-2 px-4 bg-[#4b2e43] border-2 border-royal-gold/30 rounded-2xl shadow-royal">
               <div className="flex items-center gap-4 [&_*]:!text-[#d6ae60]">
-                <RectangleStackIcon className="w-6 h-6 text-[#d6ae60] flex-shrink-0" />
+                <BlackCrossOnShieldIcon className="text-[#d6ae60] flex-shrink-0" />
                 <div className="flex flex-col items-center">
                   <span className="text-lg md:text-xl font-bold">
                     Ta Pioche
