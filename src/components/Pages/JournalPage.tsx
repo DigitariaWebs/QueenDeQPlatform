@@ -14,7 +14,7 @@ const JournalPage = () => {
           <BookOpenIcon className="w-12 h-12 text-royal-purple" />
         </div>
         <h1 className="text-4xl font-serif font-bold text-royal-pearl mb-4">
-          Journal du Royaume
+          La Gazette du Royaume
         </h1>
         <p className="text-royal-pearl/70 font-sans text-lg">
           Découvre les dernières nouvelles du royaume ici.
