@@ -62,7 +62,7 @@ node scripts/testSeeder.js
 ```
 
 **What it tests**:
-- User creation with French roles (Court/Diademe/Couronne)
+- User creation with French roles (Tiare/Diademe/Couronne)
 - Chat session creation
 - Message insertion
 - Subscription status changes
@@ -218,7 +218,7 @@ Content-Type: application/json
     "id": "...",
     "email": "test@queendeq.com",
     "name": "Test User",
-    "role": "Court",
+    "role": "Tiare",
     "isPremium": false,
     "createdAt": "..."
   },
@@ -276,7 +276,7 @@ Content-Type: application/json
     "id": "...",
     "email": "test@queendeq.com",
     "name": "Test User",
-    "role": "Court",
+    "role": "Tiare",
     "isPremium": false,
     "avatar": null,
     "preferences": {},
@@ -627,7 +627,7 @@ x-user-id: {{userId}}
     "dailyStats": [...]
   },
   "user": {
-    "role": "Court",
+    "role": "Tiare",
     "isPremium": false
   }
 }
@@ -657,7 +657,7 @@ Authorization: Bearer {{adminToken}}
     ],
     "userDistribution": [
       {
-        "_id": "Court",
+        "_id": "Tiare",
         "count": 100
       },
       {
@@ -908,7 +908,7 @@ curl -X POST http://localhost:5000/api/auth/login \
 ## 🎯 Advanced Testing Scenarios
 
 ### 1. Role-Based Access Testing
-Test that users with different roles (Court/Diademe/Couronne) have appropriate access levels.
+Test that users with different roles (Tiare/Diademe/Couronne) have appropriate access levels.
 
 ### 2. Session Isolation Testing  
 Ensure users can only access their own chat sessions and messages.

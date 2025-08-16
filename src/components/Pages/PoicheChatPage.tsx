@@ -30,7 +30,7 @@ const PoicheChatPage = () => {
     {
       id: "1",
       content:
-        "Tire pas tout de suite, ma Queen. On regarde d'abord la texture du jeu. Je suis la Reine Mère, ta grande sœur intuitive. Je vais te poser des questions pour lire la carte de ton mec. Plus tes réponses sont développées, plus le portrait sera précis. Prête pour une lecture qui va te réveiller ?",
+        "Oh Queen, si tu es ici c'est que tu es prête à voir clair dans son jeu. Avant d'aller plus loin, donne-moi un peu plus de détails pour que je puisse comprendre le contexte de la game. Tu le connais depuis quand? Vous vous êtes déjà rencontré? Vous en êtes à quel stade? Fréquentation, relation, situationship, exploration, dating ? Je pourrais adapter mes questions en fonction de ta situation. À toi, dis-moi tout!",
       isUser: false,
       timestamp: new Date(),
     },
@@ -86,7 +86,7 @@ const PoicheChatPage = () => {
       {
         id: "1",
         content:
-          "Tire pas tout de suite, ma Queen. On regarde d'abord la texture du jeu. Je suis la Reine Mère, ta grande sœur intuitive. Je vais te poser des questions pour lire la carte de ton mec. Plus tes réponses sont développées, plus le portrait sera précis. Prête pour une lecture qui va te réveiller ?",
+          "Oh Queen, si tu es ici c'est que tu es prête à voir clair dans son jeu. Avant d'aller plus loin, donne-moi un peu plus de détails pour que je puisse comprendre le contexte de la game. Tu le connais depuis quand? Vous vous êtes déjà rencontré? Vous en êtes à quel stade? Fréquentation, relation, situationship, exploration, dating ? Je pourrais adapter mes questions en fonction de ta situation. À toi, dis-moi tout!",
         isUser: false,
         timestamp: new Date(),
       },

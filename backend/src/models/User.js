@@ -42,8 +42,8 @@ const userSchema = new mongoose.Schema({
   // Subscription & Role Management
   role: {
     type: String,
-    enum: ['Court', 'Diademe', 'Couronne', 'admin'],
-    default: 'Court',
+    enum: ['Tiare', 'Diademe', 'Couronne', 'admin'],
+    default: 'Tiare',
     index: true
   },
   

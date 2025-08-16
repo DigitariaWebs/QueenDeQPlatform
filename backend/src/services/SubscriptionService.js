@@ -117,7 +117,7 @@ class SubscriptionService {
         const previousRole = user.role;
 
         // Update user to free tier
-        user.role = 'Court';
+        user.role = 'Tiare';
         user.subscriptionStatus = 'canceled';
         user.subscriptionEndDate = new Date(subscription.ended_at * 1000);
 
@@ -129,7 +129,7 @@ class SubscriptionService {
           stripeCustomerId: subscription.customer,
           stripeSubscriptionId: subscription.id,
           previousStatus: previousRole,
-          newStatus: 'Court',
+          newStatus: 'Tiare',
           subscriptionStatus: 'canceled',
           changeReason: 'cancellation',
           periodEnd: new Date(subscription.ended_at * 1000)
@@ -219,7 +219,7 @@ class SubscriptionService {
   // Determine user role from Stripe subscription
   static determineRoleFromSubscription(subscription) {
     if (subscription.status !== 'active' && subscription.status !== 'trialing') {
-      return 'Court';
+      return 'Tiare';
     }
 
     // Check the price/product to determine if monthly or annual
@@ -232,7 +232,7 @@ class SubscriptionService {
       return 'Couronne';
     }
 
-    return 'Court'; // Default fallback
+    return 'Tiare'; // Default fallback
   }
 
   // Manually upgrade user (admin function)
@@ -318,7 +318,7 @@ class SubscriptionService {
       const user = await User.findById(userId);
       if (!user) return false;
 
-      if (user.role === 'Court') return false;
+      if (user.role === 'Tiare') return false;
       if (!user.subscriptionEndDate) return false;
 
       return new Date() < user.subscriptionEndDate;

@@ -21,7 +21,7 @@ const testSeeder = async () => {
       email: 'test@example.com',
       password: 'password123',
       name: 'Test User',
-      role: 'Court',
+      role: 'Tiare',
       authProvider: 'local'
     });
     

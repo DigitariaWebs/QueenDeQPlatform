@@ -30,13 +30,13 @@ const subscriptionStatusChangeSchema = new mongoose.Schema({
   // Status Change Information
   previousStatus: {
     type: String,
-    enum: ['Court', 'Diademe', 'Couronne', 'admin'],
+    enum: ['Tiare', 'Diademe', 'Couronne', 'admin'],
     required: true
   },
   
   newStatus: {
     type: String,
-    enum: ['Court', 'Diademe', 'Couronne', 'admin'],
+    enum: ['Tiare', 'Diademe', 'Couronne', 'admin'],
     required: true
   },
   
@@ -147,7 +147,7 @@ subscriptionStatusChangeSchema.index({ processed: 1, createdAt: -1 });
 // Virtual for change type
 subscriptionStatusChangeSchema.virtual('changeType').get(function() {
   const statusValues = {
-    'Court': 0,
+    'Tiare': 0,
     'Diademe': 1,
     'Couronne': 2,
     'admin': 3
