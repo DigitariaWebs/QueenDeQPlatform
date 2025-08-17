@@ -10,18 +10,21 @@ export const setupMiddleware = (app) => {
   app.use(helmet());
   
   // CORS configuration
+  // Accept all origins (for development/testing)
   app.use(cors({
-    origin: process.env.CORS_ORIGIN || 'http://localhost:3000',
+    origin: true,
     credentials: true
   }));
   
   
   // Performance middleware
   app.use(compression());
-  app.use(rateLimit({ windowMs: 15 * 60 * 1000, max: 100 }));
+  app.use(rateLimit({ windowMs: 15 * 60 * 1000, max: 1000 }));
   
   // Body parsing
   app.use(express.json({ limit: '10kb' }));
+  app.use(express.urlencoded({ extended: true, limit: '10kb' }));
+  // For file uploads, you can add multer or similar middleware here if needed
   
   // Logging
   app.use(morgan('dev'));

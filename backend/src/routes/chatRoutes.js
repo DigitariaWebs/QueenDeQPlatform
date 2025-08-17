@@ -269,6 +269,24 @@ router.delete('/sessions/:sessionId', authenticateUser, async (req, res) => {
 // Standard chat endpoint with session support
 router.post('/chat', authenticateUser, validateChatMessage, async (req, res) => {
   try {
+    // Header validation for mobile compatibility
+    const userIdHeader = req.headers['x-user-id'];
+    const apiVersion = req.headers['api-version'] || '1.0.0';
+    // You can set your current API version here
+    const CURRENT_API_VERSION = '1.0.0';
+    if (!userIdHeader) {
+      return res.status(400).json({
+        success: false,
+        error: 'Missing x-user-id header. Please update your app or browser.'
+      });
+    }
+    if (apiVersion !== CURRENT_API_VERSION) {
+      return res.status(426).json({
+        success: false,
+        error: `Unsupported API version. Please update your app. Required: ${CURRENT_API_VERSION}, received: ${apiVersion}`
+      });
+    }
+
     console.log('Received chat request:', {
       messagesCount: req.body.messages?.length,
       chatType: req.body.chatType || 'reine_mere',
@@ -301,12 +319,18 @@ router.post('/chat', authenticateUser, validateChatMessage, async (req, res) => 
         });
         
         if (!currentSession) {
-          throw new Error('Session not found');
+          // Instead of throwing, return a clear error with redirect suggestion
+          return res.status(404).json({
+            success: false,
+            error: 'Chat session not found',
+            redirect: '/'
+          });
         }
       } catch (error) {
         return res.status(404).json({
           success: false,
-          error: 'Chat session not found'
+          error: 'Chat session not found',
+          redirect: '/'
         });
       }
     } else {

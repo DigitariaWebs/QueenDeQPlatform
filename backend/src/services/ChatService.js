@@ -30,56 +30,62 @@ class ChatService {
 
   // Add a message to a session
   static async addMessage(sessionId, userId, content, sender = 'user', metadata = {}) {
-    const session = await mongoose.startSession();
     let savedMessage;
-    
     try {
-      await session.withTransaction(async () => {
-        // Verify session exists and belongs to user
-        const chatSession = await ChatSession.findOne({
-          _id: sessionId,
-          userId: userId
-        }).session(session);
-
-        if (!chatSession) {
-          throw new Error('Chat session not found or access denied');
-        }
-
-        // Get the next order number for this session
-        const lastMessage = await Message.findOne({ sessionId })
-          .sort({ order: -1 })
-          .session(session);
-        
-        const nextOrder = lastMessage ? lastMessage.order + 1 : 1;
-
-        // Create the message
-        const message = new Message({
-          sessionId,
-          userId,
-          content,
-          sender,
-          metadata,
-          order: nextOrder
-        });
-
-        savedMessage = await message.save({ session });
-
-        // Auto-generate title if it's the first user message
-        if (sender === 'user' && chatSession.messageCount === 0) {
-          chatSession.generateAutoTitle(content);
-          await chatSession.save({ session });
-        }
-
-        return message;
+      // Verify session exists and belongs to user
+      const chatSession = await ChatSession.findOne({
+        _id: sessionId,
+        userId: userId
       });
+
+      if (!chatSession) {
+        throw new Error('Chat session not found or access denied');
+      }
+
+      // Get the next order number for this session
+      const lastMessage = await Message.findOne({ sessionId })
+        .sort({ order: -1 });
+      const nextOrder = lastMessage ? lastMessage.order + 1 : 1;
+
+      // Create the message
+      const message = new Message({
+        sessionId,
+        userId,
+        content,
+        sender,
+        metadata,
+        order: nextOrder
+      });
+      savedMessage = await message.save();
+
+      // Auto-generate title if it's the first user message
+      if (sender === 'user' && chatSession.messageCount === 0) {
+        // Use atomic update for title and flags
+        const simpleTitle = content.substring(0, 50).trim() + (content.length > 50 ? '...' : '');
+        await ChatSession.updateOne(
+          { _id: sessionId },
+          {
+            $set: { title: simpleTitle, autoTitle: false },
+            $inc: { messageCount: 1 },
+            $currentDate: { lastMessageAt: true }
+          }
+        );
+      } else {
+        // Just increment messageCount and update lastMessageAt
+        await ChatSession.updateOne(
+          { _id: sessionId },
+          {
+            $inc: { messageCount: 1 },
+            $currentDate: { lastMessageAt: true }
+          }
+        );
+      }
 
       // Return the message with populated data
       const newMessage = await Message.findById(savedMessage._id);
       return newMessage;
     } catch (error) {
       throw new Error(`Failed to add message: ${error.message}`);
-    } finally {
-      await session.endSession();
     }
   }
 

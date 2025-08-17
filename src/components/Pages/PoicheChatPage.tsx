@@ -24,6 +24,14 @@ import {
 } from "../../services/chatService";
 
 const PoicheChatPage = () => {
+  // Streaming support detection
+  const [streamingSupported, setStreamingSupported] = useState(true);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined' && typeof window.ReadableStream === 'undefined') {
+      setStreamingSupported(false);
+    }
+  }, []);
   const [inputValue, setInputValue] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
@@ -166,6 +174,15 @@ const PoicheChatPage = () => {
   const handleSendMessage = async () => {
     if (!inputValue.trim() || isTyping) return;
 
+    // Ensure sessionId is set before sending a message
+    let sessionIdToUse: string | undefined = currentSessionId ?? undefined;
+    if (!sessionIdToUse) {
+      // Create a new session if missing
+      const session = await chatService.createSession("poiche");
+      sessionIdToUse = session.id ?? session._id ?? undefined;
+      if (sessionIdToUse) setCurrentSessionId(sessionIdToUse);
+    }
+
     const userMessage: Message = {
       id: Date.now().toString(),
       content: inputValue,
@@ -238,7 +255,7 @@ const PoicheChatPage = () => {
         currentMessages,
         handleChunk,
         "poiche",
-        currentSessionId || undefined
+        sessionIdToUse
       );
     } catch (error) {
       console.error("Error sending message:", error);
@@ -260,6 +277,11 @@ const PoicheChatPage = () => {
 
   return (
     <div className="-mt-16 -mx-6 -mb-32  lg:-mt-16 lg:-mr-16 lg:-mb-32 lg:-ml-16 overflow-hidden">
+      {!streamingSupported && (
+        <div className="bg-yellow-100 text-yellow-900 p-4 rounded mb-4 text-center">
+          Ce navigateur ne supporte pas le streaming des réponses. Veuillez utiliser un navigateur moderne ou passer en mode chat standard.
+        </div>
+      )}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}

@@ -144,9 +144,14 @@ class ChatService {
       try { data = await response.json(); } catch { data = { success: false, error: 'Invalid server response' }; }
       console.log('Chat response:', data);
 
-      if (!response.ok) {
+      if (!response.ok || !data.success) {
         console.error('Chat error response:', data);
-        throw new Error(data.error || 'Erreur de communication avec la Reine-Mère');
+        // Always return a user-friendly error response
+        return {
+          success: false,
+          error: data.error || 'Erreur de communication avec la Reine-Mère',
+          fallbackMessage: "Pardonne-moi, ma chère âme, mais je rencontre une difficulté en ce moment. Peux-tu réessayer dans un instant ?"
+        };
       }
 
       return data;
