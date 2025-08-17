@@ -279,7 +279,8 @@ const PoicheChatPage = () => {
     <div className="-mt-16 -mx-6 -mb-32  lg:-mt-16 lg:-mr-16 lg:-mb-32 lg:-ml-16 overflow-hidden">
       {!streamingSupported && (
         <div className="bg-yellow-100 text-yellow-900 p-4 rounded mb-4 text-center">
-          Ce navigateur ne supporte pas le streaming des réponses. Veuillez utiliser un navigateur moderne ou passer en mode chat standard.
+          Ce navigateur ne supporte pas le streaming des réponses. Veuillez
+          utiliser un navigateur moderne ou passer en mode chat standard.
         </div>
       )}
       <motion.div
@@ -392,7 +393,7 @@ const PoicheChatPage = () => {
                             ${
                               message.isUser
                                 ? "bg-gradient-to-r from-royal-purple/90 to-royal-gold/30 text-white border-2 border-royal-gold shadow-golden"
-                                : "bg-[#8c8db3] text-white border-2 border-royal-gold/30 shadow-royal"
+                                : "bg-cabinet-aubergine text-royal-pearl border-2 border-royal-gold/30 shadow-royal"
                             }
                           `}
                           >
@@ -474,7 +475,7 @@ const PoicheChatPage = () => {
                         className="flex w-full justify-start"
                       >
                         <div className="flex items-end">
-                          <div className="rounded-2xl px-4 py-2 font-raleway text-sm md:text-base text-royal-purple max-w-[80vw] md:max-w-lg flex items-center gap-2 bg-gradient-to-r from-royal-champagne/80 to-royal-gold/40 border-2 border-royal-gold/30 shadow-royal">
+                          <div className="rounded-2xl px-4 py-2 font-raleway text-sm md:text-base text-cabinet-ink max-w-[80vw] md:max-w-lg flex items-center gap-2 bg-cabinet-parchment border-2 border-royal-gold/30 shadow-royal">
                             <span className="flex gap-1">
                               <span
                                 className="w-2 h-2 bg-royal-gold rounded-full animate-bounce"
@@ -505,7 +506,7 @@ const PoicheChatPage = () => {
                         className="flex w-full justify-start"
                       >
                         <div className="flex items-end">
-                          <div className="rounded-2xl px-4 py-2 font-raleway text-sm md:text-base text-royal-purple max-w-[80vw] md:max-w-lg bg-gradient-to-r from-royal-champagne/80 to-royal-gold/40 border-2 border-royal-gold/30 shadow-royal">
+                          <div className="rounded-2xl px-4 py-2 font-raleway text-sm md:text-base text-cabinet-ink max-w-[80vw] md:max-w-lg bg-cabinet-parchment border-2 border-royal-gold/30 shadow-royal">
                             {streamingMessage}
                             <span className="ml-2 animate-pulse text-royal-gold">
                               ...
