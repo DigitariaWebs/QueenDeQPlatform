@@ -12,7 +12,7 @@ export interface ChatRequest {
     role: 'user' | 'assistant';
     content: string;
   }[];
-  chatType?: 'poiche' | 'salon_de_the';
+  chatType?: 'poiche' | 'salon_de_the' | 'miroir';
   sessionId?: string;
 }
 
@@ -32,7 +32,7 @@ export interface ChatSessionSummary {
   _id?: string;
   id?: string;
   title: string;
-  chatType?: 'poiche' | 'salon_de_the';
+  chatType?: 'poiche' | 'salon_de_the' | 'miroir';
   messageCount?: number;
   createdAt?: string;
   updatedAt?: string;
@@ -43,7 +43,7 @@ export interface ChatSessionWithMessages {
   _id?: string;
   id?: string;
   title: string;
-  chatType?: 'poiche' | 'salon_de_the';
+  chatType?: 'poiche' | 'salon_de_the' | 'miroir';
   messages: Array<{
     _id?: string;
     content: string;
@@ -88,7 +88,7 @@ class ChatService {
     }));
   }
 
-  async createSession(chatType: 'poiche' | 'salon_de_the', title?: string): Promise<ChatSessionSummary> {
+  async createSession(chatType: 'poiche' | 'salon_de_the' | 'miroir', title?: string): Promise<ChatSessionSummary> {
     const response = await fetch(`/api/ai/sessions`, {
       method: 'POST',
       headers: getAuthHeaders(),
@@ -130,7 +130,7 @@ class ChatService {
   // Standard chat (non-streaming)
   async sendMessage(
     messages: Message[],
-    chatType: 'poiche' | 'salon_de_the' = 'poiche',
+    chatType: 'poiche' | 'salon_de_the' | 'miroir' = 'poiche',
     sessionId?: string
   ): Promise<ChatResponse> {
     try {
@@ -179,7 +179,7 @@ class ChatService {
   async sendMessageStream(
     messages: Message[],
     onChunk: (chunk: StreamChunk) => void,
-    chatType: 'poiche' | 'salon_de_the' = 'poiche',
+    chatType: 'poiche' | 'salon_de_the' | 'miroir' = 'poiche',
     sessionId?: string
   ): Promise<void> {
     try {

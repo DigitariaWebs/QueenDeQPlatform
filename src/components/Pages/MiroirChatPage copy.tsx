@@ -194,11 +194,11 @@ const MiroirChatPage = () => {
         }
       };
 
-      // Use reine_mere chat type for the miroir experience
+      // Use miroir chat type for the miroir experience
       await chatService.sendMessageStream(
         currentMessages,
         handleChunk,
-        "reine_mere"
+        "miroir"
       );
     } catch (error) {
       console.error("Error sending message:", error);

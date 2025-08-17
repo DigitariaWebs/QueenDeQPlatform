@@ -134,8 +134,8 @@ const validateChatMessage = [
     }),
   body('chatType')
     .optional()
-    .isIn(['poiche', 'salon_de_the'])
-    .withMessage('Chat type must be either poiche or salon_de_the'),
+    .isIn(['poiche', 'salon_de_the', 'miroir'])
+    .withMessage('Chat type must be either poiche, salon_de_the, or miroir'),
   body('sessionId')
     .optional()
     .isMongoId()
