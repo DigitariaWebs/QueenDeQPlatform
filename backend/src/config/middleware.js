@@ -21,9 +21,9 @@ export const setupMiddleware = (app) => {
   app.use(compression());
   app.use(rateLimit({ windowMs: 15 * 60 * 1000, max: 1000 }));
   
-  // Body parsing
-  app.use(express.json({ limit: '10kb' }));
-  app.use(express.urlencoded({ extended: true, limit: '10kb' }));
+  // Body parsing - increased limits for chat conversations
+  app.use(express.json({ limit: '50mb' }));
+  app.use(express.urlencoded({ extended: true, limit: '50mb' }));
   // For file uploads, you can add multer or similar middleware here if needed
   
   // Logging
