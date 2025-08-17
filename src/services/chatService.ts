@@ -12,7 +12,7 @@ export interface ChatRequest {
     role: 'user' | 'assistant';
     content: string;
   }[];
-  chatType?: 'reine_mere' | 'poiche';
+  chatType?: 'poiche' | 'salon_de_the';
   sessionId?: string;
 }
 
@@ -32,7 +32,7 @@ export interface ChatSessionSummary {
   _id?: string;
   id?: string;
   title: string;
-  chatType?: 'reine_mere' | 'poiche';
+  chatType?: 'poiche' | 'salon_de_the';
   messageCount?: number;
   createdAt?: string;
   updatedAt?: string;
@@ -43,7 +43,7 @@ export interface ChatSessionWithMessages {
   _id?: string;
   id?: string;
   title: string;
-  chatType?: 'reine_mere' | 'poiche';
+  chatType?: 'poiche' | 'salon_de_the';
   messages: Array<{
     _id?: string;
     content: string;
@@ -88,7 +88,7 @@ class ChatService {
     }));
   }
 
-  async createSession(chatType: 'reine_mere' | 'poiche', title?: string): Promise<ChatSessionSummary> {
+  async createSession(chatType: 'poiche' | 'salon_de_the', title?: string): Promise<ChatSessionSummary> {
     const response = await fetch(`/api/ai/sessions`, {
       method: 'POST',
       headers: getAuthHeaders(),
@@ -117,10 +117,20 @@ class ChatService {
     return data.session as ChatSessionWithMessages;
   }
 
+  async deleteSession(sessionId: string): Promise<{ success: boolean; message: string }> {
+    const response = await fetch(`/api/ai/sessions/${sessionId}`, {
+      method: 'DELETE',
+      headers: getAuthHeaders()
+    });
+    const data = await response.json();
+    if (!response.ok || !data.success) throw new Error(data.error || 'Failed to delete session');
+    return data;
+  }
+
   // Standard chat (non-streaming)
   async sendMessage(
     messages: Message[],
-    chatType: 'reine_mere' | 'poiche' = 'reine_mere',
+    chatType: 'poiche' | 'salon_de_the' = 'poiche',
     sessionId?: string
   ): Promise<ChatResponse> {
     try {
@@ -169,7 +179,7 @@ class ChatService {
   async sendMessageStream(
     messages: Message[],
     onChunk: (chunk: StreamChunk) => void,
-    chatType: 'reine_mere' | 'poiche' = 'reine_mere',
+    chatType: 'poiche' | 'salon_de_the' = 'poiche',
     sessionId?: string
   ): Promise<void> {
     try {

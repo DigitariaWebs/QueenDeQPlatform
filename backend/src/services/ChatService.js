@@ -133,19 +133,15 @@ class ChatService {
       const skip = (page - 1) * limit;
       const sort = { [sortBy]: sortOrder };
 
-      const sessions = await ChatSession.find({
-        userId,
-        status
-      })
+      const query = { userId, status };
+
+      const sessions = await ChatSession.find(query)
       .sort(sort)
       .skip(skip)
       .limit(limit)
       .select('title messageCount lastMessageAt createdAt updatedAt model tags chatType');
 
-      const total = await ChatSession.countDocuments({
-        userId,
-        status
-      });
+      const total = await ChatSession.countDocuments(query);
 
       return {
         sessions,

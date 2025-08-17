@@ -134,8 +134,8 @@ const validateChatMessage = [
     }),
   body('chatType')
     .optional()
-    .isIn(['reine_mere', 'poiche'])
-    .withMessage('Chat type must be either reine_mere or poiche'),
+    .isIn(['poiche', 'salon_de_the'])
+    .withMessage('Chat type must be either poiche or salon_de_the'),
   body('sessionId')
     .optional()
     .isMongoId()
@@ -289,7 +289,7 @@ router.post('/chat', authenticateUser, validateChatMessage, async (req, res) => 
 
     console.log('Received chat request:', {
       messagesCount: req.body.messages?.length,
-      chatType: req.body.chatType || 'reine_mere',
+      chatType: req.body.chatType || 'poiche',
       sessionId: req.body.sessionId,
       userId: req.user._id
     });
@@ -305,7 +305,7 @@ router.post('/chat', authenticateUser, validateChatMessage, async (req, res) => 
       });
     }
 
-    const { messages, chatType = 'reine_mere', sessionId } = req.body;
+    const { messages, chatType = 'poiche', sessionId } = req.body;
 
     let currentSession = null;
     
@@ -340,7 +340,8 @@ router.post('/chat', authenticateUser, validateChatMessage, async (req, res) => 
       
       currentSession = await ChatService.createChatSession(
         req.user._id,
-        title
+        title,
+        { chatType }
       );
     }
 
@@ -450,7 +451,7 @@ router.post('/chat/stream', authenticateUser, validateChatMessage, async (req, r
   try {
     console.log('Received streaming request:', {
       messagesCount: req.body.messages?.length,
-      chatType: req.body.chatType || 'reine_mere',
+      chatType: req.body.chatType || 'poiche',
       sessionId: req.body.sessionId,
       userId: req.user._id
     });
@@ -466,7 +467,7 @@ router.post('/chat/stream', authenticateUser, validateChatMessage, async (req, r
       });
     }
 
-    const { messages, chatType = 'reine_mere', sessionId } = req.body;
+    const { messages, chatType = 'poiche', sessionId } = req.body;
 
     let currentSession = null;
     
@@ -491,7 +492,8 @@ router.post('/chat/stream', authenticateUser, validateChatMessage, async (req, r
       
       currentSession = await ChatService.createChatSession(
         req.user._id,
-        title
+        title,
+        { chatType }
       );
     }
 

@@ -4,6 +4,7 @@ import {
   PaperAirplaneIcon,
   ChatBubbleLeftRightIcon,
   EllipsisHorizontalIcon,
+  TrashIcon,
 } from "@heroicons/react/24/outline";
 
 import {
@@ -33,6 +34,7 @@ const SalonChatPage = () => {
   const [currentSessionId, setCurrentSessionId] = useState<string | null>(null);
   const [showHistory, setShowHistory] = useState(false);
   const [sessions, setSessions] = useState<ChatSessionSummary[]>([]);
+  const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
 
   const firstBotMessageId = messages.find((m) => !m.isUser)?.id;
 
@@ -87,7 +89,7 @@ const SalonChatPage = () => {
     setStreamingMessage("");
     setOpenShareMenuId(null);
     try {
-      const session = await chatService.createSession("reine_mere");
+      const session = await chatService.createSession("salon_de_the");
       const id = (session._id || (session as any).id) as string;
       setCurrentSessionId(id);
     } catch (e) {
@@ -98,7 +100,7 @@ const SalonChatPage = () => {
   const handleShowHistory = async () => {
     try {
       const all = await chatService.listSessions();
-      const onlySalon = all.filter((s) => s.chatType === "reine_mere");
+      const onlySalon = all.filter((s) => s.chatType === "salon_de_the");
       setSessions(onlySalon);
       setShowHistory(true);
     } catch (e) {
@@ -123,6 +125,37 @@ const SalonChatPage = () => {
       setTimeout(scrollToBottom, 200);
     } catch (e) {
       console.error("Failed to load session messages", e);
+    }
+  };
+
+  const deleteSession = async (sessionId: string) => {
+    try {
+      await chatService.deleteSession(sessionId);
+      // Remove from local state
+      setSessions((prev) =>
+        prev.filter((s) => {
+          const id = (s._id || (s as any).id) as string;
+          return id !== sessionId;
+        })
+      );
+      setDeleteConfirmId(null);
+
+      // If we're currently viewing the deleted session, clear it
+      if (currentSessionId === sessionId) {
+        setCurrentSessionId(null);
+        setMessages([
+          {
+            id: "1",
+            content:
+              "Bienvenue au Salon de Thé, ma Queen. Je suis la Reine Mère, ta gardienne sacrée. Je suis là pour t'accompagner dans un rituel symbolique de reprise de pouvoir émotionnel. Aujourd'hui, je peux t'offrir deux types de rencontres : l'Acte de Désenvoûtement pour sortir d'un attachement toxique, ou le Flush Royal pour faire un ménage sacré et libérer ton royaume. Dis-moi, ma chère âme, qu'est-ce qui t'amène ici aujourd'hui ?",
+            isUser: false,
+            timestamp: new Date(),
+          },
+        ]);
+      }
+    } catch (e) {
+      console.error("Failed to delete session", e);
+      setDeleteConfirmId(null);
     }
   };
 
@@ -224,11 +257,11 @@ const SalonChatPage = () => {
         }
       };
 
-      // Use reine_mere chat type for this page
+      // Use salon_de_the chat type for this page
       await chatService.sendMessageStream(
         currentMessages,
         handleChunk,
-        "reine_mere",
+        "salon_de_the",
         currentSessionId || undefined
       );
     } catch (error) {
@@ -285,17 +318,59 @@ const SalonChatPage = () => {
                       const id = (s._id || (s as any).id) as string;
                       return (
                         <li key={id}>
-                          <button
-                            onClick={() => loadSession(id)}
-                            className="w-full text-left px-3 py-2 rounded-lg bg-royal-purple/40 hover:bg-royal-purple/60 border border-royal-gold/30 text-sm"
-                          >
-                            {s.title || "Conversation"}
-                            <span className="ml-2 text-xs opacity-70">
-                              {new Date(
-                                s.updatedAt || s.createdAt || Date.now()
-                              ).toLocaleString()}
-                            </span>
-                          </button>
+                          <div className="flex items-center gap-2">
+                            <button
+                              onClick={() => loadSession(id)}
+                              className="flex-1 text-left px-3 py-2 rounded-lg bg-royal-purple/40 hover:bg-royal-purple/60 border border-royal-gold/30 text-sm"
+                            >
+                              {s.title || "Conversation"}
+                              <span className="ml-2 text-xs opacity-70">
+                                {new Date(
+                                  s.updatedAt || s.createdAt || Date.now()
+                                ).toLocaleString()}
+                              </span>
+                            </button>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setDeleteConfirmId(
+                                  deleteConfirmId === id ? null : id
+                                );
+                              }}
+                              className="p-2 rounded-lg bg-red-500/20 hover:bg-red-500/40 border border-red-500/30 text-red-400 hover:text-red-300 transition-colors"
+                              title="Supprimer la conversation"
+                            >
+                              <TrashIcon className="w-4 h-4" />
+                            </button>
+                          </div>
+                          {deleteConfirmId === id && (
+                            <div className="mt-2 p-2 bg-red-500/20 border border-red-500/30 rounded-lg">
+                              <p className="text-xs text-red-300 mb-2">
+                                Êtes-vous sûr de vouloir supprimer cette
+                                conversation ?
+                              </p>
+                              <div className="flex gap-2">
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    deleteSession(id);
+                                  }}
+                                  className="px-3 py-1 bg-red-500 text-white rounded text-xs hover:bg-red-600 transition-colors"
+                                >
+                                  Supprimer
+                                </button>
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setDeleteConfirmId(null);
+                                  }}
+                                  className="px-3 py-1 bg-royal-purple/60 text-royal-pearl rounded text-xs hover:bg-royal-purple/80 transition-colors"
+                                >
+                                  Annuler
+                                </button>
+                              </div>
+                            </div>
+                          )}
                         </li>
                       );
                     })}

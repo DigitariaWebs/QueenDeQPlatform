@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   PaperAirplaneIcon,
   EllipsisHorizontalIcon,
+  TrashIcon,
 } from "@heroicons/react/24/outline";
 
 // Custom icon component for Unicode U+26E8 (Black Cross On Shield)
@@ -28,7 +29,10 @@ const PoicheChatPage = () => {
   const [streamingSupported, setStreamingSupported] = useState(true);
 
   useEffect(() => {
-    if (typeof window !== 'undefined' && typeof window.ReadableStream === 'undefined') {
+    if (
+      typeof window !== "undefined" &&
+      typeof window.ReadableStream === "undefined"
+    ) {
       setStreamingSupported(false);
     }
   }, []);
@@ -50,6 +54,7 @@ const PoicheChatPage = () => {
   const [currentSessionId, setCurrentSessionId] = useState<string | null>(null);
   const [showHistory, setShowHistory] = useState(false);
   const [sessions, setSessions] = useState<ChatSessionSummary[]>([]);
+  const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
 
   const firstBotMessageId = messages.find((m) => !m.isUser)?.id;
 
@@ -140,6 +145,37 @@ const PoicheChatPage = () => {
       setTimeout(scrollToBottom, 200);
     } catch (e) {
       console.error("Failed to load session messages", e);
+    }
+  };
+
+  const deleteSession = async (sessionId: string) => {
+    try {
+      await chatService.deleteSession(sessionId);
+      // Remove from local state
+      setSessions((prev) =>
+        prev.filter((s) => {
+          const id = (s._id || (s as any).id) as string;
+          return id !== sessionId;
+        })
+      );
+      setDeleteConfirmId(null);
+
+      // If we're currently viewing the deleted session, clear it
+      if (currentSessionId === sessionId) {
+        setCurrentSessionId(null);
+        setMessages([
+          {
+            id: "1",
+            content:
+              "Oh Queen, si tu es ici c'est que tu es prête à voir clair dans son jeu. Avant d'aller plus loin, donne-moi un peu plus de détails pour que je puisse comprendre le contexte de la game. Tu le connais depuis quand? Vous vous êtes déjà rencontré? Vous en êtes à quel stade? Fréquentation, relation, situationship, exploration, dating ? Je pourrais adapter mes questions en fonction de ta situation. À toi, dis-moi tout!",
+            isUser: false,
+            timestamp: new Date(),
+          },
+        ]);
+      }
+    } catch (e) {
+      console.error("Failed to delete session", e);
+      setDeleteConfirmId(null);
     }
   };
 
@@ -317,17 +353,59 @@ const PoicheChatPage = () => {
                       const id = (s._id || (s as any).id) as string;
                       return (
                         <li key={id}>
-                          <button
-                            onClick={() => loadSession(id)}
-                            className="w-full text-left px-3 py-2 rounded-lg bg-royal-purple/40 hover:bg-royal-purple/60 border border-royal-gold/30 text-sm"
-                          >
-                            {s.title || "Conversation"}
-                            <span className="ml-2 text-xs opacity-70">
-                              {new Date(
-                                s.updatedAt || s.createdAt || Date.now()
-                              ).toLocaleString()}
-                            </span>
-                          </button>
+                          <div className="flex items-center gap-2">
+                            <button
+                              onClick={() => loadSession(id)}
+                              className="flex-1 text-left px-3 py-2 rounded-lg bg-royal-purple/40 hover:bg-royal-purple/60 border border-royal-gold/30 text-sm"
+                            >
+                              {s.title || "Conversation"}
+                              <span className="ml-2 text-xs opacity-70">
+                                {new Date(
+                                  s.updatedAt || s.createdAt || Date.now()
+                                ).toLocaleString()}
+                              </span>
+                            </button>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setDeleteConfirmId(
+                                  deleteConfirmId === id ? null : id
+                                );
+                              }}
+                              className="p-2 rounded-lg bg-red-500/20 hover:bg-red-500/40 border border-red-500/30 text-red-400 hover:text-red-300 transition-colors"
+                              title="Supprimer la conversation"
+                            >
+                              <TrashIcon className="w-4 h-4" />
+                            </button>
+                          </div>
+                          {deleteConfirmId === id && (
+                            <div className="mt-2 p-2 bg-red-500/20 border border-red-500/30 rounded-lg">
+                              <p className="text-xs text-red-300 mb-2">
+                                Êtes-vous sûr de vouloir supprimer cette
+                                conversation ?
+                              </p>
+                              <div className="flex gap-2">
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    deleteSession(id);
+                                  }}
+                                  className="px-3 py-1 bg-red-500 text-white rounded text-xs hover:bg-red-600 transition-colors"
+                                >
+                                  Supprimer
+                                </button>
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setDeleteConfirmId(null);
+                                  }}
+                                  className="px-3 py-1 bg-royal-purple/60 text-royal-pearl rounded text-xs hover:bg-royal-purple/80 transition-colors"
+                                >
+                                  Annuler
+                                </button>
+                              </div>
+                            </div>
+                          )}
                         </li>
                       );
                     })}
