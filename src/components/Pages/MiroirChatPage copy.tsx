@@ -3,11 +3,14 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   PaperAirplaneIcon,
   EllipsisHorizontalIcon,
+  TrashIcon,
 } from "@heroicons/react/24/outline";
 import {
   chatService,
   type Message,
   type StreamChunk,
+  type ChatSessionSummary,
+  type ChatSessionWithMessages,
 } from "../../services/chatService";
 
 // Custom icon component for Unicode U+2655 (White Chess Queen)
@@ -22,6 +25,17 @@ const WhiteChessQueenIcon = ({ className = "" }: { className?: string }) => (
 );
 
 const MiroirChatPremium = () => {
+  // Streaming support detection
+  const [streamingSupported, setStreamingSupported] = useState(true);
+
+  useEffect(() => {
+    if (
+      typeof window !== "undefined" &&
+      typeof window.ReadableStream === "undefined"
+    ) {
+      setStreamingSupported(false);
+    }
+  }, []);
   const [inputValue, setInputValue] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
@@ -37,6 +51,10 @@ const MiroirChatPremium = () => {
   const [openShareMenuId, setOpenShareMenuId] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const streamingTimeoutRef = useRef<number | null>(null);
+  const [currentSessionId, setCurrentSessionId] = useState<string | null>(null);
+  const [showHistory, setShowHistory] = useState(false);
+  const [sessions, setSessions] = useState<ChatSessionSummary[]>([]);
+  const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
 
   const firstBotMessageId = messages.find((m) => !m.isUser)?.id;
 
@@ -71,29 +89,96 @@ const MiroirChatPremium = () => {
 
   const handleNewConversation = () => {
     // Clear any ongoing streaming
-    if (streamingTimeoutRef.current) {
-      clearTimeout(streamingTimeoutRef.current);
-      streamingTimeoutRef.current = null;
-    }
+    return (async () => {
+      if (streamingTimeoutRef.current) {
+        clearTimeout(streamingTimeoutRef.current);
+        streamingTimeoutRef.current = null;
+      }
 
-    // Reset all state
-    setMessages([
-      {
-        id: "1",
-        content:
-          "Bienvenue, ma chère âme. Je suis la Reine-Mère, ta confidente et guide spirituelle. Je suis là pour t'écouter, partager ma sagesse, et t'accompagner dans ton cheminement. Qu'aimerais-tu explorer aujourd'hui ?",
-        isUser: false,
-        timestamp: new Date(),
-      },
-    ]);
-    setInputValue("");
-    setIsTyping(false);
-    setStreamingMessage("");
-    setOpenShareMenuId(null);
+      // Reset all state
+      setMessages([
+        {
+          id: "1",
+          content:
+            "Bienvenue, ma chère âme. Je suis la Reine-Mère, ta confidente et guide spirituelle. Je suis là pour t'écouter, partager ma sagesse, et t'accompagner dans ton cheminement. Qu'aimerais-tu explorer aujourd'hui ?",
+          isUser: false,
+          timestamp: new Date(),
+        },
+      ]);
+      setInputValue("");
+      setIsTyping(false);
+      setStreamingMessage("");
+      setOpenShareMenuId(null);
+      try {
+        const session = await chatService.createSession("miroir");
+        const id = (session._id || (session as any).id) as string;
+        setCurrentSessionId(id);
+      } catch (e) {
+        console.error("Failed to create session", e);
+      }
+    })();
   };
 
-  const handleShowHistory = () => {
-    console.log("Showing conversation history");
+  const handleShowHistory = async () => {
+    try {
+      const all = await chatService.listSessions();
+      const onlyMiroir = all.filter((s) => s.chatType === "miroir");
+      setSessions(onlyMiroir);
+      setShowHistory(true);
+    } catch (e) {
+      console.error("Failed to load sessions", e);
+    }
+  };
+
+  const loadSession = async (sessionId: string) => {
+    try {
+      const session = (await chatService.getSession(
+        sessionId
+      )) as ChatSessionWithMessages;
+      setCurrentSessionId(sessionId);
+      const converted: Message[] = session.messages.map((m, idx) => ({
+        id: String(idx + 1),
+        content: m.content,
+        isUser: m.sender === "user",
+        timestamp: new Date(m.createdAt || Date.now()),
+      }));
+      setMessages(converted);
+      setShowHistory(false);
+      setTimeout(scrollToBottom, 200);
+    } catch (e) {
+      console.error("Failed to load session messages", e);
+    }
+  };
+
+  const deleteSession = async (sessionId: string) => {
+    try {
+      await chatService.deleteSession(sessionId);
+      // Remove from local state
+      setSessions((prev) =>
+        prev.filter((s) => {
+          const id = (s._id || (s as any).id) as string;
+          return id !== sessionId;
+        })
+      );
+      setDeleteConfirmId(null);
+
+      // If we're currently viewing the deleted session, clear it
+      if (currentSessionId === sessionId) {
+        setCurrentSessionId(null);
+        setMessages([
+          {
+            id: "1",
+            content:
+              "Bienvenue, ma chère âme. Je suis la Reine-Mère, ta confidente et guide spirituelle. Je suis là pour t'écouter, partager ma sagesse, et t'accompagner dans ton cheminement. Qu'aimerais-tu explorer aujourd'hui ?",
+            isUser: false,
+            timestamp: new Date(),
+          },
+        ]);
+      }
+    } catch (e) {
+      console.error("Failed to delete session", e);
+      setDeleteConfirmId(null);
+    }
   };
 
   const buildShareLinks = (text: string) => {
@@ -126,6 +211,19 @@ const MiroirChatPremium = () => {
 
   const handleSendMessage = async () => {
     if (!inputValue.trim() || isTyping) return;
+
+    // Ensure sessionId is set before sending a message
+    let sessionIdToUse: string | undefined = currentSessionId ?? undefined;
+    if (!sessionIdToUse) {
+      // Create a new session if missing
+      try {
+        const session = await chatService.createSession("miroir");
+        sessionIdToUse = session.id ?? session._id ?? undefined;
+        if (sessionIdToUse) setCurrentSessionId(sessionIdToUse);
+      } catch (e) {
+        console.error("Failed to create session before sending", e);
+      }
+    }
 
     const userMessage: Message = {
       id: Date.now().toString(),
@@ -198,7 +296,8 @@ const MiroirChatPremium = () => {
       await chatService.sendMessageStream(
         currentMessages,
         handleChunk,
-        "miroir"
+        "miroir",
+        sessionIdToUse
       );
     } catch (error) {
       console.error("Error sending message:", error);
@@ -220,6 +319,13 @@ const MiroirChatPremium = () => {
 
   return (
     <div className="-mt-16 -mx-6 -mb-32  lg:-mt-16 lg:-mr-16 lg:-mb-32 lg:-ml-16 overflow-hidden">
+      {!streamingSupported && (
+        <div className="bg-yellow-100 text-yellow-900 p-4 rounded mb-4 text-center">
+          Ce navigateur ne supporte pas le streaming des réponses. Veuillez
+          utiliser un navigateur moderne ou passer en mode chat standard.
+        </div>
+      )}
+
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -242,6 +348,78 @@ const MiroirChatPremium = () => {
                 </div>
               </div>
             </div>
+              {showHistory && (
+                <div className="mt-3 bg-royal-purple/30 border border-royal-gold/30 rounded-xl p-3 max-h-60 overflow-y-auto">
+                  {sessions.length === 0 ? (
+                    <div className="text-sm text-royal-pearl/70">
+                      Aucune conversation
+                    </div>
+                  ) : (
+                    <ul className="space-y-2">
+                      {sessions.map((s) => {
+                        const id = (s._id || (s as any).id) as string;
+                        return (
+                          <li key={id}>
+                            <div className="flex items-center gap-2">
+                              <button
+                                onClick={() => loadSession(id)}
+                                className="flex-1 text-left px-3 py-2 rounded-lg bg-royal-purple/40 hover:bg-royal-purple/60 border border-royal-gold/30 text-sm"
+                              >
+                                {s.title || "Conversation"}
+                                <span className="ml-2 text-xs opacity-70">
+                                  {new Date(
+                                    s.updatedAt || s.createdAt || Date.now()
+                                  ).toLocaleString()}
+                                </span>
+                              </button>
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setDeleteConfirmId(
+                                    deleteConfirmId === id ? null : id
+                                  );
+                                }}
+                                className="p-2 rounded-lg bg-red-500/20 hover:bg-red-500/40 border border-red-500/30 text-red-400 hover:text-red-300 transition-colors"
+                                title="Supprimer la conversation"
+                              >
+                                <TrashIcon className="w-4 h-4" />
+                              </button>
+                            </div>
+                            {deleteConfirmId === id && (
+                              <div className="mt-2 p-2 bg-red-500/20 border border-red-500/30 rounded-lg">
+                                <p className="text-xs text-red-300 mb-2">
+                                  Êtes-vous sûr de vouloir supprimer cette
+                                  conversation ?
+                                </p>
+                                <div className="flex gap-2">
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      deleteSession(id);
+                                    }}
+                                    className="px-3 py-1 bg-red-500 text-white rounded text-xs hover:bg-red-600 transition-colors"
+                                  >
+                                    Supprimer
+                                  </button>
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      setDeleteConfirmId(null);
+                                    }}
+                                    className="px-3 py-1 bg-royal-purple/60 text-royal-pearl rounded text-xs hover:bg-royal-purple/80 transition-colors"
+                                  >
+                                    Annuler
+                                  </button>
+                                </div>
+                              </div>
+                            )}
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  )}
+                </div>
+              )}
           </div>
         </div>
 
