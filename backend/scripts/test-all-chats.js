@@ -16,7 +16,7 @@ async function testBothChatSystems() {
   };
   
   try {
-    const ritualResponse = await fetch('http://localhost:5001/api/ai/chat', {
+  const ritualResponse = await fetch('http://localhost:5000/api/ai/chat', {
       method: 'POST',
       headers: { 
         'Content-Type': 'application/json',
@@ -45,6 +45,40 @@ async function testBothChatSystems() {
   
   console.log('\n' + '='.repeat(50) + '\n');
   
+  // Test 3: Miroir System (miroir)
+  console.log('🪞 Testing Miroir System (miroir)...');
+  const miroirTest = {
+    messages: [
+      {
+        role: 'user',
+        content: "J'ai besoin d'un miroir pour comprendre mes schémas amoureux"
+      }
+    ],
+    chatType: 'miroir'
+  };
+  
+  try {
+  const miroirResponse = await fetch('http://localhost:5000/api/ai/chat', {
+      method: 'POST',
+      headers: { 
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer test-token',
+        'x-user-id': '68989ac1a5af8810fb2ae4c2'
+      },
+      body: JSON.stringify(miroirTest)
+    });
+    
+    if (miroirResponse.ok) {
+      const miroirData = await miroirResponse.json();
+      console.log('✅ Miroir System Working');
+      console.log('Response preview:', miroirData.message?.content?.substring(0, 150) + '...');
+    } else {
+      console.log('❌ Miroir system error:', miroirResponse.status);
+    }
+  } catch (error) {
+    console.log('❌ Miroir system network error:', error.message);
+  }
+
   // Test 2: Poiche System (poiche)
   console.log('🎴 Testing Poiche System (poiche)...');
   const poicheTest = {
@@ -58,7 +92,7 @@ async function testBothChatSystems() {
   };
   
   try {
-    const poicheResponse = await fetch('http://localhost:5001/api/ai/chat', {
+  const poicheResponse = await fetch('http://localhost:5000/api/ai/chat', {
       method: 'POST',
       headers: { 
         'Content-Type': 'application/json',

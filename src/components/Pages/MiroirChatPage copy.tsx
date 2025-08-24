@@ -21,7 +21,7 @@ const WhiteChessQueenIcon = ({ className = "" }: { className?: string }) => (
   </span>
 );
 
-const MiroirChatPage = () => {
+const MiroirChatPremium = () => {
   const [inputValue, setInputValue] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
@@ -471,4 +471,4 @@ const MiroirChatPage = () => {
   );
 };
 
-export default MiroirChatPage;
+export default MiroirChatPremium;

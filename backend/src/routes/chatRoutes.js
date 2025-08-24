@@ -146,6 +146,14 @@ const validateChatMessage = [
 router.post('/sessions', authenticateUser, async (req, res) => {
   try {
     const { title, chatType = 'poiche' } = req.body;
+    // Restrict premium "miroir" to allowed roles
+    const ALLOWED_MIROIR_ROLES = ['Diademe', 'Couronne', 'admin'];
+    if (chatType === 'miroir' && !ALLOWED_MIROIR_ROLES.includes(req.user.role)) {
+      return res.status(403).json({
+        success: false,
+        error: 'Access denied: miroir mode is restricted to premium users.'
+      });
+    }
     
     const session = await ChatService.createChatSession(
       req.user._id, 
@@ -306,6 +314,15 @@ router.post('/chat', authenticateUser, validateChatMessage, async (req, res) => 
     }
 
     const { messages, chatType = 'poiche', sessionId } = req.body;
+
+    // Restrict miroir usage to allowed roles early to avoid wasted work
+    const ALLOWED_MIROIR_ROLES = ['Diademe', 'Couronne', 'admin'];
+    if (chatType === 'miroir' && !ALLOWED_MIROIR_ROLES.includes(req.user.role)) {
+      return res.status(403).json({
+        success: false,
+        error: 'Access denied: miroir mode is restricted to premium users.'
+      });
+    }
 
     let currentSession = null;
     
@@ -468,6 +485,15 @@ router.post('/chat/stream', authenticateUser, validateChatMessage, async (req, r
     }
 
     const { messages, chatType = 'poiche', sessionId } = req.body;
+
+    // Restrict miroir usage to allowed roles early to avoid wasted work
+    const ALLOWED_MIROIR_ROLES = ['Diademe', 'Couronne', 'admin'];
+    if (chatType === 'miroir' && !ALLOWED_MIROIR_ROLES.includes(req.user.role)) {
+      return res.status(403).json({
+        success: false,
+        error: 'Access denied: miroir mode is restricted to premium users.'
+      });
+    }
 
     let currentSession = null;
     
