@@ -2,9 +2,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import DashboardLayout from './components/Layout/DashboardLayout';
 import DashboardHome from './components/Pages/DashboardHome';
 import PoicheChatPage from './components/Pages/PoicheChatPage';
-import MiroirChatPage from './components/Pages/MiroirChatPage';
-// Premium miroir chat (rich experience)
-import MiroirChatPremium from './components/Pages/MiroirChatPage copy';
+import MiroirChatPremium from './components/Pages/MiroirChatPage';
 import JournalPage from './components/Pages/JournalPage';
 import SalonChatPage from './components/Pages/SalonChatPage';
 import AuthPage from './components/Pages/AuthPage';
@@ -23,16 +21,7 @@ const AppContent = () => {
         <Route path="/" element={<DashboardLayout />}>
           <Route index element={<DashboardHome />} />
           <Route path="/poiche" element={<PoicheChatPage />} />
-          <Route
-            path="/miroir"
-            element={
-              (user && ['Diademe', 'Couronne', 'admin'].includes(user.role ?? '')) ? (
-                <MiroirChatPremium />
-              ) : (
-                <MiroirChatPage />
-              )
-            }
-          />
+          <Route path="/miroir" element={<MiroirChatPremium />} />
           <Route path="/journal" element={<JournalPage />} />
           <Route path="/salon" element={<SalonChatPage />} />
         </Route>

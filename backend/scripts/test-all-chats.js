@@ -45,8 +45,8 @@ async function testBothChatSystems() {
   
   console.log('\n' + '='.repeat(50) + '\n');
   
-  // Test 3: Miroir System (miroir)
-  console.log('🪞 Testing Miroir System (miroir)...');
+  // Test 3: Miroir System (miroir_paid)
+  console.log('🪞 Testing Miroir System (miroir_paid)...');
   const miroirTest = {
     messages: [
       {
@@ -54,7 +54,7 @@ async function testBothChatSystems() {
         content: "J'ai besoin d'un miroir pour comprendre mes schémas amoureux"
       }
     ],
-    chatType: 'miroir'
+  chatType: 'miroir_paid'
   };
   
   try {

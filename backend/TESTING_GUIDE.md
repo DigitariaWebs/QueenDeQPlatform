@@ -358,8 +358,10 @@ Authorization: Bearer {{authToken}}
 The platform supports three different chat types:
 
 - **`poiche`** (Free): Basic archetype identification and guidance
-- **`miroir`** (Premium): Advanced mirror reading and deep psychological insights  
-- **`salon_de_the`** (Premium): Ritualistic tea salon sessions with guided introspection
+ - **`poiche`** (Free): Basic archetype identification and guidance
+ - **`miroir_free`** (Free): Limited mirror reading (shallower flow)
+ - **`miroir_paid`** (Premium): Advanced mirror reading and deep psychological insights  
+ - **`salon_de_the`** (Premium): Ritualistic tea salon sessions with guided introspection
 
 All chat types maintain conversation history through sessions and support both standard and streaming responses.
 
@@ -378,8 +380,9 @@ Content-Type: application/json
 
 **Available Chat Types**:
 - `poiche`: Free chat with archetype selection
-- `miroir`: Premium mirror reading mode  
-- `salon_de_the`: Premium tea salon ritual mode
+ - `miroir_free`: Free mirror reading (limited depth)
+ - `miroir_paid`: Premium mirror reading mode  
+ - `salon_de_the`: Premium tea salon ritual mode
 
 **Expected Response (200)**:
 ```json
@@ -437,7 +440,7 @@ x-user-id: {{userId}}
 
 **Chat Types Available**:
 - `poiche`: Free chat with archetype selection
-- `miroir`: Premium mirror reading mode
+-- `miroir_paid`: Premium mirror reading mode
 - `salon_de_the`: Premium tea salon ritual mode
 
 ### 3. Get Specific Session with Messages
@@ -520,7 +523,7 @@ Content-Type: application/json
 }
 ```
 
-### 5. Premium Chat (Miroir Mode)
+### 5. Premium Chat (Miroir Mode - miroir_paid)
 ```http
 POST {{baseUrl}}/api/ai/chat
 Authorization: Bearer {{authToken}}
@@ -534,7 +537,7 @@ Content-Type: application/json
       "content": "Je veux faire une lecture miroir pour comprendre ce que mon comportement révèle sur moi."
     }
   ],
-  "chatType": "miroir"
+  "chatType": "miroir_paid"
 }
 ```
 
@@ -570,7 +573,7 @@ Content-Type: application/json
       "content": "Aide-moi à comprendre pourquoi je choisis toujours le même type de partenaire toxique."
     }
   ],
-  "chatType": "miroir"
+  "chatType": "miroir_paid"
 }
 ```
 

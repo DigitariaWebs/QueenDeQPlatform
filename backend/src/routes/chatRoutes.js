@@ -115,55 +115,61 @@ const renderArchetypePortrait = (a) => {
 
 // Validation middleware for chat messages
 const validateChatMessage = [
-  body('messages')
+  body("messages")
     .isArray()
-    .withMessage('Messages must be an array')
+    .withMessage("Messages must be an array")
     .custom((messages) => {
       if (!messages.length) {
-        throw new Error('Messages array cannot be empty');
+        throw new Error("Messages array cannot be empty");
       }
       for (const message of messages) {
         if (!message.role || !message.content) {
-          throw new Error('Each message must have role and content');
+          throw new Error("Each message must have role and content");
         }
-        if (!['user', 'assistant'].includes(message.role)) {
-          throw new Error('Message role must be either user or assistant');
+        if (!["user", "assistant"].includes(message.role)) {
+          throw new Error("Message role must be either user or assistant");
         }
       }
       return true;
     }),
-  body('chatType')
+  body("chatType")
     .optional()
-    .isIn(['poiche', 'salon_de_the', 'miroir'])
-    .withMessage('Chat type must be either poiche, salon_de_the, or miroir'),
-  body('sessionId')
+    .isIn(["poiche", "salon_de_the", "miroir_free", "miroir_paid"])
+    .withMessage(
+      "Chat type must be either poiche, salon_de_the, miroir_free or miroir_paid"
+    ),
+  body("sessionId")
     .optional()
     .isMongoId()
-    .withMessage('Session ID must be a valid MongoDB ObjectId')
+    .withMessage("Session ID must be a valid MongoDB ObjectId"),
 ];
 
 // Create new chat session
 router.post('/sessions', authenticateUser, async (req, res) => {
   try {
-    const { title, chatType = 'poiche' } = req.body;
-    // Restrict premium "miroir" to allowed roles
-    const ALLOWED_MIROIR_ROLES = ['Diademe', 'Couronne', 'admin'];
-    if (chatType === 'miroir' && !ALLOWED_MIROIR_ROLES.includes(req.user.role)) {
+    const { title, chatType = "poiche" } = req.body;
+    // Restrict premium "miroir_paid" to allowed roles; free version allowed for all
+    const ALLOWED_MIROIR_ROLES = ["Diademe", "Couronne", "admin"];
+    if (
+      chatType === "miroir_paid" &&
+      !ALLOWED_MIROIR_ROLES.includes(req.user.role)
+    ) {
       return res.status(403).json({
         success: false,
-        error: 'Access denied: miroir mode is restricted to premium users.'
+        error:
+          "Access denied: miroir_paid mode is restricted to premium users.",
       });
     }
-    
+
     const session = await ChatService.createChatSession(
-      req.user._id, 
-      title || 'New Chat',
+      req.user._id,
+      title || "New Chat",
       { chatType }
     );
-    
+
     res.json({
       success: true,
-      session
+      session,
     });
   } catch (error) {
     console.error('Create session error:', error);
@@ -278,83 +284,87 @@ router.delete('/sessions/:sessionId', authenticateUser, async (req, res) => {
 router.post('/chat', authenticateUser, validateChatMessage, async (req, res) => {
   try {
     // Header validation for mobile compatibility
-    const userIdHeader = req.headers['x-user-id'];
-    const apiVersion = req.headers['api-version'] || '1.0.0';
+    const userIdHeader = req.headers["x-user-id"];
+    const apiVersion = req.headers["api-version"] || "1.0.0";
     // You can set your current API version here
-    const CURRENT_API_VERSION = '1.0.0';
+    const CURRENT_API_VERSION = "1.0.0";
     if (!userIdHeader) {
       return res.status(400).json({
         success: false,
-        error: 'Missing x-user-id header. Please update your app or browser.'
+        error: "Missing x-user-id header. Please update your app or browser.",
       });
     }
     if (apiVersion !== CURRENT_API_VERSION) {
       return res.status(426).json({
         success: false,
-        error: `Unsupported API version. Please update your app. Required: ${CURRENT_API_VERSION}, received: ${apiVersion}`
+        error: `Unsupported API version. Please update your app. Required: ${CURRENT_API_VERSION}, received: ${apiVersion}`,
       });
     }
 
-    console.log('Received chat request:', {
+    console.log("Received chat request:", {
       messagesCount: req.body.messages?.length,
-      chatType: req.body.chatType || 'poiche',
+      chatType: req.body.chatType || "poiche",
       sessionId: req.body.sessionId,
-      userId: req.user._id
+      userId: req.user._id,
     });
 
     // Check for validation errors
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      console.log('Validation errors:', errors.array());
+      console.log("Validation errors:", errors.array());
       return res.status(400).json({
         success: false,
-        error: 'Invalid request format',
-        details: errors.array()
+        error: "Invalid request format",
+        details: errors.array(),
       });
     }
 
-    const { messages, chatType = 'poiche', sessionId } = req.body;
+    const { messages, chatType = "poiche", sessionId } = req.body;
 
-    // Restrict miroir usage to allowed roles early to avoid wasted work
-    const ALLOWED_MIROIR_ROLES = ['Diademe', 'Couronne', 'admin'];
-    if (chatType === 'miroir' && !ALLOWED_MIROIR_ROLES.includes(req.user.role)) {
+    // Restrict miroir_paid usage to allowed roles early to avoid wasted work
+    const ALLOWED_MIROIR_ROLES = ["Diademe", "Couronne", "admin"];
+    if (
+      chatType === "miroir_paid" &&
+      !ALLOWED_MIROIR_ROLES.includes(req.user.role)
+    ) {
       return res.status(403).json({
         success: false,
-        error: 'Access denied: miroir mode is restricted to premium users.'
+        error:
+          "Access denied: miroir_paid mode is restricted to premium users.",
       });
     }
 
     let currentSession = null;
-    
+
     // Get or create session
     if (sessionId) {
       try {
         currentSession = await ChatSession.findOne({
           _id: sessionId,
           userId: req.user._id,
-          status: 'active'
+          status: "active",
         });
-        
+
         if (!currentSession) {
           // Instead of throwing, return a clear error with redirect suggestion
           return res.status(404).json({
             success: false,
-            error: 'Chat session not found',
-            redirect: '/'
+            error: "Chat session not found",
+            redirect: "/",
           });
         }
       } catch (error) {
         return res.status(404).json({
           success: false,
-          error: 'Chat session not found',
-          redirect: '/'
+          error: "Chat session not found",
+          redirect: "/",
         });
       }
     } else {
       // Create new session from first user message
-      const firstUserMessage = messages.find(m => m.role === 'user');
-      const title = firstUserMessage?.content?.substring(0, 50) || 'New Chat';
-      
+      const firstUserMessage = messages.find((m) => m.role === "user");
+      const title = firstUserMessage?.content?.substring(0, 50) || "New Chat";
+
       currentSession = await ChatService.createChatSession(
         req.user._id,
         title,
@@ -364,15 +374,15 @@ router.post('/chat', authenticateUser, validateChatMessage, async (req, res) => 
 
     // Save user message to database
     const userMessage = messages[messages.length - 1]; // Get the latest user message
-    if (userMessage.role === 'user') {
+    if (userMessage.role === "user") {
       await ChatService.addMessage(
         currentSession._id,
         req.user._id,
         userMessage.content,
-        'user',
+        "user",
         {
-          userAgent: req.headers['user-agent'],
-          ipAddress: req.ip
+          userAgent: req.headers["user-agent"],
+          ipAddress: req.ip,
         }
       );
     }
@@ -383,19 +393,29 @@ router.post('/chat', authenticateUser, validateChatMessage, async (req, res) => 
     const response = await callOpenAI(messages, false, chatType);
     const aiMessage = response.choices[0].message.content;
     const responseTime = Date.now() - startTime;
-    
-    console.log('OpenAI response received, length:', aiMessage.length, 'time:', responseTime + 'ms');
+
+    console.log(
+      "OpenAI response received, length:",
+      aiMessage.length,
+      "time:",
+      responseTime + "ms"
+    );
 
     // If Poiche, try to capture the selected archetype name from the model output
     let selectionName = null;
     let selectedArchetype = null;
-    if (chatType === 'poiche') {
+    if (chatType === "poiche") {
       const parsed = extractSelectedArchetypeName(aiMessage) || null;
       if (parsed) {
         selectedArchetype = getArchetypeByName(parsed) || null;
         // Use canonical name from JSON for display if found
         selectionName = selectedArchetype?.nom || parsed;
-        console.log('Poiche selection parsed:', selectionName, 'found:', !!selectedArchetype);
+        console.log(
+          "Poiche selection parsed:",
+          selectionName,
+          "found:",
+          !!selectedArchetype
+        );
       }
     }
 
@@ -409,44 +429,43 @@ router.post('/chat', authenticateUser, validateChatMessage, async (req, res) => 
       currentSession._id,
       req.user._id,
       finalContent,
-      'assistant',
+      "assistant",
       {
         openaiData: {
           model: response.model,
           tokens: {
             prompt: response.usage?.prompt_tokens || 0,
             completion: response.usage?.completion_tokens || 0,
-            total: response.usage?.total_tokens || 0
+            total: response.usage?.total_tokens || 0,
           },
           finishReason: response.choices[0]?.finish_reason,
-          responseTime
-        }
+          responseTime,
+        },
       }
     );
 
     const responseData = {
       success: true,
       message: {
-        role: 'assistant',
+        role: "assistant",
         content: finalContent,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       },
       sessionId: currentSession._id,
       usage: response.usage,
       // Non-breaking extras for Poiche selection flow
       selectionName,
-      archetype: selectedArchetype
+      archetype: selectedArchetype,
     };
 
-    console.log('Sending response:', {
+    console.log("Sending response:", {
       success: true,
       messageLength: aiMessage.length,
       chatType: chatType,
-      sessionId: currentSession._id
+      sessionId: currentSession._id,
     });
 
     res.json(responseData);
-
   } catch (error) {
     console.error('Chat endpoint error:', {
       name: error.name,
@@ -486,12 +505,12 @@ router.post('/chat/stream', authenticateUser, validateChatMessage, async (req, r
 
     const { messages, chatType = 'poiche', sessionId } = req.body;
 
-    // Restrict miroir usage to allowed roles early to avoid wasted work
+    // Restrict miroir_paid usage to allowed roles early to avoid wasted work
     const ALLOWED_MIROIR_ROLES = ['Diademe', 'Couronne', 'admin'];
-    if (chatType === 'miroir' && !ALLOWED_MIROIR_ROLES.includes(req.user.role)) {
+    if (chatType === 'miroir_paid' && !ALLOWED_MIROIR_ROLES.includes(req.user.role)) {
       return res.status(403).json({
         success: false,
-        error: 'Access denied: miroir mode is restricted to premium users.'
+        error: 'Access denied: miroir_paid mode is restricted to premium users.'
       });
     }
 

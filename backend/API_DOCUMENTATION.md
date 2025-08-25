@@ -81,7 +81,8 @@ Content-Type: application/json
 
 **Available Chat Types:**
 - `poiche`: Free archetype identification 
-- `miroir`: Premium mirror reading mode
+- `miroir_free`: Free mirror reading (limited depth)
+- `miroir_paid`: Premium mirror reading mode (full depth)
 - `salon_de_the`: Premium tea salon ritual mode
 
 **Response:**
@@ -191,7 +192,7 @@ Content-Type: application/json
       "content": "I want a mirror reading to understand my patterns"
     }
   ],
-  "chatType": "miroir",
+  "chatType": "miroir_paid",
   "sessionId": "optional-session-id"
 }
 ```
@@ -327,7 +328,7 @@ Archetype analysis personality - analyzes relationship patterns and provides arc
 - Identifies toxic patterns through archetype matching
 - Provides basic guidance and insights
 
-### Miroir (`miroir`) - Premium
+### Miroir - Premium
 Advanced mirror reading mode for deep psychological insights.
 - Premium subscription required
 - Deep psychological analysis
