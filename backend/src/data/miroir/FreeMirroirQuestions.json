@@ -1,0 +1,664 @@
+{
+    "questions": [
+        {
+            "id": 1,
+            "prompt": "Ton date annule à la dernière minute. Tu réagis comment ? (Q1/10)",
+            "options": [
+                {
+                    "key": "A",
+                    "text": "Je suis blessée, je me demande si je ne compte pas pour lui/elle.",
+                    "suit": "Cœur"
+                },
+                {
+                    "key": "B",
+                    "text": "Je le prends relax, je me dis que j’aurai d’autres occasions de m’amuser.",
+                    "suit": "Trèfle"
+                },
+                {
+                    "key": "C",
+                    "text": "Je le confronte cash : mon temps est précieux.",
+                    "suit": "Carreau"
+                },
+                {
+                    "key": "B",
+                    "text": "Je le prends relax, je me dis que j’aurai d’autres occasions de m’amuser.",
+                    "suit": "Trèfle"
+                },
+                {
+                    "key": "C",
+                    "text": "Je le confronte cash : mon temps est précieux.",
+                    "suit": "Carreau"
+                },
+                {
+                    "key": "D",
+                    "text": "Je deviens froide et distante, confiance brisée.",
+                    "suit": "Pique"
+                }
+            ]
+        },
+        {
+            "id": 2,
+            "prompt": "Au début d’une relation, ce que tu attends le plus c’est… (Q2/10)",
+            "options": [
+                {
+                    "key": "A",
+                    "text": "Des preuves concrètes qu’il/elle est sérieux·se, pas juste des mots.",
+                    "suit": "Carreau"
+                },
+                {
+                    "key": "B",
+                    "text": "Qu’il/elle me fasse rire et que tout soit léger.",
+                    "suit": "Trèfle"
+                },
+                {
+                    "key": "C",
+                    "text": "Une connexion émotionnelle forte, sentir que je suis unique.",
+                    "suit": "Cœur"
+                },
+                {
+                    "key": "D",
+                    "text": "Qu’il/elle respecte mes limites et ne me contrôle pas.",
+                    "suit": "Pique"
+                }
+            ]
+        },
+        {
+            "id": 3,
+            "prompt": "Ton/ta partenaire oublie ton anniversaire. Tu… (Q3/10)",
+            "options": [
+                {
+                    "key": "A",
+                    "text": "Je boude et je me dis qu’il/elle n’est pas assez attentif·ve.",
+                    "suit": "Carreau"
+                },
+                {
+                    "key": "B",
+                    "text": "Je lâche prise, mais je me sens triste et pas importante.",
+                    "suit": "Cœur"
+                },
+                {
+                    "key": "C",
+                    "text": "Je deviens froide, ça me coupe toute envie.",
+                    "suit": "Pique"
+                },
+                {
+                    "key": "D",
+                    "text": "Je tourne ça en blague, mais je prends note pour plus tard.",
+                    "suit": "Trèfle"
+                }
+            ]
+        },
+        {
+            "id": 4,
+            "prompt": "Quand tu es amoureuse, ta plus grande peur c’est… (Q4/10)",
+            "options": [
+                {
+                    "key": "A",
+                    "text": "Être envahie, perdre ma liberté.",
+                    "suit": "Pique"
+                },
+                {
+                    "key": "B",
+                    "text": "Donner trop et ne pas recevoir assez en retour.",
+                    "suit": "Cœur"
+                },
+                {
+                    "key": "C",
+                    "text": "Que l’autre arrête de m’admirer et me mette de côté.",
+                    "suit": "Carreau"
+                },
+                {
+                    "key": "D",
+                    "text": "Que ça devienne trop sérieux et que la joie disparaisse.",
+                    "suit": "Trèfle"
+                }
+            ]
+        },
+        {
+            "id": 5,
+            "prompt": "Dans une dispute, tu as tendance à… (Q5/10)",
+            "options": [
+                {
+                    "key": "A",
+                    "text": "Pleurer ou supplier pour rétablir le lien.",
+                    "suit": "Cœur"
+                },
+                {
+                    "key": "B",
+                    "text": "Contredire et prouver que j’ai raison.",
+                    "suit": "Carreau"
+                },
+                {
+                    "key": "C",
+                    "text": "Fuir ou couper la communication.",
+                    "suit": "Pique"
+                },
+                {
+                    "key": "D",
+                    "text": "Détourner en blague pour apaiser.",
+                    "suit": "Trèfle"
+                }
+            ]
+        },
+        {
+            "id": 6,
+            "prompt": "Ton/ta partenaire te dit qu’il/elle a besoin d’espace. Tu… (Q6/10)",
+            "options": [
+                {
+                    "key": "A",
+                    "text": "Je me sens rejetée, peur d’être abandonnée.",
+                    "suit": "Cœur"
+                },
+                {
+                    "key": "B",
+                    "text": "Je respecte, j’en profite pour vivre mes aventures.",
+                    "suit": "Trèfle"
+                },
+                {
+                    "key": "C",
+                    "text": "Je me referme, je deviens plus dure.",
+                    "suit": "Pique"
+                },
+                {
+                    "key": "D",
+                    "text": "Je demande des garanties claires : combien de temps, pourquoi ?",
+                    "suit": "Carreau"
+                }
+            ]
+        },
+        {
+            "id": 7,
+            "prompt": "Ce qui te séduit le plus chez quelqu’un c’est… (Q7/10)",
+            "options": [
+                {
+                    "key": "A",
+                    "text": "Sa tendresse, sa capacité à écouter.",
+                    "suit": "Cœur"
+                },
+                {
+                    "key": "B",
+                    "text": "Son assurance, son charisme, son ambition.",
+                    "suit": "Carreau"
+                },
+                {
+                    "key": "C",
+                    "text": "Son indépendance, son côté mystérieux.",
+                    "suit": "Pique"
+                },
+                {
+                    "key": "D",
+                    "text": "Son humour, son côté joueur.",
+                    "suit": "Trèfle"
+                }
+            ]
+        },
+        {
+            "id": 8,
+            "prompt": "Après une rupture, ta réaction naturelle est… (Q8/10)",
+            "options": [
+                {
+                    "key": "A",
+                    "text": "Je me coupe et je ne donne plus aucune nouvelle.",
+                    "suit": "Pique"
+                },
+                {
+                    "key": "B",
+                    "text": "Je pleure, je garde espoir qu’il/elle revienne.",
+                    "suit": "Cœur"
+                },
+                {
+                    "key": "C",
+                    "text": "Je ressors, je m’amuse et je passe vite à autre chose.",
+                    "suit": "Trèfle"
+                },
+                {
+                    "key": "D",
+                    "text": "Je montre à tous que je suis mieux sans lui/elle.",
+                    "suit": "Carreau"
+                }
+            ]
+        },
+        {
+            "id": 9,
+            "prompt": "Pour toi, l’amour idéal ressemble à… (Q9/10)",
+            "options": [
+                {
+                    "key": "A",
+                    "text": "Une relation passionnante où on grandit ensemble.",
+                    "suit": "Carreau"
+                },
+                {
+                    "key": "B",
+                    "text": "Une bulle douce, affectueuse, sécurisante.",
+                    "suit": "Cœur"
+                },
+                {
+                    "key": "C",
+                    "text": "Un lien complice, drôle, jamais lourd.",
+                    "suit": "Trèfle"
+                },
+                {
+                    "key": "D",
+                    "text": "Une union où chacun garde son espace et son pouvoir.",
+                    "suit": "Pique"
+                }
+            ]
+        },
+        {
+            "id": 10,
+            "prompt": "Ton plus grand dealbreaker en amour, c’est… (Q10/10)",
+            "options": [
+                {
+                    "key": "A",
+                    "text": "Le manque d’attention et d’affection.",
+                    "suit": "Cœur"
+                },
+                {
+                    "key": "B",
+                    "text": "Qu’il/elle me bride ou cherche à me contrôler.",
+                    "suit": "Pique"
+                },
+                {
+                    "key": "C",
+                    "text": "Qu’il/elle manque d’ambition ou se contente du minimum.",
+                    "suit": "Carreau"
+                },
+                {
+                    "key": "D",
+                    "text": "Que ce soit trop sérieux et étouffant, sans fun.",
+                    "suit": "Trèfle"
+                }
+            ]
+        },
+        {
+            "id": 11,
+            "prompt": "Ton/ta partenaire reçoit un message de son ex. Comment réagis-tu ? (Q11/25)",
+            "options": [
+                {
+                    "key": "A",
+                    "text": "Je suis blessée et jalouse, peur qu’il/elle me quitte.",
+                    "suit": "Cœur"
+                },
+                {
+                    "key": "B",
+                    "text": "Je reste cool, si ça ne me concerne pas, je passe à autre chose.",
+                    "suit": "Trèfle"
+                },
+                {
+                    "key": "C",
+                    "text": "Je lui demande cash d’être transparent·e.",
+                    "suit": "Carreau"
+                },
+                {
+                    "key": "D",
+                    "text": "Je me ferme et je deviens distante.",
+                    "suit": "Pique"
+                }
+            ]
+        },
+        {
+            "id": 12,
+            "prompt": "Au début d’une relation, ce que tu donnes le plus c’est… (Q12/25)",
+            "options": [
+                {
+                    "key": "A",
+                    "text": "Des gestes d’affection, de la tendresse.",
+                    "suit": "Cœur"
+                },
+                {
+                    "key": "B",
+                    "text": "Du fun, des rires, de la spontanéité.",
+                    "suit": "Trèfle"
+                },
+                {
+                    "key": "C",
+                    "text": "Des preuves matérielles, cadeaux, attention concrète.",
+                    "suit": "Carreau"
+                },
+                {
+                    "key": "D",
+                    "text": "De la loyauté et du respect de l’espace de l’autre.",
+                    "suit": "Pique"
+                }
+            ]
+        },
+        {
+            "id": 13,
+            "prompt": "Si ton/ta partenaire ne veut pas s’engager officiellement, tu… (Q13/25)",
+            "options": [
+                {
+                    "key": "A",
+                    "text": "Je reste, en espérant qu’il/elle finira par le faire.",
+                    "suit": "Cœur"
+                },
+                {
+                    "key": "B",
+                    "text": "Je profite du moment sans pression, je m’amuse.",
+                    "suit": "Trèfle"
+                },
+                {
+                    "key": "C",
+                    "text": "Je mets les points sur les i : je veux du sérieux.",
+                    "suit": "Carreau"
+                },
+                {
+                    "key": "D",
+                    "text": "Je coupe : je ne perds pas mon temps.",
+                    "suit": "Pique"
+                }
+            ]
+        },
+        {
+            "id": 14,
+            "prompt": "Quand tu tombes amoureuse, ton style c’est plutôt… (Q14/25)",
+            "options": [
+                {
+                    "key": "A",
+                    "text": "Fusionnel, j’ai besoin de beaucoup d’attention.",
+                    "suit": "Cœur"
+                },
+                {
+                    "key": "B",
+                    "text": "Indépendant, chacun son espace.",
+                    "suit": "Pique"
+                },
+                {
+                    "key": "C",
+                    "text": "Passionné, je veux séduire et impressionner.",
+                    "suit": "Carreau"
+                },
+                {
+                    "key": "D",
+                    "text": "Léger, joyeux, je prends ça comme une aventure.",
+                    "suit": "Trèfle"
+                }
+            ]
+        },
+        {
+            "id": 15,
+            "prompt": "Ton/ta partenaire te fait un compliment. Tu réagis comment ? (Q15/25)",
+            "options": [
+                {
+                    "key": "A",
+                    "text": "Je rougis, ça me touche profondément.",
+                    "suit": "Cœur"
+                },
+                {
+                    "key": "B",
+                    "text": "Je rigole et j’en rajoute pour dédramatiser.",
+                    "suit": "Trèfle"
+                },
+                {
+                    "key": "C",
+                    "text": "Je l’accueille avec assurance : je sais que je le mérite.",
+                    "suit": "Carreau"
+                },
+                {
+                    "key": "D",
+                    "text": "Je reste un peu méfiant·e, je veux voir si c’est sincère.",
+                    "suit": "Pique"
+                }
+            ]
+        },
+        {
+            "id": 16,
+            "prompt": "Si ton/ta partenaire flirte avec quelqu’un d’autre, tu… (Q16/25)",
+            "options": [
+                {
+                    "key": "A",
+                    "text": "Je me sens trahie, ça me fait mal au cœur.",
+                    "suit": "Cœur"
+                },
+                {
+                    "key": "B",
+                    "text": "Je le/la confronte cash, pas de zone grise.",
+                    "suit": "Carreau"
+                },
+                {
+                    "key": "C",
+                    "text": "Je coupe la vibe, je deviens glaciale.",
+                    "suit": "Pique"
+                },
+                {
+                    "key": "D",
+                    "text": "Je relativise, si ce n’est pas sérieux, je n’en fais pas un drame.",
+                    "suit": "Trèfle"
+                }
+            ]
+        },
+        {
+            "id": 17,
+            "prompt": "Quand tu es en couple, ce qui compte le plus pour toi c’est… (Q17/25)",
+            "options": [
+                {
+                    "key": "A",
+                    "text": "L’amour, la tendresse, la sécurité affective.",
+                    "suit": "Cœur"
+                },
+                {
+                    "key": "B",
+                    "text": "L’indépendance et la liberté.",
+                    "suit": "Pique"
+                },
+                {
+                    "key": "C",
+                    "text": "L’admiration et la valorisation.",
+                    "suit": "Carreau"
+                },
+                {
+                    "key": "D",
+                    "text": "Le plaisir, la complicité et le fun.",
+                    "suit": "Trèfle"
+                }
+            ]
+        },
+        {
+            "id": 18,
+            "prompt": "Ton/ta partenaire traverse une période difficile. Tu réagis comment ? (Q18/25)",
+            "options": [
+                {
+                    "key": "A",
+                    "text": "Je le/la soutiens émotionnellement, j’écoute et je console.",
+                    "suit": "Cœur"
+                },
+                {
+                    "key": "B",
+                    "text": "Je l’encourage à garder la tête haute et à performer.",
+                    "suit": "Carreau"
+                },
+                {
+                    "key": "C",
+                    "text": "Je respecte son espace, je ne m’impose pas.",
+                    "suit": "Pique"
+                },
+                {
+                    "key": "D",
+                    "text": "Je tente de lui changer les idées avec de la légèreté.",
+                    "suit": "Trèfle"
+                }
+            ]
+        },
+        {
+            "id": 19,
+            "prompt": "Dans l’intimité, ce que tu recherches le plus c’est… (Q19/25)",
+            "options": [
+                {
+                    "key": "A",
+                    "text": "De la passion et du jeu de séduction.",
+                    "suit": "Carreau"
+                },
+                {
+                    "key": "B",
+                    "text": "De la connexion émotionnelle et du lien profond.",
+                    "suit": "Cœur"
+                },
+                {
+                    "key": "C",
+                    "text": "De la liberté, ne pas être enfermée dans une routine.",
+                    "suit": "Pique"
+                },
+                {
+                    "key": "D",
+                    "text": "Du fun, de l’exploration, de l’imprévu.",
+                    "suit": "Trèfle"
+                }
+            ]
+        },
+        {
+            "id": 20,
+            "prompt": "Quand tu te disputes, ta stratégie secrète est… (Q20/25)",
+            "options": [
+                {
+                    "key": "A",
+                    "text": "Toucher l’autre avec des mots cinglants.",
+                    "suit": "Pique"
+                },
+                {
+                    "key": "B",
+                    "text": "Pleurer ou me montrer vulnérable pour rétablir le lien.",
+                    "suit": "Cœur"
+                },
+                {
+                    "key": "C",
+                    "text": "Sortir mes arguments, convaincre que j’ai raison.",
+                    "suit": "Carreau"
+                },
+                {
+                    "key": "D",
+                    "text": "Dédramatiser et tourner ça à la blague.",
+                    "suit": "Trèfle"
+                }
+            ]
+        },
+        {
+            "id": 21,
+            "prompt": "Si ton couple s’essouffle, tu es plutôt du genre à… (Q21/25)",
+            "options": [
+                {
+                    "key": "A",
+                    "text": "Chercher à rallumer la flamme par des sorties fun.",
+                    "suit": "Trèfle"
+                },
+                {
+                    "key": "B",
+                    "text": "Persévérer et donner encore plus d’amour.",
+                    "suit": "Cœur"
+                },
+                {
+                    "key": "C",
+                    "text": "Mettre la barre plus haut : nouveaux défis, projets ambitieux.",
+                    "suit": "Carreau"
+                },
+                {
+                    "key": "D",
+                    "text": "Prendre du recul, réfléchir si ça vaut encore la peine.",
+                    "suit": "Pique"
+                }
+            ]
+        },
+        {
+            "id": 22,
+            "prompt": "Ton idéal de déclaration d’amour, ce serait… (Q22/25)",
+            "options": [
+                {
+                    "key": "A",
+                    "text": "Un geste fou, flamboyant, public.",
+                    "suit": "Carreau"
+                },
+                {
+                    "key": "B",
+                    "text": "Une soirée intime, à deux, pleine de tendresse.",
+                    "suit": "Cœur"
+                },
+                {
+                    "key": "C",
+                    "text": "Une surprise fun, drôle, décalée.",
+                    "suit": "Trèfle"
+                },
+                {
+                    "key": "D",
+                    "text": "Une discussion sincère, claire, sans artifices.",
+                    "suit": "Pique"
+                }
+            ]
+        },
+        {
+            "id": 23,
+            "prompt": "Quand tu imagines la vie à deux, tu te vois surtout… (Q23/25)",
+            "options": [
+                {
+                    "key": "A",
+                    "text": "Dans une relation libre, chacun indépendant.",
+                    "suit": "Pique"
+                },
+                {
+                    "key": "B",
+                    "text": "Dans un couple fusionnel, toujours collés.",
+                    "suit": "Cœur"
+                },
+                {
+                    "key": "C",
+                    "text": "Dans une vie excitante, voyages, projets ambitieux.",
+                    "suit": "Carreau"
+                },
+                {
+                    "key": "D",
+                    "text": "Dans un quotidien léger, complice, plein de rires.",
+                    "suit": "Trèfle"
+                }
+            ]
+        },
+        {
+            "id": 24,
+            "prompt": "Ton plus grand défaut en amour, ce serait… (Q24/25)",
+            "options": [
+                {
+                    "key": "A",
+                    "text": "Être trop exigeant·e, vouloir toujours plus.",
+                    "suit": "Carreau"
+                },
+                {
+                    "key": "B",
+                    "text": "Être trop dépendant·e affectivement.",
+                    "suit": "Cœur"
+                },
+                {
+                    "key": "C",
+                    "text": "Être trop détaché·e, fuir les émotions.",
+                    "suit": "Pique"
+                },
+                {
+                    "key": "D",
+                    "text": "Être trop insouciant·e, ne pas assez me poser.",
+                    "suit": "Trèfle"
+                }
+            ]
+        },
+        {
+            "id": 25,
+            "prompt": "Si tu devais choisir une phrase qui te ressemble le plus en amour, ce serait… (Q25/25)",
+            "options": [
+                {
+                    "key": "A",
+                    "text": "Aime-moi fort, aime-moi vrai.",
+                    "suit": "Cœur"
+                },
+                {
+                    "key": "B",
+                    "text": "Amour rime avec liberté.",
+                    "suit": "Pique"
+                },
+                {
+                    "key": "C",
+                    "text": "Brillons ensemble, soyons admirés.",
+                    "suit": "Carreau"
+                },
+                {
+                    "key": "D",
+                    "text": "Rions, vivons, profitons.",
+                    "suit": "Trèfle"
+                }
+            ]
+        }
+    ]
+}
