@@ -5,11 +5,9 @@ import PoicheChatPage from './components/Pages/PoicheChatPage';
 import MiroirChatPremium from './components/Pages/MiroirChatPage';
 import JournalPage from './components/Pages/JournalPage';
 import SalonChatPage from './components/Pages/SalonChatPage';
-import AuthPage from './components/Pages/AuthPage';
-import { useAuth } from './context/AuthContext';
-
-
-
+import StatsPage from "./components/Pages/StatsPage";
+import AuthPage from "./components/Pages/AuthPage";
+import { useAuth } from "./context/AuthContext";
 
 const AppContent = () => {
   const { user, loading } = useAuth();
@@ -24,6 +22,7 @@ const AppContent = () => {
           <Route path="/miroir" element={<MiroirChatPremium />} />
           <Route path="/journal" element={<JournalPage />} />
           <Route path="/salon" element={<SalonChatPage />} />
+          <Route path="/stats" element={<StatsPage />} />
         </Route>
       ) : (
         <Route path="/*" element={<Navigate to="/auth" replace />} />

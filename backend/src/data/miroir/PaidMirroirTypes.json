@@ -1,0 +1,405 @@
+{
+  "corpora": {
+    "Langages_Amour": [
+      {
+        "concept": "Langage de l’amour",
+        "nom": "Paroles valorisantes",
+        "description": "Elle se sent aimée quand on lui dit qu’elle est belle, forte, importante. Les mots sont sa nourriture émotionnelle.",
+        "signes_positifs": [
+          "Elle s’épanouit avec un partenaire expressif",
+          "Elle répond aux compliments par un sourire sincère"
+        ],
+        "signes_de_manque": [
+          "Elle se sent invisible quand rien n’est dit",
+          "Elle interprète le silence comme du désintérêt"
+        ],
+        "risques": [
+          "Elle peut surestimer la parole au détriment des actes",
+          "Elle devient vulnérable à la manipulation verbale"
+        ],
+        "suggéré_pour": [
+          "Queen de Cœur",
+          "Queen de Carreau"
+        ]
+      },
+      {
+        "concept": "Langage de l’amour",
+        "nom": "Moments de qualité",
+        "description": "Elle se sent aimée quand on passe du temps intentionnel avec elle, sans distraction, avec attention.",
+        "signes_positifs": [
+          "Elle s’ouvre pendant les moments partagés",
+          "Elle ressent une profonde connexion lors d’activités simples à deux"
+        ],
+        "signes_de_manque": [
+          "Elle se sent mise de côté si le partenaire est souvent distrait",
+          "Elle s’éteint quand les moments sont trop courts ou interrompus"
+        ],
+        "risques": [
+          "Elle peut idéaliser la présence au détriment de l’indépendance",
+          "Elle risque de se sentir abandonnée facilement"
+        ],
+        "suggéré_pour": [
+          "Queen de Trèfle",
+          "Queen de Cœur"
+        ]
+      },
+      {
+        "concept": "Langage de l’amour",
+        "nom": "Toucher physique",
+        "description": "Elle se sent aimée par les gestes tendres, la proximité, les caresses, les étreintes et l’intimité physique.",
+        "signes_positifs": [
+          "Elle recherche naturellement le contact quand elle aime",
+          "Elle ressent de la sécurité dans les bras de l’autre"
+        ],
+        "signes_de_manque": [
+          "Elle doute de l’amour s’il n’y a pas de contact",
+          "Elle peut se sentir rejetée par la distance physique"
+        ],
+        "risques": [
+          "Elle peut confondre désir et amour",
+          "Elle peut se suradapter physiquement pour garder l’autre proche"
+        ],
+        "suggéré_pour": [
+          "Queen de Pique",
+          "Queen de Trèfle"
+        ]
+      },
+      {
+        "concept": "Langage de l’amour",
+        "nom": "Actes de service",
+        "description": "Elle se sent aimée quand on fait attention à elle par des gestes concrets, en rendant service ou en anticipant ses besoins.",
+        "signes_positifs": [
+          "Elle remarque tout ce que l’autre fait pour elle",
+          "Elle se sent touchée par les petites attentions du quotidien"
+        ],
+        "signes_de_manque": [
+          "Elle doute de l’amour si elle doit tout faire elle-même",
+          "Elle se sent négligée si les promesses ne sont pas suivies d’actes"
+        ],
+        "risques": [
+          "Elle peut se surinvestir dans la logistique relationnelle",
+          "Elle risque de ne pas verbaliser son besoin d’aide"
+        ],
+        "suggéré_pour": [
+          "Queen de Carreau",
+          "Queen de Trèfle"
+        ]
+      },
+      {
+        "concept": "Langage de l’amour",
+        "nom": "Cadeaux et symboles",
+        "description": "Elle se sent aimée quand on pense à elle et qu’on lui offre des choses, petites ou grandes, comme preuve visible d’attention.",
+        "signes_positifs": [
+          "Elle se sent reconnue quand elle reçoit un objet symbolique",
+          "Elle valorise la mémoire affective dans les objets"
+        ],
+        "signes_de_manque": [
+          "Elle pense ne pas compter si elle ne reçoit jamais rien",
+          "Elle associe l’amour au manque d’investissement"
+        ],
+        "risques": [
+          "Elle peut surinterpréter les cadeaux",
+          "Elle peut devenir dépendante aux gestes matériels pour valider le lien"
+        ],
+        "suggéré_pour": [
+          "Queen de Cœur",
+          "Queen de Carreau"
+        ]
+      }
+    ],
+    "Communication_Emotionnelle": [
+      {
+        "concept": "Style de communication",
+        "nom": "Assertive",
+        "description": "Elle exprime ses besoins avec clarté et respect, sans crainte ni agressivité. Elle ose nommer sans blesser.",
+        "signes_positifs": [
+          "Elle parle au ‘je’",
+          "Elle exprime ses limites avec bienveillance"
+        ],
+        "signes_de_stress": [
+          "Elle peut se suradapter par culpabilité",
+          "Elle peut douter de sa légitimité si on la remet en question"
+        ],
+        "risques": [
+          "S’épuiser à toujours maintenir la paix",
+          "Se remettre trop souvent en question pour rester juste"
+        ],
+        "suggéré_pour": [
+          "Queen de Trèfle",
+          "Queen de Carreau"
+        ]
+      },
+      {
+        "concept": "Style de communication",
+        "nom": "Passive",
+        "description": "Elle retient ses besoins. Elle évite le conflit et dit rarement ce qu’elle ressent. Elle préfère le silence à l’affirmation.",
+        "signes_positifs": [
+          "Elle est douce, patiente, à l’écoute"
+        ],
+        "signes_de_stress": [
+          "Elle accumule",
+          "Elle explose ou disparaît quand c’est trop"
+        ],
+        "risques": [
+          "Ressentiment enfoui",
+          "Abandon de soi chronique"
+        ],
+        "suggéré_pour": [
+          "Queen de Cœur",
+          "Queen de Trèfle"
+        ]
+      },
+      {
+        "concept": "Style de communication",
+        "nom": "Agressive",
+        "description": "Elle impose, coupe, dénigre parfois. Elle surprotège sa vérité au détriment de l’espace de l’autre.",
+        "signes_positifs": [
+          "Elle est directe, sans détour",
+          "Elle n’a pas peur du conflit"
+        ],
+        "signes_de_stress": [
+          "Elle attaque pour ne pas être blessée",
+          "Elle provoque pour se sentir entendue"
+        ],
+        "risques": [
+          "Rejet",
+          "Isolement",
+          "Répétition de schémas violents"
+        ],
+        "suggéré_pour": [
+          "Queen de Pique",
+          "Queen de Carreau"
+        ]
+      },
+      {
+        "concept": "Style de communication",
+        "nom": "Passive-agressive",
+        "description": "Elle dit que tout va bien, mais ses silences, gestes ou mots ironiques expriment l’inverse. C’est une fuite maquillée.",
+        "signes_positifs": [
+          "Elle détecte les tensions et les traduit subtilement"
+        ],
+        "signes_de_stress": [
+          "Elle devient ironique, sarcastique",
+          "Elle manipule par l’ambiguïté"
+        ],
+        "risques": [
+          "Relations floues",
+          "Perte de confiance de l’autre"
+        ],
+        "suggéré_pour": [
+          "Queen de Cœur",
+          "Queen de Pique"
+        ]
+      }
+    ],
+    "Blessures_Ame": [
+      {
+        "concept": "Blessure de l’âme",
+        "nom": "Rejet",
+        "description": "Blessure de la non-existence. Elle se sent de trop, invisible, comme si son essence même n’était pas la bienvenue.",
+        "masque": "Fuyant",
+        "déclencheurs": [
+          "Silence prolongé",
+          "Absence de validation",
+          "Indifférence émotionnelle"
+        ],
+        "réactions_typiques": [
+          "Se retirer",
+          "Se faire petite",
+          "Se saboter pour ne pas déranger"
+        ],
+        "guérison": "Se valider intérieurement, prendre sa place sans demander la permission",
+        "suggéré_pour": [
+          "Queen de Cœur",
+          "Queen de Trèfle"
+        ]
+      },
+      {
+        "concept": "Blessure de l’âme",
+        "nom": "Abandon",
+        "description": "Blessure de la séparation. Elle a peur d’être laissée, oubliée, reléguée. Elle s’accroche par peur de disparaître de l’autre.",
+        "masque": "Dépendant",
+        "déclencheurs": [
+          "Distance soudaine",
+          "Manque d’initiatives de l’autre",
+          "Rupture de lien"
+        ],
+        "réactions_typiques": [
+          "Fusion",
+          "Quête d’amour compulsive",
+          "Suradaptation affective"
+        ],
+        "guérison": "Se choisir même quand l’autre ne reste pas",
+        "suggéré_pour": [
+          "Queen de Cœur",
+          "Queen de Carreau"
+        ]
+      },
+      {
+        "concept": "Blessure de l’âme",
+        "nom": "Humiliation",
+        "description": "Blessure du non-droit. Elle sent qu’elle n’a pas le droit d’être, de vouloir, de demander. Honte et auto-censure dominent.",
+        "masque": "Masochiste",
+        "déclencheurs": [
+          "Critiques",
+          "Moqueries",
+          "Exposition de sa vulnérabilité"
+        ],
+        "réactions_typiques": [
+          "Auto-dénigrement",
+          "Service extrême des autres",
+          "Refus de plaisir personnel"
+        ],
+        "guérison": "Reprendre sa dignité et reconnaître ses besoins",
+        "suggéré_pour": [
+          "Queen de Trèfle",
+          "Queen de Cœur"
+        ]
+      },
+      {
+        "concept": "Blessure de l’âme",
+        "nom": "Trahison",
+        "description": "Blessure de la perte de confiance. Elle se sent trahie, trompée, utilisée. Elle anticipe et contrôle pour ne plus être prise de court.",
+        "masque": "Contrôlant",
+        "déclencheurs": [
+          "Manque de clarté",
+          "Changement brusque",
+          "Secrets ou flous"
+        ],
+        "réactions_typiques": [
+          "Surveillance",
+          "Colère froide",
+          "Manipulation subtile"
+        ],
+        "guérison": "Lâcher le contrôle sans lâcher sa lucidité",
+        "suggéré_pour": [
+          "Queen de Pique",
+          "Queen de Carreau"
+        ]
+      },
+      {
+        "concept": "Blessure de l’âme",
+        "nom": "Injustice",
+        "description": "Blessure de l’exigence. Elle pense devoir mériter l’amour. Elle se rigidifie, se contrôle, veut être irréprochable pour ne pas souffrir.",
+        "masque": "Rigide",
+        "déclencheurs": [
+          "Incohérences",
+          "Double standards",
+          "Critique de ses efforts"
+        ],
+        "réactions_typiques": [
+          "Perfectionnisme",
+          "Froideur protectrice",
+          "Hyper-contrôle de soi"
+        ],
+        "guérison": "Reconnecter au droit d’être imparfaite et aimée quand même",
+        "suggéré_pour": [
+          "Queen de Carreau",
+          "Queen de Pique"
+        ]
+      }
+    ],
+    "Attachement": [
+      {
+        "concept": "Style d’attachement",
+        "nom": "Anxieux",
+        "description": "Le lien est vital. Elle anticipe le rejet, recherche l’assurance constante, se sent insécure face à l’ambiguïté.",
+        "signes_positifs": [
+          "Elle aime intensément",
+          "Elle est hyperconnectée aux variations émotionnelles de l’autre"
+        ],
+        "signes_de_stress": [
+          "Elle envoie plusieurs messages sans réponse",
+          "Elle croit que le silence signifie abandon"
+        ],
+        "blessures_possibles": [
+          "Rejet",
+          "Abandon"
+        ],
+        "réactions_typiques": [
+          "Recherche d’approbation",
+          "Crises émotionnelles lors de distance perçue"
+        ],
+        "suggéré_pour": [
+          "Queen de Cœur",
+          "Queen de Trèfle"
+        ]
+      },
+      {
+        "concept": "Style d’attachement",
+        "nom": "Évitant",
+        "description": "Elle valorise l’autonomie. Elle fuit la dépendance et ressent l’intimité comme menaçante. Elle rationalise les liens.",
+        "signes_positifs": [
+          "Elle est très autonome",
+          "Elle pense avant de réagir"
+        ],
+        "signes_de_stress": [
+          "Elle se ferme si elle se sent envahie",
+          "Elle minimise ses besoins"
+        ],
+        "blessures_possibles": [
+          "Trahison",
+          "Humiliation"
+        ],
+        "réactions_typiques": [
+          "Silence",
+          "Évitement des sujets profonds"
+        ],
+        "suggéré_pour": [
+          "Queen de Pique",
+          "Queen de Carreau"
+        ]
+      },
+      {
+        "concept": "Style d’attachement",
+        "nom": "Sécure",
+        "description": "Elle peut aimer, se montrer vulnérable, poser ses limites et accueillir celles de l’autre. Elle ne fuit pas les conflits, elle les traverse.",
+        "signes_positifs": [
+          "Elle se régule facilement",
+          "Elle ne dramatise pas l’incertitude"
+        ],
+        "signes_de_stress": [
+          "Elle peut ressentir un inconfort temporaire",
+          "Elle pose des questions plutôt que de paniquer"
+        ],
+        "blessures_possibles": [
+          "Aucune dominante ou intégrée"
+        ],
+        "réactions_typiques": [
+          "Communication directe",
+          "Ouverture et clarté"
+        ],
+        "suggéré_pour": [
+          "Queen de Trèfle",
+          "Queen de Carreau"
+        ]
+      },
+      {
+        "concept": "Style d’attachement",
+        "nom": "Désorganisé",
+        "description": "Elle alterne entre fusion et retrait. Elle veut être proche mais panique quand c’est le cas. Son cœur dit ‘viens’, son corps dit ‘fuis’.",
+        "signes_positifs": [
+          "Elle a des élans intenses et sincères",
+          "Elle reconnaît ses paradoxes"
+        ],
+        "signes_de_stress": [
+          "Elle change d’avis souvent",
+          "Elle attire des partenaires instables"
+        ],
+        "blessures_possibles": [
+          "Abus",
+          "Négligence",
+          "Ambivalence familiale"
+        ],
+        "réactions_typiques": [
+          "Conflits répétés",
+          "Dépendance émotionnelle suivie de fuite"
+        ],
+        "suggéré_pour": [
+          "Queen de Cœur",
+          "Queen de Pique"
+        ]
+      }
+    ]
+  }
+}

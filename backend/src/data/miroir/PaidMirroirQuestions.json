@@ -1,0 +1,504 @@
+{
+  "questions": [
+    {
+      "id": 1,
+      "prompt": "Ton/ta partenaire ne répond pas à ton message pendant toute une journée. Tu réagis comment ? (Q1/20)",
+      "options": [
+        { "key": "A", "text": "Je panique, je me demande si je vais être abandonnée." },
+        { "key": "B", "text": "Je me sens rejetée, ça me fait mal." },
+        { "key": "C", "text": "Je deviens froide, je prends mes distances." },
+        { "key": "D", "text": "Autre, précise-moi ça !" }
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Tu proposes un projet de couple et il/elle te dit “pas maintenant”. Ta réaction ? (Q2/20)",
+      "options": [
+        { "key": "A", "text": "Je me sens humiliée, comme si mon idée ne valait rien." },
+        { "key": "B", "text": "Je boude ou je critique pour reprendre le dessus." },
+        { "key": "C", "text": "Je prends ça comme une preuve qu’il/elle ne m’aime pas assez." },
+        { "key": "D", "text": "Autre, précise-moi ça !" }
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Ton/ta partenaire te critique devant d’autres personnes. Que fais-tu ? (Q3/20)",
+      "options": [
+        { "key": "A", "text": "Je me sens blessée et honteuse, je ravale mes émotions." },
+        { "key": "B", "text": "Je riposte avec une pique encore plus forte." },
+        { "key": "C", "text": "Je ris jaune mais je me sens dévalorisée." },
+        { "key": "D", "text": "Autre, précise-moi ça !" }
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "Si tu te disputes, ta stratégie instinctive c’est… (Q4/20)",
+      "options": [
+        { "key": "A", "text": "Pleurer ou supplier pour rétablir le lien." },
+        { "key": "B", "text": "Contredire et prouver que j’ai raison." },
+        { "key": "C", "text": "Fuir ou couper la communication." },
+        { "key": "D", "text": "Autre, précise-moi ça !" }
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "Quand tu commences une nouvelle relation, ce que tu cherches en premier c’est… (Q5/20)",
+      "options": [
+        { "key": "A", "text": "Des preuves d'amour et de sécurité." },
+        { "key": "B", "text": "De la passion et de l’admiration." },
+        { "key": "C", "text": "De la liberté et du respect de mes limites." },
+        { "key": "D", "text": "Autre, précise-moi ça !" }
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "Ton/ta partenaire t’offre un cadeau qui ne correspond pas du tout à tes goûts. Tu réagis ? (Q6/20)",
+      "options": [
+        { "key": "A", "text": "Je souris mais au fond je suis triste et incomprise." },
+        { "key": "B", "text": "Je critique ou je fais une remarque cinglante." },
+        { "key": "C", "text": "Je me détache, je perds de l’intérêt." },
+        { "key": "D", "text": "Autre, précise-moi ça !" }
+      ]
+    },
+    {
+      "id": 7,
+      "prompt": "Si tu sens que ton/ta partenaire s’éloigne, tu… (Q7/20)",
+      "options": [
+        { "key": "A", "text": "Je donne encore plus, j’ai peur de le/la perdre." },
+        { "key": "B", "text": "Je deviens exigeante, je demande des preuves." },
+        { "key": "C", "text": "Je me referme et je garde mes émotions pour moi." },
+        { "key": "D", "text": "Autre, précise-moi ça !" }
+      ]
+    },
+    {
+      "id": 8,
+      "prompt": "Dans une relation, ce qui te fait le plus peur c’est… (Q8/20)",
+      "options": [
+        { "key": "A", "text": "Être abandonnée." },
+        { "key": "B", "text": "Être rejetée." },
+        { "key": "C", "text": "Être contrôlée ou perdre ma liberté." },
+        { "key": "D", "text": "Autre, précise-moi ça !" }
+      ]
+    },
+    {
+      "id": 9,
+      "prompt": "Après une rupture, tu as tendance à… (Q9/20)",
+      "options": [
+        { "key": "A", "text": "Espérer qu’il/elle revienne." },
+        { "key": "B", "text": "Me sentir humiliée, ruminant ce qui s’est passé." },
+        { "key": "C", "text": "Fermer mon cœur et me montrer indifférente." },
+        { "key": "D", "text": "Autre, précise-moi ça !" }
+      ]
+    },
+    {
+      "id": 10,
+      "prompt": "Ton/ta partenaire réussit dans sa carrière. Comment tu vis ça ? (Q10/20)",
+      "options": [
+        { "key": "A", "text": "Je suis fière, mais peur qu’il/elle m’abandonne." },
+        { "key": "B", "text": "Je veux qu’on me valorise moi aussi." },
+        { "key": "C", "text": "Je garde mes distances, je ne veux pas dépendre." },
+        { "key": "D", "text": "Autre, précise-moi ça !" }
+      ]
+    },
+    {
+      "id": 11,
+      "prompt": "Quand tu exprimes un besoin et qu’il/elle ne répond pas, tu… (Q11/20)",
+      "options": [
+        { "key": "A", "text": "Je me sens invisible et abandonnée." },
+        { "key": "B", "text": "Je deviens critique ou exigeante." },
+        { "key": "C", "text": "Je me tais et je me coupe." },
+        { "key": "D", "text": "Autre, précise-moi ça !" }
+      ]
+    },
+    {
+      "id": 12,
+      "prompt": "Ton/ta partenaire parle encore avec son ex. Tu… (Q12/20)",
+      "options": [
+        { "key": "A", "text": "Je panique, j’ai peur d’être remplacée." },
+        { "key": "B", "text": "Je suis jalouse et je le/la confronte." },
+        { "key": "C", "text": "Je me retire, je deviens froide." },
+        { "key": "D", "text": "Autre, précise-moi ça !" }
+      ]
+    },
+    {
+      "id": 13,
+      "prompt": "Quand ton couple traverse une crise, ta première réaction est… (Q13/20)",
+      "options": [
+        { "key": "A", "text": "Faire tout pour sauver la relation." },
+        { "key": "B", "text": "Prouver que j’ai raison et que l’autre a tort." },
+        { "key": "C", "text": "Prendre de la distance, fuir l’intensité." },
+        { "key": "D", "text": "Autre, précise-moi ça !" }
+      ]
+    },
+    {
+      "id": 14,
+      "prompt": "Si ton/ta partenaire ne montre pas son amour comme tu voudrais, tu… (Q14/20)",
+      "options": [
+        { "key": "A", "text": "Je doute de sa sincérité." },
+        { "key": "B", "text": "Je deviens exigeante et je demande plus." },
+        { "key": "C", "text": "Je me ferme et je garde mes besoins pour moi." },
+        { "key": "D", "text": "Autre, précise-moi ça !" }
+      ]
+    },
+    {
+      "id": 15,
+      "prompt": "Ce qui te blesse le plus dans une relation c’est… (Q15/20)",
+      "options": [
+        { "key": "A", "text": "Le silence ou l’absence." },
+        { "key": "B", "text": "La critique et le jugement." },
+        { "key": "C", "text": "Le manque de respect de mes limites." },
+        { "key": "D", "text": "Autre, précise-moi ça !" }
+      ]
+    },
+    {
+      "id": 16,
+      "prompt": "Quand tu tombes amoureuse, ton style c’est plutôt… (Q16/20)",
+      "options": [
+        { "key": "A", "text": "Fusionnel, collée à l’autre." },
+        { "key": "B", "text": "Passionné, je veux être admirée." },
+        { "key": "C", "text": "Indépendant, chacun son espace." },
+        { "key": "D", "text": "Autre, précise-moi ça !" }
+      ]
+    },
+    {
+      "id": 17,
+      "prompt": "Ton/ta partenaire te demande un engagement sérieux. Tu… (Q17/20)",
+      "options": [
+        { "key": "A", "text": "J’accepte avec bonheur, j’ai besoin de sécurité." },
+        { "key": "B", "text": "Je veux que ce soit spectaculaire, que ça brille." },
+        { "key": "C", "text": "J’hésite, peur de perdre ma liberté." },
+        { "key": "D", "text": "Autre, précise-moi ça !" }
+      ]
+    },
+    {
+      "id": 18,
+      "prompt": "Quand tu es en couple, ce que tu donnes le plus c’est… (Q18/20)",
+      "options": [
+        { "key": "A", "text": "Mon affection, ma tendresse." },
+        { "key": "B", "text": "Mon ambition, mon énergie." },
+        { "key": "C", "text": "Mon espace et mon respect." },
+        { "key": "D", "text": "Autre, précise-moi ça !" }
+      ]
+    },
+    {
+      "id": 19,
+      "prompt": "Quand tu imagines ton futur amoureux idéal, tu vois surtout… (Q19/20)",
+      "options": [
+        { "key": "A", "text": "Une relation douce et sécurisante." },
+        { "key": "B", "text": "Une vie passionnante et admirée." },
+        { "key": "C", "text": "Une union libre, respectueuse des espaces." },
+        { "key": "D", "text": "Autre, précise-moi ça !" }
+      ]
+    },
+    {
+      "id": 20,
+      "prompt": "Ton plus grand dealbreaker, celui qui te ferait tout arrêter c’est… (Q20/20)",
+      "options": [
+        { "key": "A", "text": "Être ignorée ou laissée seule." },
+        { "key": "B", "text": "Être humiliée ou rabaissée." },
+        { "key": "C", "text": "Être contrôlée et privée de liberté." },
+        { "key": "D", "text": "Autre, précise-moi ça !" }
+      ]
+    },
+    {
+      "id": 21,
+      "prompt": "Ton/ta partenaire te dit : « Je ne suis pas sûr·e de ce que je ressens ». Tu fais quoi ? (Q21/50)",
+      "options": [
+        { "key": "A", "text": "Je supplie, j’essaie de le/la convaincre de rester." },
+        { "key": "B", "text": "Je me sens humiliée et je pars dans la colère." },
+        { "key": "C", "text": "Je me ferme, je me protège pour ne pas souffrir." },
+        { "key": "D", "text": "Autre, précise-moi ça !" }
+      ]
+    },
+    {
+      "id": 22,
+      "prompt": "Tu commences à ressentir que la relation devient routinière. Ta réaction ? (Q22/50)",
+      "options": [
+        { "key": "A", "text": "Je propose des moments câlins, pour garder la tendresse vivante." },
+        { "key": "B", "text": "Je veux raviver la flamme par quelque chose de grandiose." },
+        { "key": "C", "text": "Je prends mes distances et j’ai besoin d’air." },
+        { "key": "D", "text": "Autre, précise-moi ça !" }
+      ]
+    },
+    {
+      "id": 23,
+      "prompt": "Ton/ta partenaire te critique sur ton corps ou ton apparence. Tu… (Q23/50)",
+      "options": [
+        { "key": "A", "text": "Je me sens rejetée, blessée dans ma valeur." },
+        { "key": "B", "text": "Je réplique avec dureté, je le/la rabaisse à mon tour." },
+        { "key": "C", "text": "Je me coupe, je me dis “peu importe, je vais me protéger”." },
+        { "key": "D", "text": "Autre, précise-moi ça !" }
+      ]
+    },
+    {
+      "id": 24,
+      "prompt": "Dans une relation, tu as tendance à donner… (Q24/50)",
+      "options": [
+        { "key": "A", "text": "Beaucoup d’attention et d’amour." },
+        { "key": "B", "text": "De la séduction et des preuves matérielles." },
+        { "key": "C", "text": "De la distance et du respect." },
+        { "key": "D", "text": "Autre, précise-moi ça !" }
+      ]
+    },
+    {
+      "id": 25,
+      "prompt": "Si tu sens que l’autre ne s’investit pas autant que toi, tu… (Q25/50)",
+      "options": [
+        { "key": "A", "text": "Je compense en donnant encore plus." },
+        { "key": "B", "text": "Je réclame son attention et je critique." },
+        { "key": "C", "text": "Je lâche et je me mets en retrait." },
+        { "key": "D", "text": "Autre, précise-moi ça !" }
+      ]
+    },
+    {
+      "id": 26,
+      "prompt": "Ton/ta partenaire oublie un rendez-vous important. Tu… (Q26/50)",
+      "options": [
+        { "key": "A", "text": "Je suis blessée, je me sens invisible." },
+        { "key": "B", "text": "Je me fâche et je demande des comptes." },
+        { "key": "C", "text": "Je me ferme et je ne dis plus rien." },
+        { "key": "D", "text": "Autre, précise-moi ça !" }
+      ]
+    },
+    {
+      "id": 27,
+      "prompt": "Quand l’autre ne correspond pas à tes attentes, tu… (Q27/50)",
+      "options": [
+        { "key": "A", "text": "Je me dis que je ne mérite pas mieux." },
+        { "key": "B", "text": "Je cherche à le/la transformer." },
+        { "key": "C", "text": "Je prends mes distances et je rêve de liberté." },
+        { "key": "D", "text": "Autre, précise-moi ça !" }
+      ]
+    },
+    {
+      "id": 28,
+      "prompt": "Ton/ta partenaire réussit mieux que toi dans un domaine. Tu… (Q28/50)",
+      "options": [
+        { "key": "A", "text": "J’ai peur qu’il/elle m’abandonne pour quelqu’un de “mieux”." },
+        { "key": "B", "text": "Je me sens humiliée, j’ai besoin de prouver ma valeur." },
+        { "key": "C", "text": "Je deviens indifférente pour ne pas souffrir." },
+        { "key": "D", "text": "Autre, précise-moi ça !" }
+      ]
+    },
+    {
+      "id": 29,
+      "prompt": "Dans une discussion difficile, tu as tendance à… (Q29/50)",
+      "options": [
+        { "key": "A", "text": "Supplier pour que tout s’arrange." },
+        { "key": "B", "text": "Hausser le ton et dominer la conversation." },
+        { "key": "C", "text": "Te fermer et quitter." },
+        { "key": "D", "text": "Autre, précise-moi ça !" }
+      ]
+    },
+    {
+      "id": 30,
+      "prompt": "Quand tu es attirée par quelqu’un, ce que tu veux avant tout c’est… (Q30/50)",
+      "options": [
+        { "key": "A", "text": "Sentir son affection sincère." },
+        { "key": "B", "text": "Être admirée et désirée." },
+        { "key": "C", "text": "Qu’il/elle respecte mon espace." },
+        { "key": "D", "text": "Autre, précise-moi ça !" }
+      ]
+    },
+    {
+      "id": 31,
+      "prompt": "Ton/ta partenaire ne poste jamais de photo de vous deux. Tu ressens… (Q31/50)",
+      "options": [
+        { "key": "A", "text": "Tristesse, impression d’être cachée." },
+        { "key": "B", "text": "Colère : je mérite d’être montré·e." },
+        { "key": "C", "text": "Détachement : ça ne me touche pas." },
+        { "key": "D", "text": "Autre, précise-moi ça !" }
+      ]
+    },
+    {
+      "id": 32,
+      "prompt": "Dans l’intimité, si l’autre n’est pas attentif à ton plaisir, tu… (Q32/50)",
+      "options": [
+        { "key": "A", "text": "Je me sens rejetée, pas assez aimée." },
+        { "key": "B", "text": "Je lui reproche son égoïsme." },
+        { "key": "C", "text": "Je me détache et j’ai moins envie." },
+        { "key": "D", "text": "Autre, précise-moi ça !" }
+      ]
+    },
+    {
+      "id": 33,
+      "prompt": "Si tu sens que ton couple perd de la magie, tu… (Q33/50)",
+      "options": [
+        { "key": "A", "text": "Je multiplie les attentions affectueuses." },
+        { "key": "B", "text": "Je réclame plus d’énergie et de passion." },
+        { "key": "C", "text": "Je prends mes distances." },
+        { "key": "D", "text": "Autre, précise-moi ça !" }
+      ]
+    },
+    {
+      "id": 34,
+      "prompt": "Ton/ta partenaire fait une erreur qui te blesse. Tu… (Q34/50)",
+      "options": [
+        { "key": "A", "text": "Je pardonne vite, j’ai peur de perdre le lien." },
+        { "key": "B", "text": "Je critique et je garde rancune." },
+        { "key": "C", "text": "Je coupe, je m’éloigne intérieurement." },
+        { "key": "D", "text": "Autre, précise-moi ça !" }
+      ]
+    },
+    {
+      "id": 35,
+      "prompt": "Ce qui déclenche ta jalousie, c’est surtout… (Q35/50)",
+      "options": [
+        { "key": "A", "text": "La peur qu’il/elle m’abandonne." },
+        { "key": "B", "text": "Le besoin de rester la seule admirée." },
+        { "key": "C", "text": "Le sentiment de perdre le contrôle." },
+        { "key": "D", "text": "Autre, précise-moi ça !" }
+      ]
+    },
+    {
+      "id": 36,
+      "prompt": "Quand tu rencontres quelqu’un de nouveau, tu… (Q36/50)",
+      "options": [
+        { "key": "A", "text": "Te livres vite, besoin de proximité." },
+        { "key": "B", "text": "Te montres impressionnante et séduisante." },
+        { "key": "C", "text": "Restes distante, prudente." },
+        { "key": "D", "text": "Autre, précise-moi ça !" }
+      ]
+    },
+    {
+      "id": 37,
+      "prompt": "Dans les grandes décisions de couple, tu veux surtout… (Q37/50)",
+      "options": [
+        { "key": "A", "text": "Être rassurée et protégée." },
+        { "key": "B", "text": "Être valorisée et briller." },
+        { "key": "C", "text": "Garder ton indépendance." },
+        { "key": "D", "text": "Autre, précise-moi ça !" }
+      ]
+    },
+    {
+      "id": 38,
+      "prompt": "Si ton/ta partenaire ne remarque pas tes efforts, tu… (Q38/50)",
+      "options": [
+        { "key": "A", "text": "Je me sens invisible, je souffre en silence." },
+        { "key": "B", "text": "Je réclame et je critique." },
+        { "key": "C", "text": "Je me ferme, je me dis que ça ne sert à rien." },
+        { "key": "D", "text": "Autre, précise-moi ça !" }
+      ]
+    },
+    {
+      "id": 39,
+      "prompt": "Quand tu rêves de l’amour idéal, tu veux avant tout… (Q39/50)",
+      "options": [
+        { "key": "A", "text": "Être comblée affectivement." },
+        { "key": "B", "text": "Être admirée et désirée." },
+        { "key": "C", "text": "Être respectée dans ta liberté." },
+        { "key": "D", "text": "Autre, précise-moi ça !" }
+      ]
+    },
+    {
+      "id": 40,
+      "prompt": "Ton/ta partenaire te cache quelque chose. Tu réagis… (Q40/50)",
+      "options": [
+        { "key": "A", "text": "Je me sens trahie, peur d’être abandonnée." },
+        { "key": "B", "text": "Je deviens méfiante et contrôlante." },
+        { "key": "C", "text": "Je me coupe et je garde mes distances." },
+        { "key": "D", "text": "Autre, précise-moi ça !" }
+      ]
+    },
+    {
+      "id": 41,
+      "prompt": "Quand tu es amoureuse, ta force principale c’est… (Q41/50)",
+      "options": [
+        { "key": "A", "text": "Donner énormément d’amour." },
+        { "key": "B", "text": "Être passionnée et motivante." },
+        { "key": "C", "text": "Être loyale et respectueuse." },
+        { "key": "D", "text": "Autre, précise-moi ça !" }
+      ]
+    },
+    {
+      "id": 42,
+      "prompt": "Quand tu es amoureuse, ton piège classique c’est… (Q42/50)",
+      "options": [
+        { "key": "A", "text": "Donner trop et m’oublier." },
+        { "key": "B", "text": "Vouloir trop briller ou dominer." },
+        { "key": "C", "text": "Me fermer pour me protéger." },
+        { "key": "D", "text": "Autre, précise-moi ça !" }
+      ]
+    },
+    {
+      "id": 43,
+      "prompt": "Quand tu as besoin de réconfort, tu aimerais que l’autre… (Q43/50)",
+      "options": [
+        { "key": "A", "text": "Te prenne dans ses bras, câlins." },
+        { "key": "B", "text": "Te dise à quel point tu es géniale." },
+        { "key": "C", "text": "Te respecte dans ton silence." },
+        { "key": "D", "text": "Autre, précise-moi ça !" }
+      ]
+    },
+    {
+      "id": 44,
+      "prompt": "Si l’autre est en colère, tu as tendance à… (Q44/50)",
+      "options": [
+        { "key": "A", "text": "Supplier pour calmer." },
+        { "key": "B", "text": "Riposter et hausser le ton." },
+        { "key": "C", "text": "Fuir la confrontation." },
+        { "key": "D", "text": "Autre, précise-moi ça !" }
+      ]
+    },
+    {
+      "id": 45,
+      "prompt": "Ton/ta partenaire fait un choix important sans toi. Tu… (Q45/50)",
+      "options": [
+        { "key": "A", "text": "Je me sens rejetée, non considérée." },
+        { "key": "B", "text": "Je me sens rabaissée, j’exige plus de place." },
+        { "key": "C", "text": "Je me ferme et je prends de la distance." },
+        { "key": "D", "text": "Autre, précise-moi ça !" }
+      ]
+    },
+    {
+      "id": 46,
+      "prompt": "Si tu devais résumer ta quête en amour en un mot, ce serait… (Q46/50)",
+      "options": [
+        { "key": "A", "text": "Sécurité." },
+        { "key": "B", "text": "Passion." },
+        { "key": "C", "text": "Liberté." },
+        { "key": "D", "text": "Autre, précise-moi ça !" }
+      ]
+    },
+    {
+      "id": 47,
+      "prompt": "Quand tu penses à ton passé amoureux, ce qui revient souvent c’est… (Q47/50)",
+      "options": [
+        { "key": "A", "text": "Des séparations douloureuses." },
+        { "key": "B", "text": "Des luttes de pouvoir." },
+        { "key": "C", "text": "Des fuites et des silences." },
+        { "key": "D", "text": "Autre, précise-moi ça !" }
+      ]
+    },
+    {
+      "id": 48,
+      "prompt": "Dans ton couple idéal, ton rôle serait surtout… (Q48/50)",
+      "options": [
+        { "key": "A", "text": "Être la source d’amour et de douceur." },
+        { "key": "B", "text": "Être l’inspiratrice flamboyante." },
+        { "key": "C", "text": "Être la partenaire indépendante et libre." },
+        { "key": "D", "text": "Autre, précise-moi ça !" }
+      ]
+    },
+    {
+      "id": 49,
+      "prompt": "La croyance qui t’empêche le plus d’aimer librement c’est… (Q49/50)",
+      "options": [
+        { "key": "A", "text": "Je vais toujours être abandonnée." },
+        { "key": "B", "text": "Je dois toujours prouver ma valeur." },
+        { "key": "C", "text": "Je ne peux compter que sur moi." },
+        { "key": "D", "text": "Autre, précise-moi ça !" }
+      ]
+    },
+    {
+      "id": 50,
+      "prompt": "Si je te donnais une couronne maintenant, ce que tu voudrais incarner c’est… (Q50/50)",
+      "options": [
+        { "key": "A", "text": "La tendresse et la sécurité." },
+        { "key": "B", "text": "La passion et le rayonnement." },
+        { "key": "C", "text": "La liberté et l’indépendance." },
+        { "key": "D", "text": "Autre, précise-moi ça !" }
+      ]
+    }
+  ]
+}

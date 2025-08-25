@@ -74,6 +74,7 @@ const navItems = [
     icon: BookOpenIcon,
     label: "La Gazette du Royaume",
   },
+  // 'About' or 'Stats' will be injected dynamically depending on user role
   {
     name: "Shop",
     external: true,
@@ -81,13 +82,7 @@ const navItems = [
     icon: ShoppingBagIcon,
     label: "La boutique",
   },
-  {
-    name: "About",
-    external: true,
-    url: "https://queen-de-q.vercel.app",
-    icon: InformationCircleIcon,
-    label: "À propos",
-  },
+  // ...other static items
 ];
 
 const Sidebar = ({
@@ -233,6 +228,39 @@ const Sidebar = ({
                 </Link>
               ) : null;
             })}
+            {/* Dynamic link: show admin-only Stats, otherwise show About external link */}
+            {user && user.role === "admin" ? (
+              <Link
+                to="/stats"
+                onClick={onClose}
+                className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 group ${
+                  location.pathname === "/stats"
+                    ? "bg-royal-gold text-royal-purple border-l-4 border-royal-gold"
+                    : "text-royal-pearl hover:bg-royal-gold/10 hover:text-royal-champagne"
+                }`}
+              >
+                <InformationCircleIcon
+                  className={`w-5 h-5 ${
+                    location.pathname === "/stats"
+                      ? "text-royal-purple"
+                      : "text-royal-pearl"
+                  }`}
+                />
+                <span className="font-sans font-medium">Statistiques</span>
+              </Link>
+            ) : (
+              <a
+                href="https://queen-de-q.vercel.app"
+                target="_blank"
+                rel="noopener noreferrer"
+                className={
+                  "flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 group text-royal-pearl hover:bg-royal-gold/10 hover:text-royal-champagne"
+                }
+              >
+                <InformationCircleIcon className="w-5 h-5 text-royal-pearl" />
+                <span className="font-sans font-medium">À propos</span>
+              </a>
+            )}
             {showInscriptionLink && (
               <Link
                 to="/auth?mode=signup"
