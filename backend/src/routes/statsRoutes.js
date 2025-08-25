@@ -26,8 +26,9 @@ router.get('/stats', async (req, res) => {
   const firstUser = await User.findOne().sort({ createdAt: 1 }).select('createdAt').lean();
   const lastUser = await User.findOne().sort({ createdAt: -1 }).select('createdAt').lean();
 
-    // Gather simple breakdown by role
+    // Gather simple breakdown by role, excluding 'admin' role from public stats
     const rolesAgg = await User.aggregate([
+      { $match: { role: { $ne: 'admin' } } },
       { $group: { _id: '$role', count: { $sum: 1 } } },
       { $project: { role: '$_id', count: 1, _id: 0 } }
     ]);

@@ -99,6 +99,10 @@ const SalonChatPage = () => {
 
   const handleShowHistory = async () => {
     try {
+      if (showHistory) {
+        setShowHistory(false);
+        return;
+      }
       const all = await chatService.listSessions();
       const onlySalon = all.filter((s) => s.chatType === "salon_de_the");
       setSessions(onlySalon);

@@ -136,6 +136,12 @@ const MiroirChatPremium = () => {
 
   const handleShowHistory = async () => {
     try {
+      // If history is already shown, hide it on second click
+      if (showHistory) {
+        setShowHistory(false);
+        return;
+      }
+
       const all = await chatService.listSessions();
   // Only show sessions that match the miroir variant for this user
   const chatTypeForUser = getMiroirChatTypeForRole(user?.role);

@@ -119,6 +119,10 @@ const PoicheChatPage = () => {
 
   const handleShowHistory = async () => {
     try {
+      if (showHistory) {
+        setShowHistory(false);
+        return;
+      }
       const all = await chatService.listSessions();
       const onlyPoiche = all.filter((s) => s.chatType === "poiche");
       setSessions(onlyPoiche);

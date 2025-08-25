@@ -133,8 +133,8 @@ const StatsPage = () => {
             Répartition des rôles
           </h3>
           <div className="flex flex-wrap gap-2">
-            {stats?.counts?.roles?.length ? (
-              stats.counts.roles.map((r) => (
+            {stats?.counts?.roles?.filter(r => r.role !== 'admin').length ? (
+              stats.counts.roles.filter(r => r.role !== 'admin').map((r) => (
                 <div
                   key={r.role}
                   className="px-3 py-1 rounded-full bg-royal-gold/10 text-royal-champagne text-sm"
