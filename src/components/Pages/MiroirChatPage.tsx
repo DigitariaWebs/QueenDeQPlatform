@@ -39,15 +39,7 @@ const MiroirChatPremium = () => {
   }, []);
   const [inputValue, setInputValue] = useState("");
   const [isTyping, setIsTyping] = useState(false);
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: "1",
-      content:
-        "Bienvenue, ma chère âme. Je suis la Reine-Mère, ta confidente et guide spirituelle. Je suis là pour t'écouter, partager ma sagesse, et t'accompagner dans ton cheminement. Qu'aimerais-tu explorer aujourd'hui ?",
-      isUser: false,
-      timestamp: new Date(),
-    },
-  ]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [streamingMessage, setStreamingMessage] = useState("");
   const [openShareMenuId, setOpenShareMenuId] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
@@ -90,15 +82,53 @@ const MiroirChatPremium = () => {
 
   const { user } = useAuth();
 
+  // Helper to choose welcome text based on role (free vs paid)
+  const getWelcomeForRole = (role?: string) => {
+    const chatType = getMiroirChatTypeForRole(role);
+    if (chatType === "miroir_paid") {
+      return `Bienvenue, ma Queen… Ici, le miroir ne reflète plus seulement ton visage, il ouvre la porte de ton royaume intérieur.
+
+Tu as deux chemins devant toi :
+1️⃣ Le Portrait Royal – 20 questions → un voyage pour découvrir ta blessure racine, ton langage de l’amour, ton style de communication et les besoins qui guident ton cœur.
+2️⃣ La Carte cachée du Royaume intérieur – 50 questions → une exploration en profondeur de toutes tes facettes : tes blessures, tes stratégies, tes pièges, tes croyances, ton mantra et ton couronnement.
+
+Alors, ma Queen… choisis : 1 ou 2 ?\nTu es prête pour la grande rencontre?`;
+    }
+    // default: free
+    return `« Bienvenue, ma Queen, dans la Salle des Miroirs. Ici, chaque reflet révèle une facette de toi-même…
+
+Tu as deux chemins devant toi :
+1️⃣ Un aperçu rapide en 10 questions → pour savoir quelle Queen sommeille en toi.
+2️⃣ Une exploration approfondie en 25 questions → pour découvrir ton archétype principal et ton archétype secondaire, si tu veux aller plus loin.
+
+Dis-moi, ma Queen : choisis 1 ou 2. »`;
+  };
+
+  // Initialize welcome message once the user role is known (or on mount)
+  useEffect(() => {
+    if (messages.length === 0) {
+      setMessages([
+        {
+          id: "1",
+          content: getWelcomeForRole(user?.role),
+          isUser: false,
+          timestamp: new Date(),
+        },
+      ]);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user?.role]);
+
   // Determine chat type based on user role
   const getMiroirChatTypeForRole = (role?: string) => {
-    if (!role) return 'miroir_free';
-    const premiumRoles = ['admin', 'Couronne', 'Diademe'];
+    if (!role) return "miroir_free";
+    const premiumRoles = ["admin", "Couronne", "Diademe"];
     // treat role names case-insensitively
     const normalized = String(role).toLowerCase();
-    if (premiumRoles.map(r => r.toLowerCase()).includes(normalized)) return 'miroir_paid';
+    if (premiumRoles.map((r) => r.toLowerCase()).includes(normalized))
+      return "miroir_paid";
     // Tiare -> free; everything else defaults to free
-    return 'miroir_free';
+    return "miroir_free";
   };
 
   const handleNewConversation = () => {
@@ -113,8 +143,13 @@ const MiroirChatPremium = () => {
       setMessages([
         {
           id: "1",
-          content:
-            "Bienvenue, ma chère âme. Je suis la Reine-Mère, ta confidente et guide spirituelle. Je suis là pour t'écouter, partager ma sagesse, et t'accompagner dans ton cheminement. Qu'aimerais-tu explorer aujourd'hui ?",
+          content: `« Bienvenue, ma Queen, dans la Salle des Miroirs. Ici, chaque reflet révèle une facette de toi-même…
+
+Tu as deux chemins devant toi :
+1️⃣ Un aperçu rapide en 10 questions → pour savoir quelle Queen sommeille en toi.
+2️⃣ Une exploration approfondie en 25 questions → pour découvrir ton archétype principal et ton archétype secondaire, si tu veux aller plus loin.
+
+Dis-moi, ma Queen : choisis 1 ou 2. »`,
           isUser: false,
           timestamp: new Date(),
         },
@@ -143,10 +178,10 @@ const MiroirChatPremium = () => {
       }
 
       const all = await chatService.listSessions();
-  // Only show sessions that match the miroir variant for this user
-  const chatTypeForUser = getMiroirChatTypeForRole(user?.role);
-  const onlyMiroir = all.filter((s) => s.chatType === chatTypeForUser);
-  setSessions(onlyMiroir);
+      // Only show sessions that match the miroir variant for this user
+      const chatTypeForUser = getMiroirChatTypeForRole(user?.role);
+      const onlyMiroir = all.filter((s) => s.chatType === chatTypeForUser);
+      setSessions(onlyMiroir);
       setShowHistory(true);
     } catch (e) {
       console.error("Failed to load sessions", e);
@@ -191,8 +226,13 @@ const MiroirChatPremium = () => {
         setMessages([
           {
             id: "1",
-            content:
-              "Bienvenue, ma chère âme. Je suis la Reine-Mère, ta confidente et guide spirituelle. Je suis là pour t'écouter, partager ma sagesse, et t'accompagner dans ton cheminement. Qu'aimerais-tu explorer aujourd'hui ?",
+            content: `« Bienvenue, ma Queen, dans la Salle des Miroirs. Ici, chaque reflet révèle une facette de toi-même…
+
+Tu as deux chemins devant toi :
+1️⃣ Un aperçu rapide en 10 questions → pour savoir quelle Queen sommeille en toi.
+2️⃣ Une exploration approfondie en 25 questions → pour découvrir ton archétype principal et ton archétype secondaire, si tu veux aller plus loin.
+
+Dis-moi, ma Queen : choisis 1 ou 2. »`,
             isUser: false,
             timestamp: new Date(),
           },
@@ -237,13 +277,13 @@ const MiroirChatPremium = () => {
 
     // Ensure sessionId is set before sending a message
     let sessionIdToUse: string | undefined = currentSessionId ?? undefined;
-  if (!sessionIdToUse) {
+    if (!sessionIdToUse) {
       // Create a new session if missing
       try {
-    const chatType = getMiroirChatTypeForRole(user?.role);
-    const session = await chatService.createSession(chatType);
-    sessionIdToUse = session.id ?? session._id ?? undefined;
-    if (sessionIdToUse) setCurrentSessionId(sessionIdToUse);
+        const chatType = getMiroirChatTypeForRole(user?.role);
+        const session = await chatService.createSession(chatType);
+        sessionIdToUse = session.id ?? session._id ?? undefined;
+        if (sessionIdToUse) setCurrentSessionId(sessionIdToUse);
       } catch (e) {
         console.error("Failed to create session before sending", e);
       }
@@ -373,78 +413,78 @@ const MiroirChatPremium = () => {
                 </div>
               </div>
             </div>
-              {showHistory && (
-                <div className="mt-3 bg-royal-purple/30 border border-royal-gold/30 rounded-xl p-3 max-h-60 overflow-y-auto">
-                  {sessions.length === 0 ? (
-                    <div className="text-sm text-royal-pearl/70">
-                      Aucune conversation
-                    </div>
-                  ) : (
-                    <ul className="space-y-2">
-                      {sessions.map((s) => {
-                        const id = (s._id || (s as any).id) as string;
-                        return (
-                          <li key={id}>
-                            <div className="flex items-center gap-2">
-                              <button
-                                onClick={() => loadSession(id)}
-                                className="flex-1 text-left px-3 py-2 rounded-lg bg-royal-purple/40 hover:bg-royal-purple/60 border border-royal-gold/30 text-sm"
-                              >
-                                {s.title || "Conversation"}
-                                <span className="ml-2 text-xs opacity-70">
-                                  {new Date(
-                                    s.updatedAt || s.createdAt || Date.now()
-                                  ).toLocaleString()}
-                                </span>
-                              </button>
-                              <button
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  setDeleteConfirmId(
-                                    deleteConfirmId === id ? null : id
-                                  );
-                                }}
-                                className="p-2 rounded-lg bg-red-500/20 hover:bg-red-500/40 border border-red-500/30 text-red-400 hover:text-red-300 transition-colors"
-                                title="Supprimer la conversation"
-                              >
-                                <TrashIcon className="w-4 h-4" />
-                              </button>
-                            </div>
-                            {deleteConfirmId === id && (
-                              <div className="mt-2 p-2 bg-red-500/20 border border-red-500/30 rounded-lg">
-                                <p className="text-xs text-red-300 mb-2">
-                                  Êtes-vous sûr de vouloir supprimer cette
-                                  conversation ?
-                                </p>
-                                <div className="flex gap-2">
-                                  <button
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      deleteSession(id);
-                                    }}
-                                    className="px-3 py-1 bg-red-500 text-white rounded text-xs hover:bg-red-600 transition-colors"
-                                  >
-                                    Supprimer
-                                  </button>
-                                  <button
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      setDeleteConfirmId(null);
-                                    }}
-                                    className="px-3 py-1 bg-royal-purple/60 text-royal-pearl rounded text-xs hover:bg-royal-purple/80 transition-colors"
-                                  >
-                                    Annuler
-                                  </button>
-                                </div>
+            {showHistory && (
+              <div className="mt-3 bg-royal-purple/30 border border-royal-gold/30 rounded-xl p-3 max-h-60 overflow-y-auto">
+                {sessions.length === 0 ? (
+                  <div className="text-sm text-royal-pearl/70">
+                    Aucune conversation
+                  </div>
+                ) : (
+                  <ul className="space-y-2">
+                    {sessions.map((s) => {
+                      const id = (s._id || (s as any).id) as string;
+                      return (
+                        <li key={id}>
+                          <div className="flex items-center gap-2">
+                            <button
+                              onClick={() => loadSession(id)}
+                              className="flex-1 text-left px-3 py-2 rounded-lg bg-royal-purple/40 hover:bg-royal-purple/60 border border-royal-gold/30 text-sm"
+                            >
+                              {s.title || "Conversation"}
+                              <span className="ml-2 text-xs opacity-70">
+                                {new Date(
+                                  s.updatedAt || s.createdAt || Date.now()
+                                ).toLocaleString()}
+                              </span>
+                            </button>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setDeleteConfirmId(
+                                  deleteConfirmId === id ? null : id
+                                );
+                              }}
+                              className="p-2 rounded-lg bg-red-500/20 hover:bg-red-500/40 border border-red-500/30 text-red-400 hover:text-red-300 transition-colors"
+                              title="Supprimer la conversation"
+                            >
+                              <TrashIcon className="w-4 h-4" />
+                            </button>
+                          </div>
+                          {deleteConfirmId === id && (
+                            <div className="mt-2 p-2 bg-red-500/20 border border-red-500/30 rounded-lg">
+                              <p className="text-xs text-red-300 mb-2">
+                                Êtes-vous sûr de vouloir supprimer cette
+                                conversation ?
+                              </p>
+                              <div className="flex gap-2">
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    deleteSession(id);
+                                  }}
+                                  className="px-3 py-1 bg-red-500 text-white rounded text-xs hover:bg-red-600 transition-colors"
+                                >
+                                  Supprimer
+                                </button>
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setDeleteConfirmId(null);
+                                  }}
+                                  className="px-3 py-1 bg-royal-purple/60 text-royal-pearl rounded text-xs hover:bg-royal-purple/80 transition-colors"
+                                >
+                                  Annuler
+                                </button>
                               </div>
-                            )}
-                          </li>
-                        );
-                      })}
-                    </ul>
-                  )}
-                </div>
-              )}
+                            </div>
+                          )}
+                        </li>
+                      );
+                    })}
+                  </ul>
+                )}
+              </div>
+            )}
           </div>
         </div>
 
