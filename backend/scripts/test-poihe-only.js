@@ -6,7 +6,7 @@ async function testPoicheOnly() {
   // First, test if server is running
   try {
     console.log('🔍 Checking if server is running...');
-    const healthResponse = await fetch('http://localhost:5001/api/health');
+    const healthResponse = await fetch('http://localhost:5000/api/health');
     if (healthResponse.ok) {
       const healthData = await healthResponse.json();
       console.log('✅ Server is running:', healthData.message);
@@ -33,7 +33,7 @@ async function testPoicheOnly() {
   try {
     console.log('📤 Sending poiche test...');
     
-    const response = await fetch('http://localhost:5001/api/ai/chat', {
+    const response = await fetch('http://localhost:5000/api/ai/chat', {
       method: 'POST',
       headers: { 
         'Content-Type': 'application/json',

@@ -79,11 +79,11 @@ const loadMiroirFile = (filename) => {
 
 // Free Miroir resources (questions + result types)
 const FREE_MIRROR_QUESTIONS = loadMiroirFile("FreeMirroirQuestions.json");
-const FREE_MIRROR_TYPES = loadMiroirFile("FreeMirrorTypes.json");
+const FREE_MIRROR_TYPES = loadMiroirFile("FreeMirroirTypes.json");
 
 // Paid Miroir resources (questions + result types)
 const PAID_MIRROR_QUESTIONS = loadMiroirFile("PaidMirroirQuestions.json");
-const PAID_MIRROR_TYPES = loadMiroirFile("PaidMirrorTypes.json");
+const PAID_MIRROR_TYPES = loadMiroirFile("PaidMirroirTypes.json");
 
 // Lightweight indexes to expose to the model (avoid inlining heavy JSON)
 const FREE_MIRROR_QUESTIONS_INDEX = Array.isArray(FREE_MIRROR_QUESTIONS.questions)
