@@ -161,6 +161,19 @@ router.post('/sessions', authenticateUser, async (req, res) => {
       });
     }
 
+    // Restrict salon_de_the usage to Couronne and admin roles
+    const ALLOWED_SALON_ROLES = ["Couronne", "admin"];
+    if (
+      chatType === "salon_de_the" &&
+      !ALLOWED_SALON_ROLES.includes(req.user.role)
+    ) {
+      return res.status(403).json({
+        success: false,
+        error:
+          "Access denied: Salon de Thé is restricted to Couronne and admin users. Please upgrade your subscription to access this feature.",
+      });
+    }
+
     const session = await ChatService.createChatSession(
       req.user._id,
       title || "New Chat",
@@ -334,6 +347,19 @@ router.post('/chat', authenticateUser, validateChatMessage, async (req, res) => 
       });
     }
 
+    // Restrict salon_de_the usage to Couronne and admin roles
+    const ALLOWED_SALON_ROLES = ["Couronne", "admin"];
+    if (
+      chatType === "salon_de_the" &&
+      !ALLOWED_SALON_ROLES.includes(req.user.role)
+    ) {
+      return res.status(403).json({
+        success: false,
+        error:
+          "Access denied: Salon de Thé is restricted to Couronne and admin users. Please upgrade your subscription to access this feature.",
+      });
+    }
+
     let currentSession = null;
 
     // Get or create session
@@ -485,56 +511,73 @@ router.post('/chat', authenticateUser, validateChatMessage, async (req, res) => 
 // Streaming chat endpoint with session support
 router.post('/chat/stream', authenticateUser, validateChatMessage, async (req, res) => {
   try {
-    console.log('Received streaming request:', {
+    console.log("Received streaming request:", {
       messagesCount: req.body.messages?.length,
-      chatType: req.body.chatType || 'poiche',
+      chatType: req.body.chatType || "poiche",
       sessionId: req.body.sessionId,
-      userId: req.user._id
+      userId: req.user._id,
     });
 
     // Check for validation errors
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      console.log('Validation errors:', errors.array());
+      console.log("Validation errors:", errors.array());
       return res.status(400).json({
         success: false,
-        error: 'Invalid request format',
-        details: errors.array()
+        error: "Invalid request format",
+        details: errors.array(),
       });
     }
 
-    const { messages, chatType = 'poiche', sessionId } = req.body;
+    const { messages, chatType = "poiche", sessionId } = req.body;
 
     // Restrict miroir_paid usage to allowed roles early to avoid wasted work
-    const ALLOWED_MIROIR_ROLES = ['Diademe', 'Couronne', 'admin'];
-    if (chatType === 'miroir_paid' && !ALLOWED_MIROIR_ROLES.includes(req.user.role)) {
+    const ALLOWED_MIROIR_ROLES = ["Diademe", "Couronne", "admin"];
+    if (
+      chatType === "miroir_paid" &&
+      !ALLOWED_MIROIR_ROLES.includes(req.user.role)
+    ) {
       return res.status(403).json({
         success: false,
-        error: 'Access denied: miroir_paid mode is restricted to premium users.'
+        error:
+          "Access denied: miroir_paid mode is restricted to premium users.",
+      });
+    }
+
+    // Restrict salon_de_the usage to Couronne and admin roles
+    const ALLOWED_SALON_ROLES = ["Couronne", "admin"];
+    if (
+      chatType === "salon_de_the" &&
+      !ALLOWED_SALON_ROLES.includes(req.user.role)
+    ) {
+      return res.status(403).json({
+        success: false,
+        error:
+          "Access denied: Salon de Thé is restricted to Couronne and admin users. Please upgrade your subscription to access this feature.",
       });
     }
 
     let currentSession = null;
-    
+
     // Get or create session
     if (sessionId) {
       currentSession = await ChatSession.findOne({
         _id: sessionId,
         userId: req.user._id,
-        status: 'active'
+        status: "active",
       });
-      
+
       if (!currentSession) {
         return res.status(404).json({
           success: false,
-          error: 'Chat session not found'
+          error: "Chat session not found",
         });
       }
     } else {
       // Create new session from first user message
-      const firstUserMessage = messages.find(m => m.role === 'user');
-      const title = firstUserMessage?.content?.substring(0, 50) || 'New Chat';
-      
+      const firstUserMessage = messages.find((m) => m.role === "user");
+      const title = firstUserMessage?.content?.substring(0, 50) || "New Chat";
+
       currentSession = await ChatService.createChatSession(
         req.user._id,
         title,
@@ -544,31 +587,31 @@ router.post('/chat/stream', authenticateUser, validateChatMessage, async (req, r
 
     // Save user message to database
     const userMessage = messages[messages.length - 1];
-    if (userMessage.role === 'user') {
+    if (userMessage.role === "user") {
       await ChatService.addMessage(
         currentSession._id,
         req.user._id,
         userMessage.content,
-        'user',
+        "user",
         {
-          userAgent: req.headers['user-agent'],
-          ipAddress: req.ip
+          userAgent: req.headers["user-agent"],
+          ipAddress: req.ip,
         }
       );
     }
 
     // Set headers for streaming
-    res.setHeader('Content-Type', 'text/plain; charset=utf-8');
-    res.setHeader('Cache-Control', 'no-cache');
-    res.setHeader('Connection', 'keep-alive');
-    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader("Content-Type", "text/plain; charset=utf-8");
+    res.setHeader("Cache-Control", "no-cache");
+    res.setHeader("Connection", "keep-alive");
+    res.setHeader("Access-Control-Allow-Origin", "*");
 
     const startTime = Date.now();
 
     // Call OpenAI with streaming and appropriate chat type
     const stream = await callOpenAI(messages, true, chatType);
 
-    let fullResponse = '';
+    let fullResponse = "";
 
     for await (const chunk of stream) {
       const content = chunk.choices[0]?.delta?.content;
@@ -576,13 +619,13 @@ router.post('/chat/stream', authenticateUser, validateChatMessage, async (req, r
         fullResponse += content;
         // Send each chunk to the client
         const chunkData = {
-          type: 'chunk',
+          type: "chunk",
           content: content,
           sessionId: currentSession._id,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         };
-        console.log('Sending chunk, length:', content.length);
-        res.write(JSON.stringify(chunkData) + '\n');
+        console.log("Sending chunk, length:", content.length);
+        res.write(JSON.stringify(chunkData) + "\n");
       }
     }
 
@@ -591,7 +634,7 @@ router.post('/chat/stream', authenticateUser, validateChatMessage, async (req, r
     // If Poiche, try to capture the selected archetype from the full streamed message
     let selectionName = null;
     let selectedArchetype = null;
-    if (chatType === 'poiche') {
+    if (chatType === "poiche") {
       const parsed = extractSelectedArchetypeName(fullResponse) || null;
       if (parsed) {
         selectedArchetype = getArchetypeByName(parsed) || null;
@@ -608,28 +651,27 @@ router.post('/chat/stream', authenticateUser, validateChatMessage, async (req, r
       currentSession._id,
       req.user._id,
       fullResponse,
-      'assistant',
+      "assistant",
       {
         openaiData: {
-          responseTime
-        }
+          responseTime,
+        },
       }
     );
 
     // Send completion signal (with optional selection metadata)
     const completionData = {
-      type: 'complete',
+      type: "complete",
       fullMessage: fullResponse,
       sessionId: currentSession._id,
       selectionName,
       archetype: selectedArchetype,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
-    console.log('Stream complete, total length:', fullResponse.length);
-    res.write(JSON.stringify(completionData) + '\n');
+    console.log("Stream complete, total length:", fullResponse.length);
+    res.write(JSON.stringify(completionData) + "\n");
 
     res.end();
-
   } catch (error) {
     console.error('Stream endpoint error:', {
       name: error.name,
