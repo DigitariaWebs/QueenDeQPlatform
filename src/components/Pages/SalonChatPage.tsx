@@ -82,13 +82,13 @@ Ici, au Salon de Thé, plusieurs rituels puissants sont gardés en silence, rés
 
 Si tu veux, je peux t'en présenter quelques-uns. Juste pour voir si l'un d'eux appelle quelque chose en toi…
 
-☕ Que veux-tu explorer en ce moment, ma Queen?
+**☕ Que veux-tu explorer en ce moment, ma Queen?**
 
-    Un attachement difficile ou une obsession qui me freine
+**Un attachement difficile** ou **une obsession qui me freine**
 
-    Une peur ou une blessure récurrente
+**Une peur** ou **une blessure récurrente**
 
-    Je suis pas certaine… je veux voir les rituels disponibles`;
+Je suis pas certaine… je veux voir les rituels disponibles`;
   } else {
     // Fallback for other roles
     return `👑 Bienvenue, ma Queen…
