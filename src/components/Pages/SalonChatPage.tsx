@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import ReactMarkdown from "react-markdown";
 import {
   PaperAirplaneIcon,
   ChatBubbleLeftRightIcon,
@@ -18,33 +19,29 @@ import { useAuth } from "../../context/AuthContext";
 
 // Utility function to render text with clickable links
 const renderMessageWithLinks = (text: string) => {
-  // First, handle markdown-style links [text](url)
-  const markdownLinkRegex = /\[([^\]]+)\]\((https?:\/\/[^\)]+)\)/g;
-  let processedText = text.replace(markdownLinkRegex, '$2');
-  
-  // Then handle plain URLs
-  const urlRegex = /(https?:\/\/[^\s\)\]]+)/g;
-  const parts = processedText.split(urlRegex);
-  
-  return parts.map((part, index) => {
-    if (part.match(urlRegex)) {
-      // Clean the URL by removing any trailing punctuation
-      const cleanUrl = part.replace(/[)\].,;!?]+$/, '');
-      return (
-        <a
-          key={index}
-          href={cleanUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-royal-pearl underline hover:text-white transition-colors duration-200 break-all cursor-pointer"
-          style={{ zIndex: 1000, position: 'relative' }}
-        >
-          {cleanUrl}
-        </a>
-      );
-    }
-    return <span key={index}>{part}</span>;
-  });
+  return (
+    <ReactMarkdown
+      components={{
+        strong: ({ children }) => (
+          <strong className="font-bold text-white">{children}</strong>
+        ),
+        p: ({ children }) => <p className="mb-2 last:mb-0">{children}</p>,
+        a: ({ href, children }) => (
+          <a
+            href={href}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-royal-pearl underline hover:text-white transition-colors duration-200 break-all cursor-pointer"
+            style={{ zIndex: 1000, position: "relative" }}
+          >
+            {children}
+          </a>
+        ),
+      }}
+    >
+      {text}
+    </ReactMarkdown>
+  );
 };
 
 // Get initial message based on user role

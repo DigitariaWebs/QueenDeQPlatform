@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import ReactMarkdown from "react-markdown";
 import {
   PaperAirplaneIcon,
   EllipsisHorizontalIcon,
@@ -479,7 +480,20 @@ const PoicheChatPage = () => {
                             }
                           `}
                           >
-                            {message.content}
+                            <ReactMarkdown
+                              components={{
+                                strong: ({ children }) => (
+                                  <strong className="font-bold text-white">
+                                    {children}
+                                  </strong>
+                                ),
+                                p: ({ children }) => (
+                                  <p className="mb-2 last:mb-0">{children}</p>
+                                ),
+                              }}
+                            >
+                              {message.content}
+                            </ReactMarkdown>
                             {/* Share menu for bot messages (hidden for first bot message) */}
                             {!message.isUser &&
                               message.id !== firstBotMessageId && (
@@ -589,7 +603,20 @@ const PoicheChatPage = () => {
                       >
                         <div className="flex items-end">
                           <div className="rounded-2xl px-4 py-2 font-raleway text-sm md:text-base text-cabinet-ink max-w-[80vw] md:max-w-lg bg-cabinet-parchment border-2 border-royal-gold/30 shadow-royal">
-                            {streamingMessage}
+                            <ReactMarkdown
+                              components={{
+                                strong: ({ children }) => (
+                                  <strong className="font-bold text-white">
+                                    {children}
+                                  </strong>
+                                ),
+                                p: ({ children }) => (
+                                  <p className="mb-2 last:mb-0">{children}</p>
+                                ),
+                              }}
+                            >
+                              {streamingMessage}
+                            </ReactMarkdown>
                             <span className="ml-2 animate-pulse text-royal-gold">
                               ...
                             </span>
