@@ -18,10 +18,10 @@ const chatSessionSchema = new mongoose.Schema({
     default: 'New Chat'
   },
   
-  // Chat Type (Poiche=free, miroir_free=free, miroir_paid=paid, salon_de_the=paid)
+  // Chat Type (Poiche=free, miroir_free=free, miroir_paid=paid, reine_mere_Diademe=paid, reine_mere_Couronne=paid)
   chatType: {
     type: String,
-  enum: ['poiche', 'miroir_free', 'miroir_paid', 'salon_de_the'],
+  enum: ['poiche', 'miroir_free', 'miroir_paid', 'reine_mere_Diademe', 'reine_mere_Couronne'],
     default: 'poiche',
     index: true
   },

@@ -134,9 +134,9 @@ const validateChatMessage = [
     }),
   body("chatType")
     .optional()
-    .isIn(["poiche", "salon_de_the", "miroir_free", "miroir_paid"])
+    .isIn(["poiche", "reine_mere_Diademe", "reine_mere_Couronne", "miroir_free", "miroir_paid"])
     .withMessage(
-      "Chat type must be either poiche, salon_de_the, miroir_free or miroir_paid"
+      "Chat type must be either poiche, reine_mere_Diademe, reine_mere_Couronne, miroir_free or miroir_paid"
     ),
   body("sessionId")
     .optional()
@@ -147,22 +147,7 @@ const validateChatMessage = [
 // Create new chat session
 router.post('/sessions', authenticateUser, async (req, res) => {
   try {
-    let { title, chatType = "poiche" } = req.body;
-    
-    // Determine correct chatType for salon_de_the based on user role
-    if (chatType === "salon_de_the") {
-      if (req.user.role === "Diademe") {
-        chatType = "reine_mere_Diademe";
-      } else if (req.user.role === "Couronne" || req.user.role === "admin") {
-        chatType = "reine_mere_Couronne";
-      } else {
-        return res.status(403).json({
-          success: false,
-          error:
-            "Access denied: Salon de Thé requires at least Diademe subscription. Please upgrade your subscription to access this feature.",
-        });
-      }
-    }
+    const { title, chatType = "poiche" } = req.body;
     
     // Restrict premium "miroir_paid" to allowed roles; free version allowed for all
     const ALLOWED_MIROIR_ROLES = ["Diademe", "Couronne", "admin"];
@@ -174,6 +159,32 @@ router.post('/sessions', authenticateUser, async (req, res) => {
         success: false,
         error:
           "Access denied: miroir_paid mode is restricted to premium users.",
+      });
+    }
+    
+    // Restrict reine_mere_Diademe to Diademe and higher roles
+    const ALLOWED_DIADEME_ROLES = ["Diademe", "Couronne", "admin"];
+    if (
+      chatType === "reine_mere_Diademe" &&
+      !ALLOWED_DIADEME_ROLES.includes(req.user.role)
+    ) {
+      return res.status(403).json({
+        success: false,
+        error:
+          "Access denied: Salon de Thé Diadème requires at least Diadème subscription. Please upgrade your subscription to access this feature.",
+      });
+    }
+    
+    // Restrict reine_mere_Couronne to Couronne and admin roles
+    const ALLOWED_COURONNE_ROLES = ["Couronne", "admin"];
+    if (
+      chatType === "reine_mere_Couronne" &&
+      !ALLOWED_COURONNE_ROLES.includes(req.user.role)
+    ) {
+      return res.status(403).json({
+        success: false,
+        error:
+          "Access denied: Salon de Thé Couronne is restricted to Couronne and admin users. Please upgrade your subscription to access this feature.",
       });
     }
 
@@ -335,22 +346,7 @@ router.post('/chat', authenticateUser, validateChatMessage, async (req, res) => 
       });
     }
 
-    let { messages, chatType = "poiche", sessionId } = req.body;
-
-    // Determine correct chatType for salon_de_the based on user role
-    if (chatType === "salon_de_the") {
-      if (req.user.role === "Diademe") {
-        chatType = "reine_mere_Diademe";
-      } else if (req.user.role === "Couronne" || req.user.role === "admin") {
-        chatType = "reine_mere_Couronne";
-      } else {
-        return res.status(403).json({
-          success: false,
-          error:
-            "Access denied: Salon de Thé requires at least Diademe subscription. Please upgrade your subscription to access this feature.",
-        });
-      }
-    }
+    const { messages, chatType = "poiche", sessionId } = req.body;
 
     // Restrict miroir_paid usage to allowed roles early to avoid wasted work
     const ALLOWED_MIROIR_ROLES = ["Diademe", "Couronne", "admin"];
@@ -362,6 +358,32 @@ router.post('/chat', authenticateUser, validateChatMessage, async (req, res) => 
         success: false,
         error:
           "Access denied: miroir_paid mode is restricted to premium users.",
+      });
+    }
+
+    // Restrict reine_mere_Diademe to Diademe and higher roles
+    const ALLOWED_DIADEME_ROLES = ["Diademe", "Couronne", "admin"];
+    if (
+      chatType === "reine_mere_Diademe" &&
+      !ALLOWED_DIADEME_ROLES.includes(req.user.role)
+    ) {
+      return res.status(403).json({
+        success: false,
+        error:
+          "Access denied: Salon de Thé Diadème requires at least Diadème subscription.",
+      });
+    }
+
+    // Restrict reine_mere_Couronne to Couronne and admin roles
+    const ALLOWED_COURONNE_ROLES = ["Couronne", "admin"];
+    if (
+      chatType === "reine_mere_Couronne" &&
+      !ALLOWED_COURONNE_ROLES.includes(req.user.role)
+    ) {
+      return res.status(403).json({
+        success: false,
+        error:
+          "Access denied: Salon de Thé Couronne is restricted to Couronne and admin users.",
       });
     }
 
@@ -534,22 +556,7 @@ router.post('/chat/stream', authenticateUser, validateChatMessage, async (req, r
       });
     }
 
-    let { messages, chatType = "poiche", sessionId } = req.body;
-
-    // Determine correct chatType for salon_de_the based on user role
-    if (chatType === "salon_de_the") {
-      if (req.user.role === "Diademe") {
-        chatType = "reine_mere_Diademe";
-      } else if (req.user.role === "Couronne" || req.user.role === "admin") {
-        chatType = "reine_mere_Couronne";
-      } else {
-        return res.status(403).json({
-          success: false,
-          error:
-            "Access denied: Salon de Thé requires at least Diademe subscription. Please upgrade your subscription to access this feature.",
-        });
-      }
-    }
+    const { messages, chatType = "poiche", sessionId } = req.body;
 
     // Restrict miroir_paid usage to allowed roles early to avoid wasted work
     const ALLOWED_MIROIR_ROLES = ["Diademe", "Couronne", "admin"];
@@ -561,6 +568,32 @@ router.post('/chat/stream', authenticateUser, validateChatMessage, async (req, r
         success: false,
         error:
           "Access denied: miroir_paid mode is restricted to premium users.",
+      });
+    }
+
+    // Restrict reine_mere_Diademe to Diademe and higher roles
+    const ALLOWED_DIADEME_ROLES = ["Diademe", "Couronne", "admin"];
+    if (
+      chatType === "reine_mere_Diademe" &&
+      !ALLOWED_DIADEME_ROLES.includes(req.user.role)
+    ) {
+      return res.status(403).json({
+        success: false,
+        error:
+          "Access denied: Salon de Thé Diadème requires at least Diadème subscription.",
+      });
+    }
+
+    // Restrict reine_mere_Couronne to Couronne and admin roles
+    const ALLOWED_COURONNE_ROLES = ["Couronne", "admin"];
+    if (
+      chatType === "reine_mere_Couronne" &&
+      !ALLOWED_COURONNE_ROLES.includes(req.user.role)
+    ) {
+      return res.status(403).json({
+        success: false,
+        error:
+          "Access denied: Salon de Thé Couronne is restricted to Couronne and admin users.",
       });
     }
 

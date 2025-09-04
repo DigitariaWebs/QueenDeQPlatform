@@ -16,6 +16,37 @@ import {
 } from "../../services/chatService";
 import { useAuth } from "../../context/AuthContext";
 
+// Utility function to render text with clickable links
+const renderMessageWithLinks = (text: string) => {
+  // First, handle markdown-style links [text](url)
+  const markdownLinkRegex = /\[([^\]]+)\]\((https?:\/\/[^\)]+)\)/g;
+  let processedText = text.replace(markdownLinkRegex, '$2');
+  
+  // Then handle plain URLs
+  const urlRegex = /(https?:\/\/[^\s\)\]]+)/g;
+  const parts = processedText.split(urlRegex);
+  
+  return parts.map((part, index) => {
+    if (part.match(urlRegex)) {
+      // Clean the URL by removing any trailing punctuation
+      const cleanUrl = part.replace(/[)\].,;!?]+$/, '');
+      return (
+        <a
+          key={index}
+          href={cleanUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-royal-pearl underline hover:text-white transition-colors duration-200 break-all cursor-pointer"
+          style={{ zIndex: 1000, position: 'relative' }}
+        >
+          {cleanUrl}
+        </a>
+      );
+    }
+    return <span key={index}>{part}</span>;
+  });
+};
+
 // Get initial message based on user role
 const getInitialMessage = (userRole?: string): string => {
   if (userRole === "Diademe") {
@@ -68,6 +99,14 @@ Si tu veux, je peux t'en présenter quelques-uns. Juste pour voir si l'un d'eux 
 Pour accéder au Salon de Thé, vous devez avoir au moins un abonnement Diadème.
 Veuillez mettre à niveau votre abonnement pour profiter de cette expérience.`;
   }
+};
+
+// Get chatType based on user role
+const getChatType = (userRole?: string): 'reine_mere_Diademe' | 'reine_mere_Couronne' => {
+  if (userRole === "Couronne" || userRole === "admin") {
+    return 'reine_mere_Couronne';
+  }
+  return 'reine_mere_Diademe'; // Default to Diademe for everyone else including "Diademe" role
 };
 
 const SalonChatPage = () => {
@@ -143,7 +182,8 @@ const SalonChatPage = () => {
     setStreamingMessage("");
     setOpenShareMenuId(null);
     try {
-      const session = await chatService.createSession("salon_de_the");
+      const chatType = getChatType(user?.role);
+      const session = await chatService.createSession(chatType);
       const id = (session._id || (session as any).id) as string;
       setCurrentSessionId(id);
     } catch (e) {
@@ -158,7 +198,11 @@ const SalonChatPage = () => {
         return;
       }
       const all = await chatService.listSessions();
-      const onlySalon = all.filter((s) => s.chatType === "salon_de_the");
+      const onlySalon = all.filter(
+        (s) =>
+          s.chatType === "reine_mere_Diademe" ||
+          s.chatType === "reine_mere_Couronne"
+      );
       setSessions(onlySalon);
       setShowHistory(true);
     } catch (e) {
@@ -204,8 +248,7 @@ const SalonChatPage = () => {
         setMessages([
           {
             id: "1",
-            content:
-              "Bienvenue au Salon de Thé, ma Queen. Je suis la Reine Mère, ta gardienne sacrée. Je suis là pour t'accompagner dans un rituel symbolique de reprise de pouvoir émotionnel. Aujourd'hui, je peux t'offrir deux types de rencontres : l'Acte de Désenvoûtement pour sortir d'un attachement toxique, ou le Flush Royal pour faire un ménage sacré et libérer ton royaume. Dis-moi, ma chère âme, qu'est-ce qui t'amène ici aujourd'hui ?",
+            content: getInitialMessage(user?.role),
             isUser: false,
             timestamp: new Date(),
           },
@@ -315,11 +358,12 @@ const SalonChatPage = () => {
         }
       };
 
-      // Use salon_de_the chat type for this page
+      // Use appropriate chat type based on user role
+      const chatType = getChatType(user?.role);
       await chatService.sendMessageStream(
         currentMessages,
         handleChunk,
-        "salon_de_the",
+        chatType,
         currentSessionId || undefined
       );
     } catch (error) {
@@ -543,7 +587,7 @@ const SalonChatPage = () => {
                             }
                           `}
                           >
-                            {message.content}
+                            {renderMessageWithLinks(message.content)}
                             {/* Share menu for bot messages (hidden for first bot message) */}
                             {!message.isUser &&
                               message.id !== firstBotMessageId && (
@@ -652,8 +696,8 @@ const SalonChatPage = () => {
                         className="flex w-full justify-start"
                       >
                         <div className="flex items-end">
-                          <div className="rounded-2xl px-4 py-2 font-raleway text-sm md:text-base text-white max-w-[80vw] md:max-w-lg bg-gradient-to-r from-royal-champagne/80 to-royal-gold/40 border-2 border-royal-gold/30 shadow-royal">
-                            {streamingMessage}
+                          <div className="rounded-2xl px-4 py-2 font-raleway text-sm md:text-base text-white max-w-[80vw] md:max-w-lg bg-gradient-to-r from-royal-champagne/80 to-royal-gold/40 border-2 border-royal-gold/30 shadow-royal whitespace-pre-line break-words">
+                            {renderMessageWithLinks(streamingMessage)}
                             <span className="ml-2 animate-pulse text-royal-gold">
                               ...
                             </span>
