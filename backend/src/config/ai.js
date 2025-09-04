@@ -77,6 +77,18 @@ const loadMiroirFile = (filename) => {
   }
 };
 
+// Load report templates
+const loadReportFile = (filename) => {
+  try {
+    const p = path.join(__dirname, "../data/miroir", filename);
+    const d = fs.readFileSync(p, "utf8");
+    return JSON.parse(d);
+  } catch (error) {
+    console.error(`Error loading report file ${filename}:`, error);
+    return {};
+  }
+};
+
 // Free Miroir resources (questions + result types)
 const FREE_MIRROR_QUESTIONS = loadMiroirFile("FreeMirroirQuestions.json");
 const FREE_MIRROR_TYPES = loadMiroirFile("FreeMirroirTypes.json");
@@ -84,6 +96,10 @@ const FREE_MIRROR_TYPES = loadMiroirFile("FreeMirroirTypes.json");
 // Paid Miroir resources (questions + result types)
 const PAID_MIRROR_QUESTIONS = loadMiroirFile("PaidMirroirQuestions.json");
 const PAID_MIRROR_TYPES = loadMiroirFile("PaidMirroirTypes.json");
+
+// Report templates
+const REPORT_FREE = loadReportFile("ReportFree.json");
+const REPORT_PAID = loadReportFile("ReportPaid.json");
 
 // Lightweight indexes to expose to the model (avoid inlining heavy JSON)
 const FREE_MIRROR_QUESTIONS_INDEX = Array.isArray(FREE_MIRROR_QUESTIONS.questions)
@@ -435,7 +451,7 @@ Alors, ma Queen… choisis : 1 ou 2 ? \nTu es prête pour la grande rencontre?"
 
 3. À la fin :  
   - Version 20 → tu livres un portrait intermédiaire synthétique.  
-  - Version 50 → tu livres un portrait narratif complet, stylé Queen de Q, avec slogan et mantra.  
+  - Version 50 → tu livres un portrait narratif complet, stylé Queen de Q, avec slogan et mantra utilisant le modèle de rapport complet fourni ci-dessous. Utilise ce modèle pour structurer ta réponse de manière engageante et profonde, en remplaçant les placeholders par des analyses personnalisées basées sur les réponses de la Queen.  
 
 Note for final report: when rendering the report, suggest that the Queen can also try some rituals for free in the Salon de thé experience and briefly list that some Salon de thé rituals (e.g., Acte de Désenvoûtement, Flush Royal) are available to try for free as a taster.
 
@@ -445,6 +461,9 @@ Rappel
 - Tu n’inventes pas d’autres catégories que celles prévues.  
 
 FORMAT DES QUESTIONS : Pose toujours les questions en gras pour les rendre faciles à localiser, par exemple **Question :**. Formate également les lettres de choix en gras, par exemple **A)** option, **B)** option.
+
+MODÈLE DE RAPPORT COMPLET POUR LA VERSION 50 QUESTIONS :
+${JSON.stringify(REPORT_PAID, null, 2)}
 
 QUESTIONS_INDEX: ${JSON.stringify(PAID_MIRROR_QUESTIONS_INDEX, null, 2)}
 TYPES_INDEX: ${JSON.stringify(PAID_MIRROR_TYPES_INDEX, null, 2)}
@@ -488,14 +507,14 @@ Dis-moi, ma Queen : choisis 1 ou 2. »
 
 5. À la fin du test :  
   - 10 questions : tu annonces la Queen dominante avec un portrait court et stylé, fidèle au livre Queen de Q.  
-  - 25 questions : tu annonces la Queen dominante + la Queen secondaire, avec un portrait nuancé.  
+  - 25 questions : tu annonces la Queen dominante + la Queen secondaire, avec un portrait nuancé utilisant le modèle de rapport condensé fourni ci-dessous. Utilise ce modèle pour structurer ta réponse de manière engageante et mystique, en remplaçant les placeholders par des analyses personnalisées basées sur les réponses de la Queen.  
 
 6. Après avoir donné le résultat, tu continues la conversation en proposant deux chemins :  
   "Maintenant que tu connais ton archétype principal, ma Queen, tu as deux possibilités pour approfondir ton voyage :
 
 1️⃣ Créer ton Profil royal complet → Si tu veux explorer en profondeur tes blessures racines, ton langage de l'amour, tes pièges relationnels et recevoir ton mantra unique, je peux te guider vers un Portrait royal de 50 questions sur https://www.queendeq.com
 
-2️⃣ Explorer des rituels de libération → Si tu sens que quelque chose bloque dans ta vie amoureuse ou ton rapport à toi-même, je peux te connecter au Salon de Thé où la Reine Mère Diadème t'aidera avec des rituels puissants comme l'Acte de Désenvoûtement ou le Flush Royal.
+2️⃣ Explorer des rituels de libération → Si tu sens que quelque chose bloque dans ta vie amoureuse ou ton rapport à toi-même, je peux te connecter au Salon de Thé où la Reine Mère Diadème t'aidera avec des rituels puissants comme l'Acte de Désenvoûtement ou le Flush Royal (disponibles gratuitement pour te faire goûter l'expérience).
 
 Qu'est-ce qui résonne le plus pour toi, ma Queen ? Le travail en profondeur sur ton profil ou des rituels pour te libérer ?"
 
@@ -510,6 +529,9 @@ Rappel
 - Tu n’inventes jamais de nouvelles catégories.  
 
 FORMAT DES QUESTIONS : Pose toujours les questions en gras pour les rendre faciles à localiser, par exemple **Question :**. Formate également les lettres de choix en gras, par exemple **A)** option, **B)** option.
+
+MODÈLE DE RAPPORT CONDENSÉ POUR LA VERSION 25 QUESTIONS :
+${JSON.stringify(REPORT_FREE, null, 2)}
 
 Ressources (backend corpus)
 - Questions source: FreeMirroirQuestions.json (local corpus) — this contains the 10/25 questions to be asked.
@@ -675,4 +697,6 @@ export {
   ARCHETYPE_INDEX,
   getArchetypeByName,
   extractSelectedArchetypeName,
+  REPORT_FREE,
+  REPORT_PAID,
 };

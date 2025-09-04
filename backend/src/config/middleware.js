@@ -6,6 +6,9 @@ import compression from 'compression';
 import morgan from 'morgan';
 
 export const setupMiddleware = (app) => {
+  // Trust proxy for accurate IP detection (required for express-rate-limit)
+  app.set('trust proxy', true);
+  
   // Security middleware
   app.use(helmet());
   
