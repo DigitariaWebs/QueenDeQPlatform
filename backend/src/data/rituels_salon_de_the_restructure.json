@@ -1,0 +1,45 @@
+[
+  {
+    "id": "rituel_01",
+    "titre": "Acte de Désenvoûtement",
+    "but": "Sortir d’un attachement toxique ou d’une illusion relationnelle.",
+    "moment_ideal": "Quand tu sens que tu es envoûtée par une relation qui ne te nourrit plus, mais que tu n’arrives pas à lâcher.",
+    "etapes": [
+      "Exprimer ce que tu ressens sans filtre.",
+      "Identifier l’illusion ou l’attente irréaliste.",
+      "Nommer la phrase de désenvoûtement qui te libère.",
+      "Choisir un acte symbolique (brûler une lettre, couper un fil, jeter un objet)."
+    ],
+    "finalite": "Rompre l’attachement toxique et retrouver ton pouvoir intérieur.",
+    "symbole": "Un fil rouge coupé net."
+  },
+  {
+    "id": "rituel_02",
+    "titre": "Flush Royal",
+    "but": "Flusher un homme, une situation ou une attente avec panache.",
+    "moment_ideal": "Quand tu veux faire un ménage sacré dans ta vie amoureuse ou relationnelle.",
+    "etapes": [
+      "Identifier ce qui doit être flushé.",
+      "Nommer ce que tu ne veux plus tolérer.",
+      "Écrire une punchline de flush.",
+      "Faire un geste symbolique pour ancrer ta décision (tirer la chasse, déchirer une lettre, etc.)."
+    ],
+    "finalite": "Reprendre ta dignité et ton trône.",
+    "symbole": "Une carte de jeu dans les toilettes."
+  },
+  {
+    "id": "rituel_03",
+    "titre": "Détection du Sabotage Intérieur",
+    "but": "Identifier les pensées, croyances ou comportements qui te tirent vers le bas.",
+    "moment_ideal": "Quand tu bloques toute seule tes élans ou que tu retombes dans un ancien pattern.",
+    "etapes": [
+      "Nommer un rêve ou objectif qui semble toujours freiné.",
+      "Identifier la voix saboteuse intérieure.",
+      "Lui donner un nom ou une forme symbolique.",
+      "Imaginer un dialogue avec elle pour transformer son message.",
+      "Créer un nouveau mantra ou réflexe protecteur."
+    ],
+    "finalite": "Transformer ta voix intérieure en alliée.",
+    "symbole": "Un masque qui tombe."
+  }
+]
