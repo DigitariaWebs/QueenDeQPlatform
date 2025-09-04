@@ -16,6 +16,60 @@ import {
 } from "../../services/chatService";
 import { useAuth } from "../../context/AuthContext";
 
+// Get initial message based on user role
+const getInitialMessage = (userRole?: string): string => {
+  if (userRole === "Diademe") {
+    return `👑 Bienvenue, ma Queen…
+
+Assieds-toi. Je te sers le thé.
+Respire un peu. Ici, le temps s'arrête. Le monde peut attendre.
+
+On va lire au fond de ta tasse.
+Peut-être qu'on y verra une illusion à briser…
+Peut-être qu'un ancien lien te retient encore…
+Ou peut-être qu'il est temps de faire place nette dans ton royaume.
+
+🫖 J'ai plusieurs rituels sous la main, mais aujourd'hui je peux t'en offrir deux :
+
+1 — L'Acte de Désenvoûtement, si tu sens qu'un sort invisible t'empêche d'avancer.
+2 — Le Flush Royal, pour faire couler les attentes, les regrets ou les mauvais choix avec toute la classe d'une Queen.
+
+✨ D'autres rituels dorment encore dans les alcôves du Royaume.
+Un jour, tu pourras y accéder… si tu choisis de t'offrir la version Royale.
+On y trouve des puissances comme :
+Miroir de l'ombre, Détection du sabotage intérieur, Apaiser la peur d'être seule, Honorer la Déesse…
+
+Alors dis-moi ma Queen, que lis-tu dans ta tasse aujourd'hui ?
+Réponds simplement par :
+1 — pour l'Acte de Désenvoûtement
+2 — pour le Flush Royal
+3 — pour que je te montre tous les rituels disponibles, sans encore y plonger`;
+  } else if (userRole === "Couronne" || userRole === "admin") {
+    return `🌙 Je t'ai préparé une infusion spéciale, ma Queen.
+
+Bois doucement… et regarde bien au fond de ta tasse.
+Il y a des murmures là-dedans. Des vérités encore timides.
+
+Ici, au Salon de Thé, plusieurs rituels puissants sont gardés en silence, réservés aux reines prêtes à marcher un peu plus loin.
+
+Si tu veux, je peux t'en présenter quelques-uns. Juste pour voir si l'un d'eux appelle quelque chose en toi…
+
+☕ Que veux-tu explorer en ce moment, ma Queen?
+
+    Un attachement difficile ou une obsession qui me freine
+
+    Une peur ou une blessure récurrente
+
+    Je suis pas certaine… je veux voir les rituels disponibles`;
+  } else {
+    // Fallback for other roles
+    return `👑 Bienvenue, ma Queen…
+
+Pour accéder au Salon de Thé, vous devez avoir au moins un abonnement Diadème.
+Veuillez mettre à niveau votre abonnement pour profiter de cette expérience.`;
+  }
+};
+
 const SalonChatPage = () => {
   const { user } = useAuth();
   const [inputValue, setInputValue] = useState("");
@@ -23,8 +77,7 @@ const SalonChatPage = () => {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: "1",
-      content:
-        "Bienvenue au Salon de Thé, ma Queen. Je suis la Reine Mère, ta gardienne sacrée. Je suis là pour t'accompagner dans un rituel symbolique de reprise de pouvoir émotionnel. Aujourd'hui, je peux t'offrir deux types de rencontres : l'Acte de Désenvoûtement pour sortir d'un attachement toxique, ou le Flush Royal pour faire un ménage sacré et libérer ton royaume. Dis-moi, ma chère âme, qu'est-ce qui t'amène ici aujourd'hui ?",
+      content: getInitialMessage(user?.role),
       isUser: false,
       timestamp: new Date(),
     },
@@ -80,8 +133,7 @@ const SalonChatPage = () => {
     setMessages([
       {
         id: "1",
-        content:
-          "Bienvenue au Salon de Thé, ma Queen. Je suis la Reine Mère, ta gardienne sacrée. Je suis là pour t'accompagner dans un rituel symbolique de reprise de pouvoir émotionnel. Aujourd'hui, je peux t'offrir deux types de rencontres : l'Acte de Désenvoûtement pour sortir d'un attachement toxique, ou le Flush Royal pour faire un ménage sacré et libérer ton royaume. Dis-moi, ma chère âme, qu'est-ce qui t'amène ici aujourd'hui ?",
+        content: getInitialMessage(user?.role),
         isUser: false,
         timestamp: new Date(),
       },
@@ -298,7 +350,7 @@ const SalonChatPage = () => {
   };
 
   // Check if user has access to Salon de Thé
-  const hasAccess = user?.role === "Couronne" || user?.role === "admin";
+  const hasAccess = user?.role === "Diademe" || user?.role === "Couronne" || user?.role === "admin";
 
   if (!hasAccess) {
     return (
@@ -317,8 +369,8 @@ const SalonChatPage = () => {
                   Salon de Thé - Accès Premium
                 </h2>
                 <p className="text-royal-pearl/80 text-lg mb-6">
-                  Le Salon de Thé est réservé aux Queens Couronne et aux
-                  administrateurs. Cette fonctionnalité exclusive vous permet
+                  Le Salon de Thé est réservé aux Queens avec abonnement Diadème,
+                  Couronne et aux administrateurs. Cette fonctionnalité exclusive vous permet
                   d'accéder aux rituels sacrés de reprise de pouvoir émotionnel.
                 </p>
                 <p className="text-royal-gold font-medium">
