@@ -13,6 +13,7 @@ import {
 import { useEffect, useState } from "react";
 import { logout } from "@/services/authService";
 import { useAuth } from "@/context/AuthContext";
+import { useAuth0 } from "@auth0/auth0-react";
 
 // Custom icon component for Unicode U+26E8 (Black Cross On Shield)
 const BlackCrossOnShieldIcon = ({ className = "" }: { className?: string }) => (
@@ -134,6 +135,7 @@ const Sidebar = ({
   };
 
   const { user } = useAuth();
+  const { logout: auth0Logout } = useAuth0();
   return (
     <>
       {/* Mobile backdrop */}
@@ -290,9 +292,18 @@ const Sidebar = ({
                       <span className="font-sans text-sm">{user.name}</span>
                     </div>
                     <button
-                      onClick={() => {
+                      onClick={async () => {
+                        // Always clear local storage first
                         logout();
-                        navigate("/auth", { replace: true });
+                        
+                        // Check if user is logged in via Auth0
+                        if (user?.authProvider === 'auth0') {
+                          // Use Auth0 logout without returnTo - it will use default configured URL
+                          auth0Logout();
+                        } else {
+                          // Navigate manually for non-Auth0 users
+                          navigate("/auth", { replace: true });
+                        }
                         onClose();
                       }}
                       className="text-royal-gold hover:text-royal-champagne text-sm"

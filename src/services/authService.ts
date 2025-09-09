@@ -40,24 +40,11 @@ export function getToken(): string | null {
 }
 
 export function logout() {
+  // Clear local storage
   localStorage.removeItem('auth_token');
   localStorage.removeItem('auth_user');
-
-  // If using Auth0, also logout from Auth0
-  if (typeof window !== 'undefined' && window.location) {
-    // Check if this is an Auth0 session
-    const user = getCurrentUser();
-    if (user?.authProvider === 'auth0') {
-      // Redirect to Auth0 logout
-      const auth0Domain = import.meta.env.VITE_AUTH0_DOMAIN;
-      const clientId = import.meta.env.VITE_AUTH0_CLIENT_ID;
-      const returnTo = encodeURIComponent(window.location.origin);
-
-      window.location.href = `https://${auth0Domain}/v2/logout?client_id=${clientId}&returnTo=${returnTo}`;
-      return; // Don't dispatch event as we're redirecting
-    }
-  }
-
+  
+  // Dispatch auth changed event for local state management
   window.dispatchEvent(new Event('auth:changed'));
 }
 
