@@ -3,14 +3,6 @@ import { ParticleCanvas } from '@/components/Effects/ParticleCanvas';
 import { login, register, getCurrentUser } from '@/services/authService';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
-declare global {
-  interface Window {
-    google?: any;
-  }
-}
-
-// const GOOGLE_BUTTON_ID = 'google-login-button';
-
 export default function AuthPage() {
   const [mode, setMode] = useState<'login' | 'signup'>('login');
   const [searchParams] = useSearchParams();
@@ -18,7 +10,6 @@ export default function AuthPage() {
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
   const [loading, setLoading] = useState(false);
-  // Google auth disabled for testing; using hardcoded credentials via button click
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
@@ -31,8 +22,6 @@ export default function AuthPage() {
     const m = searchParams.get('mode');
     if (m === 'signup' || m === 'login') setMode(m);
   }, [searchParams]);
-
-  // Google auth initialization is commented out for test mode
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

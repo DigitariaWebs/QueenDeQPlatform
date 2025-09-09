@@ -1,25 +1,42 @@
 import mongoose from 'mongoose';
 
+// Cache the connection for serverless environments
+let cachedConnection = null;
+
 const connectDB = async () => {
+  // If we have a cached connection and it's ready, return it
+  if (cachedConnection && mongoose.connection.readyState === 1) {
+    console.log('♻️  Reusing existing MongoDB connection');
+    return cachedConnection;
+  }
+
   try {
     const options = {
       maxPoolSize: 10, // Maintain up to 10 socket connections
       serverSelectionTimeoutMS: 5000, // Keep trying to send operations for 5 seconds
       socketTimeoutMS: 45000, // Close sockets after 45 seconds of inactivity
+      bufferCommands: false, // Disable mongoose buffering
     };
 
     const connection = await mongoose.connect(process.env.MONGODB_URI, options);
+    cachedConnection = connection;
     
     console.log('✔️  MongoDB connected');
     console.log(`📍 Host: ${connection.connection.host}`);
     console.log(`🗄️  Database: ${connection.connection.name}`);
     
-    // Create indexes for better performance
-    await createIndexes();
+    // Create indexes for better performance (only if not already cached)
+    if (mongoose.connection.readyState === 1) {
+      await createIndexes();
+    }
     
     return connection;
   } catch (err) {
     console.error('❌ MongoDB connection error:', err);
+    // For serverless, we don't want to exit the process
+    if (process.env.NODE_ENV === 'production') {
+      throw err;
+    }
     process.exit(1);
   }
 };

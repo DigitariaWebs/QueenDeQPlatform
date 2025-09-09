@@ -72,19 +72,4 @@ export async function login(email: string, password: string): Promise<AuthRespon
   return data;
 }
 
-// Google One Tap / button: pass the credential (ID token) to backend
-export async function loginWithGoogle(credential: string): Promise<AuthResponse> {
-  const res = await fetch(`${API_BASE}/google`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ credential })
-  });
-  let data: AuthResponse = { success: false, error: 'Unknown error' };
-  try { data = await res.json(); } catch { data = { success: false, error: 'Invalid server response' }; }
-  if (res.ok && data.user && data.token) {
-    saveSession(data.user, data.token);
-  }
-  return data;
-}
-
 

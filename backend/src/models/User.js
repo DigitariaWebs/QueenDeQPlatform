@@ -30,7 +30,7 @@ const userSchema = new mongoose.Schema({
   // Authentication & Provider Info
   authProvider: {
     type: String,
-    enum: ['local', 'google', 'apple', 'github'],
+    enum: ['local', 'apple', 'github'],
     default: 'local'
   },
   
