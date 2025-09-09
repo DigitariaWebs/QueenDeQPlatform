@@ -61,7 +61,9 @@ export interface StreamChunk {
   timestamp?: string;
 }
 
-const API_BASE = '/api/ai';
+const API_BASE = import.meta.env.PROD
+  ? 'https://queen-de-q-platform-backend.vercel.app/api/ai'
+  : '/api/ai';
 
 function getAuthHeaders(): Record<string, string> {
   const headers: Record<string, string> = {
@@ -89,7 +91,7 @@ class ChatService {
   }
 
   async createSession(chatType: 'poiche' | 'reine_mere_Diademe' | 'reine_mere_Couronne' | 'miroir_free' | 'miroir_paid', title?: string): Promise<ChatSessionSummary> {
-    const response = await fetch(`/api/ai/sessions`, {
+    const response = await fetch(`${API_BASE}/sessions`, {
       method: 'POST',
       headers: getAuthHeaders(),
       body: JSON.stringify({ title, chatType })
@@ -100,7 +102,7 @@ class ChatService {
   }
 
   async listSessions(): Promise<ChatSessionSummary[]> {
-    const response = await fetch(`/api/ai/sessions`, {
+    const response = await fetch(`${API_BASE}/sessions`, {
       headers: getAuthHeaders()
     });
     const data = await response.json();
@@ -109,7 +111,7 @@ class ChatService {
   }
 
   async getSession(sessionId: string): Promise<ChatSessionWithMessages> {
-    const response = await fetch(`/api/ai/sessions/${sessionId}`, {
+    const response = await fetch(`${API_BASE}/sessions/${sessionId}`, {
       headers: getAuthHeaders()
     });
     const data = await response.json();
@@ -118,7 +120,7 @@ class ChatService {
   }
 
   async deleteSession(sessionId: string): Promise<{ success: boolean; message: string }> {
-    const response = await fetch(`/api/ai/sessions/${sessionId}`, {
+    const response = await fetch(`${API_BASE}/sessions/${sessionId}`, {
       method: 'DELETE',
       headers: getAuthHeaders()
     });

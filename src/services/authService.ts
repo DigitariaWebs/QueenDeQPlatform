@@ -15,7 +15,9 @@ interface AuthResponse {
   details?: any;
 }
 
-const API_BASE = '/api/auth';
+const API_BASE = import.meta.env.PROD
+  ? 'https://queen-de-q-platform-backend.vercel.app/api/auth'
+  : '/api/auth';
 
 function saveSession(user: AuthUser, token: string) {
   localStorage.setItem('auth_token', token);
@@ -44,32 +46,95 @@ export function logout() {
   window.dispatchEvent(new Event('auth:changed'));
 }
 
-export async function register(name: string, email: string, password: string): Promise<AuthResponse> {
-  const res = await fetch(`${API_BASE}/register`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ name, email, password })
-  });
-  let data: AuthResponse = { success: false, error: 'Unknown error' };
-  try { data = await res.json(); } catch { data = { success: false, error: 'Invalid server response' }; }
-  if (res.ok && data.user && data.token) {
-    saveSession(data.user, data.token);
+export async function register(
+  name: string,
+  email: string,
+  password: string
+): Promise<AuthResponse> {
+  try {
+    const res = await fetch(`${API_BASE}/register`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, email, password }),
+    });
+
+    let data: AuthResponse = { success: false, error: "Unknown error" };
+
+    if (!res.ok) {
+      const text = await res.text();
+      console.error(
+        "Registration failed with status:",
+        res.status,
+        "Response:",
+        text
+      );
+      data = { success: false, error: `Server error: ${res.status}` };
+      return data;
+    }
+
+    try {
+      data = await res.json();
+    } catch (parseError) {
+      console.error("Failed to parse JSON response:", parseError);
+      const text = await res.text();
+      console.error("Raw response:", text);
+      data = { success: false, error: "Invalid server response format" };
+    }
+
+    if (res.ok && data.user && data.token) {
+      saveSession(data.user, data.token);
+    }
+    return data;
+  } catch (networkError) {
+    console.error("Network error during registration:", networkError);
+    return {
+      success: false,
+      error: "Network error - please check your connection",
+    };
   }
-  return data;
 }
 
-export async function login(email: string, password: string): Promise<AuthResponse> {
-  const res = await fetch(`${API_BASE}/login`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email, password })
-  });
-  let data: AuthResponse = { success: false, error: 'Unknown error' };
-  try { data = await res.json(); } catch { data = { success: false, error: 'Invalid server response' }; }
-  if (res.ok && data.user && data.token) {
-    saveSession(data.user, data.token);
+export async function login(
+  email: string,
+  password: string
+): Promise<AuthResponse> {
+  try {
+    const res = await fetch(`${API_BASE}/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
+    });
+
+    let data: AuthResponse = { success: false, error: "Unknown error" };
+
+    // Check if response is ok before trying to parse JSON
+    if (!res.ok) {
+      const text = await res.text();
+      console.error("Login failed with status:", res.status, "Response:", text);
+      data = { success: false, error: `Server error: ${res.status}` };
+      return data;
+    }
+
+    try {
+      data = await res.json();
+    } catch (parseError) {
+      console.error("Failed to parse JSON response:", parseError);
+      const text = await res.text();
+      console.error("Raw response:", text);
+      data = { success: false, error: "Invalid server response format" };
+    }
+
+    if (res.ok && data.user && data.token) {
+      saveSession(data.user, data.token);
+    }
+    return data;
+  } catch (networkError) {
+    console.error("Network error during login:", networkError);
+    return {
+      success: false,
+      error: "Network error - please check your connection",
+    };
   }
-  return data;
 }
 
 

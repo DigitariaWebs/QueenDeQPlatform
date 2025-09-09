@@ -31,7 +31,9 @@ const StatsPage = () => {
     const fetchStats = async () => {
       try {
         setLoading(true);
-        const res = await fetch("/api/stats");
+        const res = await fetch(import.meta.env.PROD
+          ? "https://queen-de-q-platform-backend.vercel.app/api/stats"
+          : "/api/stats");
         if (!res.ok) throw new Error("Failed to load stats");
         const json = await res.json();
         if (!json.success) throw new Error(json.error || "Unknown error");
