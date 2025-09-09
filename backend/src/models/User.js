@@ -8,8 +8,8 @@ const userSchema = new mongoose.Schema({
     required: true,
     unique: true,
     lowercase: true,
-    trim: true,
-    index: true
+    trim: true
+    // Removed index: true since unique: true already creates an index
   },
   
   password: {
@@ -30,11 +30,11 @@ const userSchema = new mongoose.Schema({
   // Authentication & Provider Info
   authProvider: {
     type: String,
-    enum: ['local', 'apple', 'github'],
+    enum: ['local', 'auth0'],
     default: 'local'
   },
   
-  providerId: {
+  authProviderId: {
     type: String,
     sparse: true // Only OAuth users will have this
   },

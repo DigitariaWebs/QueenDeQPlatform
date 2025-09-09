@@ -15,6 +15,7 @@
     "seed:dev": "cross-env NODE_ENV=development node scripts/seedDatabase.js"
   },
   "dependencies": {
+    "auth0": "^4.29.0",
     "axios": "^0.21.1",
     "bcrypt": "^6.0.0",
     "compression": "^1.8.1",

@@ -2,8 +2,16 @@ import express from 'express';
 import { body, validationResult } from 'express-validator';
 import jwt from 'jsonwebtoken';
 import { User } from '../models/index.js';
+import { ManagementClient } from 'auth0';
 
 const router = express.Router();
+
+// Auth0 Management Client
+const auth0 = new ManagementClient({
+  domain: process.env.AUTH0_DOMAIN,
+  clientId: process.env.AUTH0_CLIENT_ID,
+  clientSecret: process.env.AUTH0_CLIENT_SECRET,
+});
 
 // Validation middleware
 const validateRegistration = [
@@ -38,6 +46,95 @@ const generateToken = (userId) => {
     { expiresIn: process.env.JWT_EXPIRES_IN || '7d' }
   );
 };
+
+// Auth0 authentication callback
+router.post('/auth0', async (req, res) => {
+  try {
+    const { accessToken } = req.body;
+
+    if (!accessToken) {
+      return res.status(400).json({
+        success: false,
+        error: 'Access token is required'
+      });
+    }
+
+    // Verify the token with Auth0
+    const auth0Domain = process.env.AUTH0_DOMAIN;
+    const response = await fetch(`https://${auth0Domain}/userinfo`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    if (!response.ok) {
+      return res.status(401).json({
+        success: false,
+        error: 'Invalid access token'
+      });
+    }
+
+    const userInfo = await response.json();
+
+    // Check if user exists in our database
+    let user = await User.findByEmail(userInfo.email);
+
+    if (!user) {
+      // Create new user from Auth0 data
+      user = new User({
+        email: userInfo.email,
+        name: userInfo.name || userInfo.nickname || 'Auth0 User',
+        authProvider: 'auth0',
+        authProviderId: userInfo.sub,
+        avatar: userInfo.picture,
+        isActive: true,
+        emailVerified: userInfo.email_verified || false,
+      });
+      await user.save();
+    } else {
+      // Update user info if needed
+      if (user.authProvider !== 'auth0') {
+        user.authProvider = 'auth0';
+        user.authProviderId = userInfo.sub;
+        if (userInfo.picture && !user.avatar) {
+          user.avatar = userInfo.picture;
+        }
+        await user.save();
+      }
+    }
+
+    // Update last login
+    user.lastLoginAt = new Date();
+    await user.save();
+
+    // Generate JWT token
+    const token = generateToken(user._id);
+
+    res.json({
+      success: true,
+      message: 'Auth0 authentication successful',
+      user: {
+        id: user._id,
+        email: user.email,
+        name: user.name,
+        role: user.role,
+        isPremium: user.isPremium,
+        avatar: user.avatar,
+        authProvider: user.authProvider,
+        lastLoginAt: user.lastLoginAt
+      },
+      token
+    });
+
+  } catch (error) {
+    console.error('Auth0 authentication error:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Auth0 authentication failed',
+      message: error.message
+    });
+  }
+});
 
 // Register new user
 router.post('/register', validateRegistration, async (req, res) => {

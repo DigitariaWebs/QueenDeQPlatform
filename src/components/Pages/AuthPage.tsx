@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { ParticleCanvas } from '@/components/Effects/ParticleCanvas';
 import { login, register, getCurrentUser } from '@/services/authService';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useAuth0 } from '@auth0/auth0-react';
 
 export default function AuthPage() {
   const [mode, setMode] = useState<'login' | 'signup'>('login');
@@ -12,31 +13,90 @@ export default function AuthPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
+  const {
+    loginWithRedirect,
+    isAuthenticated,
+    isLoading: auth0Loading,
+    user: auth0User,
+  } = useAuth0();
 
-  useEffect(() => {
-    const user = getCurrentUser();
-    if (user) navigate('/');
-  }, [navigate]);
+  // Show loading screen during Auth0 authentication
+  if (auth0Loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#2d133e] via-[#130926] to-black/95 text-white">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-400 mx-auto mb-4"></div>
+          <p className="text-lg">Connexion avec Google...</p>
+          <p className="text-sm text-zinc-400 mt-2">
+            Veuillez patienter pendant la vérification
+          </p>
+        </div>
+      </div>
+    );
+  }
 
+  // Check for existing user on mount only
   useEffect(() => {
-    const m = searchParams.get('mode');
-    if (m === 'signup' || m === 'login') setMode(m);
+    const checkExistingUser = () => {
+      const user = getCurrentUser();
+      if (user) {
+        navigate("/", { replace: true });
+      }
+    };
+
+    // Small delay to prevent immediate redirect conflicts
+    const timer = setTimeout(checkExistingUser, 100);
+    return () => clearTimeout(timer);
+  }, []); // Empty dependency array - only run once
+
+  // Handle search params
+  useEffect(() => {
+    const m = searchParams.get("mode");
+    if (m === "signup" || m === "login") setMode(m);
   }, [searchParams]);
+
+  // Handle Auth0 authentication - simplified
+  useEffect(() => {
+    if (isAuthenticated && !auth0Loading && auth0User) {
+      // Use a longer delay and only navigate once
+      const timer = setTimeout(() => {
+        navigate("/", { replace: true });
+      }, 1000); // Increased delay to allow Auth0 to settle
+
+      return () => clearTimeout(timer);
+    }
+  }, [isAuthenticated, auth0Loading, auth0User, navigate]);
+
+  const handleGoogleLogin = async () => {
+    try {
+      setError(null);
+      await loginWithRedirect({
+        authorizationParams: {
+          connection: "google-oauth2",
+          redirect_uri: window.location.origin,
+        },
+      });
+    } catch (error) {
+      console.error("Auth0 login error:", error);
+      setError("Failed to initiate Google login. Please try again.");
+    }
+  };
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
     try {
-      const res = mode === 'login'
-        ? await login(email, password)
-        : await register(name, email, password);
+      const res =
+        mode === "login"
+          ? await login(email, password)
+          : await register(name, email, password);
       setLoading(false);
-      if (res.success) navigate('/');
-      else setError(res.error || 'Authentication failed');
+      if (res.success) navigate("/");
+      else setError(res.error || "Authentication failed");
     } catch (err: any) {
       setLoading(false);
-      setError(err?.message || 'Authentication failed');
+      setError(err?.message || "Authentication failed");
     }
   };
 
@@ -126,26 +186,27 @@ export default function AuthPage() {
             </div> */}
 
             <div className="space-y-3">
-              {/* <button
+              <button
                 type="button"
-                disabled={loading}
-                onClick={async () => {
-                  setLoading(true);
-                  setError(null);
-                  const res = await login("mohamed@gmail.com", "mohamed123");
-                  setLoading(false);
-                  if (res.success) navigate("/");
-                  else
-                    setError(
-                      res.error || "Échec de l'authentification de test"
-                    );
-                }}
+                disabled={loading || auth0Loading}
+                onClick={handleGoogleLogin}
                 className="w-full inline-flex items-center justify-center gap-3 rounded-lg bg-white text-zinc-900 font-medium py-2.5 hover:bg-zinc-100 transition-colors disabled:opacity-60 border border-white/20"
-              > */}
-                {/* <img src="/assets/icons/google.svg" alt="Google" className="h-5 w-5" /> */}
-                {/* <span>Se connecter directement</span>
-              </button> */}
-              {/* Google rendered button disabled for testing */}
+              >
+                {auth0Loading ? (
+                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-zinc-900"></div>
+                ) : (
+                  <img
+                    src="/assets/icons/google.svg"
+                    alt="Google"
+                    className="h-5 w-5"
+                  />
+                )}
+                <span>
+                  {auth0Loading
+                    ? "Connexion en cours..."
+                    : "Continuer avec Google"}
+                </span>
+              </button>
             </div>
 
             <div className="text-sm text-center text-zinc-300">

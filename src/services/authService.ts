@@ -4,6 +4,7 @@ export interface AuthUser {
   name: string;
   role?: string;
   isPremium?: boolean;
+  authProvider?: string;
 }
 
 interface AuthResponse {
@@ -41,8 +42,22 @@ export function getToken(): string | null {
 export function logout() {
   localStorage.removeItem('auth_token');
   localStorage.removeItem('auth_user');
-  // Optional: call backend logout
-  fetch(`${API_BASE}/logout`, { method: 'POST' }).catch(() => {});
+
+  // If using Auth0, also logout from Auth0
+  if (typeof window !== 'undefined' && window.location) {
+    // Check if this is an Auth0 session
+    const user = getCurrentUser();
+    if (user?.authProvider === 'auth0') {
+      // Redirect to Auth0 logout
+      const auth0Domain = import.meta.env.VITE_AUTH0_DOMAIN;
+      const clientId = import.meta.env.VITE_AUTH0_CLIENT_ID;
+      const returnTo = encodeURIComponent(window.location.origin);
+
+      window.location.href = `https://${auth0Domain}/v2/logout?client_id=${clientId}&returnTo=${returnTo}`;
+      return; // Don't dispatch event as we're redirecting
+    }
+  }
+
   window.dispatchEvent(new Event('auth:changed'));
 }
 
@@ -130,6 +145,50 @@ export async function login(
     return data;
   } catch (networkError) {
     console.error("Network error during login:", networkError);
+    return {
+      success: false,
+      error: "Network error - please check your connection",
+    };
+  }
+}
+
+export async function loginWithAuth0(accessToken: string): Promise<AuthResponse> {
+  try {
+    const res = await fetch(`${API_BASE}/auth0`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ accessToken }),
+    });
+
+    let data: AuthResponse = { success: false, error: "Unknown error" };
+
+    if (!res.ok) {
+      const text = await res.text();
+      console.error(
+        "Auth0 login failed with status:",
+        res.status,
+        "Response:",
+        text
+      );
+      data = { success: false, error: `Server error: ${res.status}` };
+      return data;
+    }
+
+    try {
+      data = await res.json();
+    } catch (parseError) {
+      console.error("Failed to parse JSON response:", parseError);
+      const text = await res.text();
+      console.error("Raw response:", text);
+      data = { success: false, error: "Invalid server response format" };
+    }
+
+    if (res.ok && data.user && data.token) {
+      saveSession(data.user, data.token);
+    }
+    return data;
+  } catch (networkError) {
+    console.error("Network error during Auth0 login:", networkError);
     return {
       success: false,
       error: "Network error - please check your connection",
