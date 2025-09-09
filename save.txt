@@ -1,0 +1,7 @@
+Make Sure Mighty Networks is on Your Whitelist
+Copy and paste this redirect URL in the appropriate field on your site and allow query string params.
+https://le-royaume-de-queen-de-q.mn.co/auth/custom_sso/callback
+
+Save Your Host Backdoor
+It is critical to save your Backdoor URL to prevent lockouts. This allows Hosts to bypass SSO and directly access your Sign In page for troubleshooting.
+https://le-royaume-de-queen-de-q.mn.co/skip_sso
