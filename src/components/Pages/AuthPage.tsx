@@ -3,9 +3,11 @@ import { ParticleCanvas } from "@/components/Effects/ParticleCanvas";
 import { getCurrentUser } from "@/services/authService";
 import { useNavigate } from "react-router-dom";
 import { useAuth0 } from "@auth0/auth0-react";
+import { useAuth } from "@/context/AuthContext";
 
 export default function AuthPage() {
   const navigate = useNavigate();
+  const { user, isAuthenticating } = useAuth();
   const {
     loginWithRedirect,
     isAuthenticated,
@@ -13,13 +15,15 @@ export default function AuthPage() {
     user: auth0User,
   } = useAuth0();
 
-  // Show loading screen during Auth0 authentication
-  if (auth0Loading) {
+  // Show loading screen during Auth0 authentication or backend sync
+  if (auth0Loading || isAuthenticating) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#2d133e] via-[#130926] to-black/95 text-white">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-400 mx-auto mb-4"></div>
-          <p className="text-lg">Connexion en cours...</p>
+          <p className="text-lg">
+            {auth0Loading ? "Connexion en cours..." : "Synchronisation..."}
+          </p>
           <p className="text-sm text-zinc-400 mt-2">
             Veuillez patienter pendant la vérification
           </p>
@@ -28,31 +32,44 @@ export default function AuthPage() {
     );
   }
 
-  // Handle authentication state - unified approach
+  // Navigate to dashboard if user is already authenticated
   useEffect(() => {
-    const handleAuthRedirect = () => {
-      // If Auth0 is authenticated, let it complete its flow
-      if (isAuthenticated && !auth0Loading && auth0User) {
-        const timer = setTimeout(() => {
+    if (
+      user &&
+      !isAuthenticating &&
+      !auth0Loading &&
+      window.location.pathname === "/auth"
+    ) {
+      console.log(
+        "AuthPage: User authenticated, navigating to dashboard...",
+        user
+      );
+      // Add small delay to ensure state is settled
+      setTimeout(() => {
+        navigate("/", { replace: true });
+      }, 100);
+    }
+  }, [user, isAuthenticating, auth0Loading, navigate]);
+
+  // Only handle localStorage user check for non-Auth0 cases
+  useEffect(() => {
+    // Only check localStorage if Auth0 is not involved at all and not authenticating
+    if (
+      !isAuthenticated &&
+      !auth0Loading &&
+      !auth0User &&
+      !isAuthenticating &&
+      window.location.pathname === "/auth"
+    ) {
+      const localUser = getCurrentUser();
+      if (localUser) {
+        // Add small delay to avoid race conditions
+        setTimeout(() => {
           navigate("/", { replace: true });
-        }, 500); // Shorter delay since Auth0 has already completed
-        return () => clearTimeout(timer);
+        }, 100);
       }
-
-      // Only check localStorage if Auth0 is not authenticated and not loading
-      if (!isAuthenticated && !auth0Loading) {
-        const user = getCurrentUser();
-        if (user) {
-          const timer = setTimeout(() => {
-            navigate("/", { replace: true });
-          }, 100);
-          return () => clearTimeout(timer);
-        }
-      }
-    };
-
-    return handleAuthRedirect();
-  }, [isAuthenticated, auth0Loading, auth0User, navigate]);
+    }
+  }, [isAuthenticated, auth0Loading, auth0User, isAuthenticating, navigate]);
 
   const handleLogin = async () => {
     try {

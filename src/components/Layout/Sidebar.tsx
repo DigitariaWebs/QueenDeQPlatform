@@ -293,17 +293,24 @@ const Sidebar = ({
                     </div>
                     <button
                       onClick={async () => {
-                        // Always clear local storage first
+                        console.log("Logout button clicked");
+
+                        // Clear localStorage for all users
                         logout();
-                        
-                        // Check if user is logged in via Auth0
-                        if (user?.authProvider === 'auth0') {
-                          // Use Auth0 logout without returnTo - it will use default configured URL
-                          auth0Logout();
-                        } else {
-                          // Navigate manually for non-Auth0 users
-                          navigate("/auth", { replace: true });
+
+                        if (user?.authProvider === "auth0") {
+                          // For Auth0 users, also clear Auth0 session without redirect
+                          try {
+                            await auth0Logout({
+                              openUrl: false, // This prevents the redirect
+                            });
+                          } catch (error) {
+                            console.log("Auth0 logout completed");
+                          }
                         }
+
+                        // Navigate to auth page
+                        navigate("/auth", { replace: true });
                         onClose();
                       }}
                       className="text-royal-gold hover:text-royal-champagne text-sm"
