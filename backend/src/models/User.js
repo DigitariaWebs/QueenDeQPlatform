@@ -1,124 +1,133 @@
 import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
 
-const userSchema = new mongoose.Schema({
-  // Basic Profile Information
-  email: {
-    type: String,
-    required: true,
-    unique: true,
-    lowercase: true,
-    trim: true
-    // Removed index: true since unique: true already creates an index
-  },
-  
-  password: {
-    type: String,
-    required: function() {
-      return this.authProvider === 'local';
+const userSchema = new mongoose.Schema(
+  {
+    // Basic Profile Information
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+      lowercase: true,
+      trim: true,
+      // Removed index: true since unique: true already creates an index
     },
-    minlength: 8
+
+    password: {
+      type: String,
+      required: function () {
+        return this.authProvider === "local";
+      },
+      minlength: 8,
+    },
+
+    name: {
+      type: String,
+      required: true,
+      trim: true,
+      maxlength: 100,
+    },
+
+    // Authentication & Provider Info
+    authProvider: {
+      type: String,
+      enum: ["local", "auth0"],
+      default: "local",
+    },
+
+    authProviderId: {
+      type: String,
+      sparse: true, // Used for Auth0 users (both OAuth and database connections)
+    },
+
+    // Subscription & Role Management
+    role: {
+      type: String,
+      enum: ["Tiare", "Diademe", "Couronne", "admin"],
+      default: "Tiare",
+      index: true,
+    },
+
+    // Stripe Integration
+    stripeCustomerId: {
+      type: String,
+      sparse: true,
+      index: true,
+    },
+
+    stripeSubscriptionId: {
+      type: String,
+      sparse: true,
+    },
+
+    subscriptionStatus: {
+      type: String,
+      enum: [
+        "active",
+        "canceled",
+        "past_due",
+        "unpaid",
+        "trialing",
+        "incomplete",
+      ],
+      default: null,
+    },
+
+    subscriptionEndDate: {
+      type: Date,
+      default: null,
+    },
+
+    // Account Status
+    isActive: {
+      type: Boolean,
+      default: true,
+    },
+
+    //   isEmailVerified: {
+    //     type: Boolean,
+    //     default: false
+    //   },
+
+    lastMonthlyReset: {
+      type: Date,
+      default: Date.now,
+    },
+
+    // Security
+    lastLoginAt: {
+      type: Date,
+      default: null,
+    },
+
+    passwordResetToken: {
+      type: String,
+      default: null,
+    },
+
+    passwordResetExpires: {
+      type: Date,
+      default: null,
+    },
+
+    emailVerificationToken: {
+      type: String,
+      default: null,
+    },
   },
-  
-  name: {
-    type: String,
-    required: true,
-    trim: true,
-    maxlength: 100
-  },
-  
-  // Authentication & Provider Info
-  authProvider: {
-    type: String,
-    enum: ['local', 'auth0'],
-    default: 'local'
-  },
-  
-  authProviderId: {
-    type: String,
-    sparse: true // Only OAuth users will have this
-  },
-  
-  // Subscription & Role Management
-  role: {
-    type: String,
-    enum: ['Tiare', 'Diademe', 'Couronne', 'admin'],
-    default: 'Tiare',
-    index: true
-  },
-  
-  // Stripe Integration
-  stripeCustomerId: {
-    type: String,
-    sparse: true,
-    index: true
-  },
-  
-  stripeSubscriptionId: {
-    type: String,
-    sparse: true
-  },
-  
-  subscriptionStatus: {
-    type: String,
-    enum: ['active', 'canceled', 'past_due', 'unpaid', 'trialing', 'incomplete'],
-    default: null
-  },
-  
-  subscriptionEndDate: {
-    type: Date,
-    default: null
-  },
-  
-  // Account Status
-  isActive: {
-    type: Boolean,
-    default: true
-  },
-  
-//   isEmailVerified: {
-//     type: Boolean,
-//     default: false
-//   },
-  
-  lastMonthlyReset: {
-    type: Date,
-    default: Date.now
-  },
-  
-  // Security
-  lastLoginAt: {
-    type: Date,
-    default: null
-  },
-  
-  passwordResetToken: {
-    type: String,
-    default: null
-  },
-  
-  passwordResetExpires: {
-    type: Date,
-    default: null
-  },
-  
-  emailVerificationToken: {
-    type: String,
-    default: null
-  },
-  
-}, {
-  timestamps: true,
-  toJSON: {
-    virtuals: true,
-    transform: function(doc, ret) {
-      delete ret.password;
-      delete ret.passwordResetToken;
-      delete ret.emailVerificationToken;
-      return ret;
-    }
+  {
+    timestamps: true,
+    toJSON: {
+      virtuals: true,
+      transform: function (doc, ret) {
+        delete ret.password;
+        delete ret.passwordResetToken;
+        delete ret.emailVerificationToken;
+        return ret;
+      },
+    },
   }
-});
+);
 
 // Indexes for performance (removed duplicates)
 userSchema.index({ createdAt: -1 });

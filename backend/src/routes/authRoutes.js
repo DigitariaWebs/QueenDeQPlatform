@@ -48,14 +48,14 @@ const generateToken = (userId) => {
 };
 
 // Auth0 authentication callback
-router.post('/auth0', async (req, res) => {
+router.post("/auth0", async (req, res) => {
   try {
     const { accessToken } = req.body;
 
     if (!accessToken) {
       return res.status(400).json({
         success: false,
-        error: 'Access token is required'
+        error: "Access token is required",
       });
     }
 
@@ -70,21 +70,39 @@ router.post('/auth0', async (req, res) => {
     if (!response.ok) {
       return res.status(401).json({
         success: false,
-        error: 'Invalid access token'
+        error: "Invalid access token",
       });
     }
 
     const userInfo = await response.json();
+
+    // Log user info for debugging different auth methods
+    console.log("Auth0 userInfo:", {
+      sub: userInfo.sub,
+      email: userInfo.email,
+      name: userInfo.name,
+      nickname: userInfo.nickname,
+      picture: userInfo.picture ? "present" : "not present",
+      email_verified: userInfo.email_verified,
+    });
 
     // Check if user exists in our database
     let user = await User.findByEmail(userInfo.email);
 
     if (!user) {
       // Create new user from Auth0 data
+      // For database users, name might be email, so try to create a better display name
+      let displayName = userInfo.name;
+      if (userInfo.name === userInfo.email) {
+        // For database users, name is often the email, so use nickname or create from email
+        displayName =
+          userInfo.nickname || userInfo.email.split("@")[0] || "Auth0 User";
+      }
+
       user = new User({
         email: userInfo.email,
-        name: userInfo.name || userInfo.nickname || 'Auth0 User',
-        authProvider: 'auth0',
+        name: displayName,
+        authProvider: "auth0",
         authProviderId: userInfo.sub,
         avatar: userInfo.picture,
         isActive: true,
@@ -93,13 +111,26 @@ router.post('/auth0', async (req, res) => {
       await user.save();
     } else {
       // Update user info if needed
-      if (user.authProvider !== 'auth0') {
-        user.authProvider = 'auth0';
+      if (user.authProvider !== "auth0") {
+        user.authProvider = "auth0";
         user.authProviderId = userInfo.sub;
         if (userInfo.picture && !user.avatar) {
           user.avatar = userInfo.picture;
         }
         await user.save();
+      }
+
+      // Update name if it's still the default or email for database users
+      if (user.name === "Auth0 User" || user.name === userInfo.email) {
+        let displayName = userInfo.name;
+        if (userInfo.name === userInfo.email) {
+          displayName =
+            userInfo.nickname || userInfo.email.split("@")[0] || "Auth0 User";
+        }
+        if (displayName !== user.name) {
+          user.name = displayName;
+          await user.save();
+        }
       }
     }
 
@@ -112,7 +143,7 @@ router.post('/auth0', async (req, res) => {
 
     res.json({
       success: true,
-      message: 'Auth0 authentication successful',
+      message: "Auth0 authentication successful",
       user: {
         id: user._id,
         email: user.email,
@@ -121,31 +152,30 @@ router.post('/auth0', async (req, res) => {
         isPremium: user.isPremium,
         avatar: user.avatar,
         authProvider: user.authProvider,
-        lastLoginAt: user.lastLoginAt
+        lastLoginAt: user.lastLoginAt,
       },
-      token
+      token,
     });
-
   } catch (error) {
-    console.error('Auth0 authentication error:', error);
+    console.error("Auth0 authentication error:", error);
     res.status(500).json({
       success: false,
-      error: 'Auth0 authentication failed',
-      message: error.message
+      error: "Auth0 authentication failed",
+      message: error.message,
     });
   }
 });
 
 // Register new user
-router.post('/register', validateRegistration, async (req, res) => {
+router.post("/register", validateRegistration, async (req, res) => {
   try {
     // Check for validation errors
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({
         success: false,
-        error: 'Validation failed',
-        details: errors.array()
+        error: "Validation failed",
+        details: errors.array(),
       });
     }
 
@@ -154,9 +184,16 @@ router.post('/register', validateRegistration, async (req, res) => {
     // Check if user already exists
     const existingUser = await User.findByEmail(email);
     if (existingUser) {
+      if (existingUser.authProvider === "auth0") {
+        return res.status(409).json({
+          success: false,
+          error:
+            "This email is already registered with Auth0. Please use Auth0 to login.",
+        });
+      }
       return res.status(409).json({
         success: false,
-        error: 'User with this email already exists'
+        error: "User with this email already exists",
       });
     }
 
@@ -165,7 +202,7 @@ router.post('/register', validateRegistration, async (req, res) => {
       email,
       password,
       name,
-      authProvider: 'local'
+      authProvider: "local",
     });
 
     await user.save();
@@ -175,38 +212,37 @@ router.post('/register', validateRegistration, async (req, res) => {
 
     res.status(201).json({
       success: true,
-      message: 'User registered successfully',
+      message: "User registered successfully",
       user: {
         id: user._id,
         email: user.email,
         name: user.name,
         role: user.role,
         isPremium: user.isPremium,
-        createdAt: user.createdAt
+        createdAt: user.createdAt,
       },
-      token
+      token,
     });
-
   } catch (error) {
-    console.error('Registration error:', error);
+    console.error("Registration error:", error);
     res.status(500).json({
       success: false,
-      error: 'Registration failed',
-      message: error.message
+      error: "Registration failed",
+      message: error.message,
     });
   }
 });
 
 // Login user
-router.post('/login', validateLogin, async (req, res) => {
+router.post("/login", validateLogin, async (req, res) => {
   try {
     // Check for validation errors
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({
         success: false,
-        error: 'Validation failed',
-        details: errors.array()
+        error: "Validation failed",
+        details: errors.array(),
       });
     }
 
@@ -217,7 +253,16 @@ router.post('/login', validateLogin, async (req, res) => {
     if (!user) {
       return res.status(401).json({
         success: false,
-        error: 'Invalid email or password'
+        error: "Invalid email or password",
+      });
+    }
+
+    // Check if user is an Auth0 user
+    if (user.authProvider === "auth0") {
+      return res.status(401).json({
+        success: false,
+        error:
+          "This email is registered with Auth0. Please use Auth0 to login.",
       });
     }
 
@@ -226,7 +271,7 @@ router.post('/login', validateLogin, async (req, res) => {
     if (!isPasswordValid) {
       return res.status(401).json({
         success: false,
-        error: 'Invalid email or password'
+        error: "Invalid email or password",
       });
     }
 
@@ -234,7 +279,7 @@ router.post('/login', validateLogin, async (req, res) => {
     if (!user.isActive) {
       return res.status(403).json({
         success: false,
-        error: 'Account is deactivated. Please contact support.'
+        error: "Account is deactivated. Please contact support.",
       });
     }
 
@@ -247,7 +292,7 @@ router.post('/login', validateLogin, async (req, res) => {
 
     res.json({
       success: true,
-      message: 'Login successful',
+      message: "Login successful",
       user: {
         id: user._id,
         email: user.email,
@@ -256,17 +301,16 @@ router.post('/login', validateLogin, async (req, res) => {
         isPremium: user.isPremium,
         avatar: user.avatar,
         preferences: user.preferences,
-        lastLoginAt: user.lastLoginAt
+        lastLoginAt: user.lastLoginAt,
       },
-      token
+      token,
     });
-
   } catch (error) {
-    console.error('Login error:', error);
+    console.error("Login error:", error);
     res.status(500).json({
       success: false,
-      error: 'Login failed',
-      message: error.message
+      error: "Login failed",
+      message: error.message,
     });
   }
 });

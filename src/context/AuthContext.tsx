@@ -75,10 +75,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const handleAuth0Login = async () => {
       // Only process Auth0 login if we have all the required data
       if (isAuthenticated && auth0User && !auth0Loading) {
-        console.log(
-          "Auth0 user authenticated, syncing with backend...",
-          auth0User.email
-        );
+        console.log("Auth0 user authenticated, syncing with backend...", {
+          email: auth0User.email,
+          name: auth0User.name,
+          nickname: auth0User.nickname,
+          sub: auth0User.sub,
+          picture: auth0User.picture ? "present" : "not present",
+        });
         setIsAuthenticating(true);
 
         try {
@@ -103,10 +106,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
               result.error
             );
             // Fallback to client-side user data if backend fails
+            // For database users, name might be email, so create better display name
+            let displayName =
+              auth0User.name || auth0User.nickname || "Auth0 User";
+            if (auth0User.name === auth0User.email) {
+              displayName =
+                auth0User.nickname ||
+                auth0User.email?.split("@")[0] ||
+                "Auth0 User";
+            }
+
             const auth0UserData = {
               id: auth0User.sub || "",
               email: auth0User.email || "",
-              name: auth0User.name || auth0User.nickname || "Auth0 User",
+              name: displayName,
               role: "Tiare",
               isPremium: false,
               authProvider: "auth0",
@@ -119,10 +132,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         } catch (error) {
           console.error("Error during Auth0 backend sync:", error);
           // Fallback to client-side storage
+          let displayName =
+            auth0User.name || auth0User.nickname || "Auth0 User";
+          if (auth0User.name === auth0User.email) {
+            displayName =
+              auth0User.nickname ||
+              auth0User.email?.split("@")[0] ||
+              "Auth0 User";
+          }
+
           const auth0UserData = {
             id: auth0User.sub || "",
             email: auth0User.email || "",
-            name: auth0User.name || auth0User.nickname || "Auth0 User",
+            name: displayName,
             role: "Tiare",
             isPremium: false,
             authProvider: "auth0",
