@@ -17,42 +17,6 @@ const stripeEmailsSchema = new mongoose.Schema({
     index: true
   },
 
-  // Customer name
-  name: {
-    type: String,
-    trim: true
-  },
-
-  // Customer phone
-  phone: {
-    type: String,
-    trim: true
-  },
-
-  // Customer address
-  address: {
-    city: String,
-    country: String,
-    line1: String,
-    line2: String,
-    postal_code: String,
-    state: String
-  },
-
-  // Customer shipping address
-  shipping: {
-    address: {
-      city: String,
-      country: String,
-      line1: String,
-      line2: String,
-      postal_code: String,
-      state: String
-    },
-    name: String,
-    phone: String
-  },
-
   // Customer metadata from Stripe
   metadata: {
     type: mongoose.Schema.Types.Mixed,
@@ -63,18 +27,6 @@ const stripeEmailsSchema = new mongoose.Schema({
   stripeCreated: {
     type: Date,
     required: true
-  },
-
-  // Currency preference
-  currency: {
-    type: String,
-    trim: true
-  },
-
-  // Default payment method
-  defaultPaymentMethod: {
-    type: String,
-    trim: true
   },
 
   // Customer description

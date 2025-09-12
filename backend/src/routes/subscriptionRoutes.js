@@ -307,4 +307,25 @@ router.get('/admin/stripe-email/:customerId', async (req, res) => {
   }
 });
 
+// Manually apply StripeEmails updates to user (admin only)
+router.post('/admin/apply-stripe-emails-update/:email', async (req, res) => {
+  try {
+    // Add admin authentication here
+    const { email } = req.params;
+    
+    const result = await SubscriptionService.applyStripeEmailsUpdates(email);
+    
+    res.json({
+      success: result.applied,
+      ...result
+    });
+  } catch (error) {
+    console.error('Apply StripeEmails update error:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
 export default router;
