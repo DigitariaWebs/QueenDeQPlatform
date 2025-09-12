@@ -6,6 +6,9 @@ import compression from 'compression';
 import morgan from 'morgan';
 
 export const setupMiddleware = (app) => {
+  // Trust proxy for proper IP detection (important for Vercel deployments)
+  app.set('trust proxy', 1);
+  
   // Security middleware
   app.use(helmet());
   
@@ -60,6 +63,8 @@ export const setupMiddleware = (app) => {
   app.use(rateLimit({ windowMs: 15 * 60 * 1000, max: 1000 }));
   
   // Body parsing - increased limits for chat conversations
+  // Skip body parsing for Stripe webhook to preserve raw body for signature verification
+  app.use('/api/stripe/webhook', express.raw({ type: 'application/json' }));
   app.use(express.json({ limit: '50mb' }));
   app.use(express.urlencoded({ extended: true, limit: '50mb' }));
   // For file uploads, you can add multer or similar middleware here if needed

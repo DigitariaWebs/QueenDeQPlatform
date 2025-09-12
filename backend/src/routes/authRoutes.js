@@ -3,6 +3,7 @@ import { body, validationResult } from 'express-validator';
 import jwt from 'jsonwebtoken';
 import { User } from '../models/index.js';
 import { ManagementClient } from 'auth0';
+import SubscriptionService from '../services/SubscriptionService.js';
 
 const router = express.Router();
 
@@ -137,6 +138,19 @@ router.post("/auth0", async (req, res) => {
     // Update last login
     user.lastLoginAt = new Date();
     await user.save();
+
+    // Apply any pending subscription updates
+    try {
+      const updateResult = await SubscriptionService.applyPendingUpdates(userInfo.email);
+      if (updateResult.applied) {
+        console.log(`Applied pending update for ${userInfo.email}: ${updateResult.previousRole} -> ${updateResult.newRole}`);
+        // Refresh user data after update
+        user = await User.findById(user._id);
+      }
+    } catch (error) {
+      console.error('Error applying pending updates:', error);
+      // Don't fail login if pending update fails
+    }
 
     // Generate JWT token
     const token = generateToken(user._id);
@@ -286,6 +300,19 @@ router.post("/login", validateLogin, async (req, res) => {
     // Update last login
     user.lastLoginAt = new Date();
     await user.save();
+
+    // Apply any pending subscription updates
+    try {
+      const updateResult = await SubscriptionService.applyPendingUpdates(user.email);
+      if (updateResult.applied) {
+        console.log(`Applied pending update for ${user.email}: ${updateResult.previousRole} -> ${updateResult.newRole}`);
+        // Refresh user data after update
+        user = await User.findById(user._id);
+      }
+    } catch (error) {
+      console.error('Error applying pending updates:', error);
+      // Don't fail login if pending update fails
+    }
 
     // Generate token
     const token = generateToken(user._id);
