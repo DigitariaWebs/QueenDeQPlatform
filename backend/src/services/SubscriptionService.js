@@ -2,6 +2,7 @@ import {
   User,
   SubscriptionStatusChange,
   PendingUserUpdate,
+  StripeEmails,
 } from "../models/index.js";
 import mongoose from "mongoose";
 import Stripe from "stripe";
@@ -25,7 +26,8 @@ class SubscriptionService {
           await this.handleSubscriptionChange(
             object,
             "stripe_webhook",
-            event.id
+            event.id,
+            type
           );
           break;
 
@@ -60,7 +62,8 @@ class SubscriptionService {
   static async handleSubscriptionChange(
     subscription,
     reason = "stripe_webhook",
-    eventId = null
+    eventId = null,
+    eventType = null
   ) {
     const session = await mongoose.startSession();
 
@@ -72,95 +75,91 @@ class SubscriptionService {
         }).session(session);
 
         if (!user) {
-          // If not found, try multiple ways to get customer email
+          // If not found, try to get customer email following the priority order
           const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
           let customerEmail = null;
 
+          // Priority 1: Try to get customer email directly from Stripe customer API
           try {
-            // Try 1: Get customer directly
+            console.log(`Attempting to retrieve customer ${subscription.customer} from Stripe API`);
             const customer = await stripe.customers.retrieve(
               subscription.customer
             );
             customerEmail = customer.email;
-            console.log(`Found customer email from Stripe: ${customerEmail}`);
+            console.log(`✅ Found customer email from Stripe API: ${customerEmail}`);
 
-            if (customer.email) {
-              user = await User.findOne({ email: customer.email }).session(
+            if (customerEmail) {
+              user = await User.findOne({ email: customerEmail }).session(
                 session
               );
               if (user) {
-                // Update with stripeCustomerId
                 user.stripeCustomerId = subscription.customer;
+                console.log(`✅ Matched user by customer email: ${customerEmail}`);
               }
             }
           } catch (stripeError) {
             console.warn(
-              `Could not retrieve Stripe customer ${subscription.customer}:`,
+              `❌ Could not retrieve Stripe customer ${subscription.customer}:`,
               stripeError.message
             );
+          }
 
-            // Try 2: Get email from latest invoice
+          // Priority 2: If still no email and we have an invoice, try to get email from invoice
+          if (!customerEmail && subscription.latest_invoice) {
             try {
-              if (subscription.latest_invoice) {
-                console.log(
-                  `Trying to get email from invoice: ${subscription.latest_invoice}`
-                );
-                const invoice = await stripe.invoices.retrieve(
-                  subscription.latest_invoice
-                );
-                customerEmail = invoice.customer_email;
-                console.log(
-                  `Found customer email from invoice: ${customerEmail}`
-                );
+              console.log(
+                `Attempting to get email from invoice: ${subscription.latest_invoice}`
+              );
+              const invoice = await stripe.invoices.retrieve(
+                subscription.latest_invoice
+              );
+              customerEmail = invoice.customer_email;
+              console.log(`✅ Found customer email from invoice: ${customerEmail}`);
 
-                if (customerEmail) {
-                  user = await User.findOne({ email: customerEmail }).session(
-                    session
-                  );
-                  if (user) {
-                    user.stripeCustomerId = subscription.customer;
-                    console.log(
-                      `Matched user by invoice email: ${customerEmail}`
-                    );
-                  }
+              if (customerEmail) {
+                user = await User.findOne({ email: customerEmail }).session(
+                  session
+                );
+                if (user) {
+                  user.stripeCustomerId = subscription.customer;
+                  console.log(`✅ Matched user by invoice email: ${customerEmail}`);
                 }
-              } else {
-                console.log(`No latest_invoice found in subscription`);
               }
             } catch (invoiceError) {
               console.warn(
-                `Could not retrieve invoice ${subscription.latest_invoice}:`,
+                `❌ Could not retrieve invoice ${subscription.latest_invoice}:`,
                 invoiceError.message
               );
+            }
+          }
 
-              // Try 3: Get email from subscription metadata (if Mighty Networks includes it)
-              try {
-                if (
-                  subscription.metadata &&
-                  subscription.metadata.customer_email
-                ) {
-                  customerEmail = subscription.metadata.customer_email;
-                  console.log(
-                    `Found customer email from subscription metadata: ${customerEmail}`
-                  );
+          // Priority 3: If still no email, try local mapping by finding existing user with this customer ID
+          if (!customerEmail) {
+            console.log(`Attempting fallback: searching local database for existing user with customer ID ${subscription.customer}`);
+            user = await User.findOne({ 
+              stripeCustomerId: subscription.customer 
+            }).session(session);
+            
+            if (user) {
+              customerEmail = user.email;
+              console.log(`✅ Found user via local customer ID mapping: ${customerEmail}`);
+            } else {
+              console.log(`❌ No existing user found with customer ID ${subscription.customer}`);
+            }
+          }
 
-                  if (customerEmail) {
-                    user = await User.findOne({ email: customerEmail }).session(
-                      session
-                    );
-                    if (user) {
-                      user.stripeCustomerId = subscription.customer;
-                      console.log(
-                        `Matched user by metadata email: ${customerEmail}`
-                      );
-                    }
-                  }
-                }
-              } catch (metadataError) {
-                console.warn(
-                  `Error processing subscription metadata:`,
-                  metadataError.message
-                );
+          // Final fallback: Check metadata for email (Mighty Networks might include it)
+          if (!customerEmail && subscription.metadata && subscription.metadata.customer_email) {
+            customerEmail = subscription.metadata.customer_email;
+            console.log(`Found customer email from subscription metadata: ${customerEmail}`);
+
+            if (customerEmail) {
+              user = await User.findOne({ email: customerEmail }).session(
+                session
+              );
+              if (user) {
+                user.stripeCustomerId = subscription.customer;
+                console.log(`✅ Matched user by metadata email: ${customerEmail}`);
               }
             }
           }
@@ -178,7 +177,14 @@ class SubscriptionService {
               status: subscription.status,
               latest_invoice: subscription.latest_invoice,
               current_period_end: subscription.current_period_end,
+              current_period_start: subscription.current_period_start,
               metadata: subscription.metadata,
+              items: subscription.items?.data?.map(item => ({
+                price_id: item.price?.id,
+                product_id: item.price?.product,
+                amount: item.price?.unit_amount,
+                currency: item.price?.currency
+              }))
             });
 
             // Create pending update without user
@@ -187,10 +193,17 @@ class SubscriptionService {
               `Determined role: ${newRole} for subscription ${subscription.id}`
             );
 
-            // Safe date conversion
-            const endDate = subscription.current_period_end
-              ? new Date(subscription.current_period_end * 1000)
-              : null;
+            // Safe date conversion - try multiple date fields
+            let endDate = null;
+            if (subscription.current_period_end) {
+              endDate = new Date(subscription.current_period_end * 1000);
+            } else if (subscription.ended_at) {
+              endDate = new Date(subscription.ended_at * 1000);
+            } else if (subscription.canceled_at) {
+              endDate = new Date(subscription.canceled_at * 1000);
+            }
+            
+            console.log(`Subscription end date resolved to: ${endDate}`);
 
             await PendingUserUpdate.create({
               email:
@@ -200,10 +213,7 @@ class SubscriptionService {
               stripeSubscriptionId: subscription.id,
               subscriptionStatus: subscription.status,
               subscriptionEndDate: endDate,
-              sourceEvent:
-                reason === "stripe_webhook"
-                  ? "customer.subscription.updated"
-                  : "customer.subscription.created",
+              sourceEvent: eventType || "customer.subscription.created",
               stripeEventId: eventId,
               metadata: {
                 stripePriceId: subscription.items.data[0]?.price?.id,
@@ -224,10 +234,17 @@ class SubscriptionService {
         const newRole = this.determineRoleFromSubscription(subscription);
         const previousRole = user.role;
 
-        // Safe date conversion
-        const endDate = subscription.current_period_end 
-          ? new Date(subscription.current_period_end * 1000)
-          : null;
+        // Safe date conversion - try multiple date fields
+        let endDate = null;
+        if (subscription.current_period_end) {
+          endDate = new Date(subscription.current_period_end * 1000);
+        } else if (subscription.ended_at) {
+          endDate = new Date(subscription.ended_at * 1000);
+        } else if (subscription.canceled_at) {
+          endDate = new Date(subscription.canceled_at * 1000);
+        }
+        
+        console.log(`Subscription end date resolved to: ${endDate}`);
 
         // Update user subscription info
         user.role = newRole;
@@ -276,10 +293,7 @@ class SubscriptionService {
           stripeSubscriptionId: subscription.id,
           subscriptionStatus: subscription.status,
           subscriptionEndDate: endDate,
-          sourceEvent:
-            reason === "stripe_webhook"
-              ? "customer.subscription.updated"
-              : "customer.subscription.created",
+          sourceEvent: eventType || "customer.subscription.created",
           stripeEventId: eventId,
           metadata: {
             stripePriceId: subscription.items.data[0]?.price?.id,
@@ -288,6 +302,14 @@ class SubscriptionService {
             currency: subscription.currency || "usd",
           },
         });
+
+        // Update StripeEmails collection with subscription data
+        try {
+          await this.updateStripeEmailSubscription(subscription, eventType);
+        } catch (stripeEmailError) {
+          console.error('Error updating StripeEmails subscription:', stripeEmailError);
+          // Don't fail the main transaction, just log the error
+        }
       });
     } catch (error) {
       console.error("Error handling subscription change:", error);
@@ -409,6 +431,14 @@ class SubscriptionService {
             currency: subscription.currency || "usd",
           },
         });
+
+        // Update StripeEmails collection with cancellation data
+        try {
+          await this.updateStripeEmailSubscription(subscription, 'customer.subscription.deleted');
+        } catch (stripeEmailError) {
+          console.error('Error updating StripeEmails subscription cancellation:', stripeEmailError);
+          // Don't fail the main transaction, just log the error
+        }
       });
     } catch (error) {
       console.error("Error handling subscription cancellation:", error);
@@ -474,13 +504,53 @@ class SubscriptionService {
   // Handle customer creation
   static async handleCustomerCreated(customer) {
     try {
-      // Update user with Stripe customer ID if email matches
+      console.log(`Processing customer.created for: ${customer.id}, email: ${customer.email}`);
+
+      // Save customer data to stripe_emails collection
+      const customerData = {
+        stripeCustomerId: customer.id,
+        email: customer.email || `stripe_customer_${customer.id}`, // Fallback if no email
+        name: customer.name,
+        phone: customer.phone,
+        address: customer.address,
+        shipping: customer.shipping,
+        metadata: customer.metadata || {},
+        stripeCreated: new Date(customer.created * 1000), // Convert Unix timestamp
+        currency: customer.currency,
+        defaultPaymentMethod: customer.default_source || customer.invoice_settings?.default_payment_method,
+        description: customer.description,
+        // subscription field is initialized as empty in the schema
+        subscriptionUpdated: false,
+        lastSyncAttempt: null
+      };
+
+      // Check if customer already exists in stripe_emails collection
+      const existingStripeEmail = await StripeEmails.findByCustomerId(customer.id);
+      
+      if (!existingStripeEmail) {
+        // Create new record in stripe_emails collection
+        const stripeEmail = new StripeEmails(customerData);
+        await stripeEmail.save();
+        console.log(`✅ Saved customer ${customer.id} to stripe_emails collection`);
+        
+        // Try to sync with any existing pending updates immediately
+        await this.syncStripeEmailWithPendingUpdates(customer.id, customer.email);
+      } else {
+        console.log(`Customer ${customer.id} already exists in stripe_emails collection`);
+        
+        // Update existing record with latest customer data (in case customer details changed)
+        Object.assign(existingStripeEmail, customerData);
+        await existingStripeEmail.save();
+        console.log(`✅ Updated existing customer ${customer.id} in stripe_emails collection`);
+      }
+
+      // Original logic: Update user with Stripe customer ID if email matches
       if (customer.email) {
         const user = await User.findOne({ email: customer.email });
         if (user && !user.stripeCustomerId) {
           user.stripeCustomerId = customer.id;
           await user.save();
-          console.log(`Updated user ${user.email} with Stripe customer ID`);
+          console.log(`✅ Updated user ${user.email} with Stripe customer ID`);
         }
       }
     } catch (error) {
@@ -493,36 +563,68 @@ class SubscriptionService {
   static async handleCheckoutSessionCompleted(session, eventId = null) {
     try {
       const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+      let customerEmail = null;
+      let user = null;
 
-      // Get email from session or customer
-      let email = session.customer_details?.email;
-      if (!email && session.customer) {
-        try {
-          const customer = await stripe.customers.retrieve(session.customer);
-          email = customer.email;
-        } catch (stripeError) {
-          console.warn(`Could not retrieve Stripe customer ${session.customer}:`, stripeError.message);
-          // Continue without customer email if not available
+      // Priority 1: Get email from session.customer_details.email (as you specified)
+      if (session.customer_details?.email) {
+        customerEmail = session.customer_details.email;
+        console.log(`✅ Found email from checkout session customer_details: ${customerEmail}`);
+        
+        user = await User.findOne({ email: customerEmail });
+        if (user) {
+          console.log(`✅ Found existing user by session email: ${customerEmail}`);
         }
       }
 
-      if (!email) {
-        console.error("No email found in checkout session");
+      // Priority 2: If no email from session, try Stripe customer API
+      if (!customerEmail && session.customer) {
+        try {
+          console.log(`Attempting to retrieve customer ${session.customer} from Stripe API`);
+          const customer = await stripe.customers.retrieve(session.customer);
+          customerEmail = customer.email;
+          console.log(`✅ Found email from Stripe customer API: ${customerEmail}`);
+          
+          if (customerEmail) {
+            user = await User.findOne({ email: customerEmail });
+            if (user) {
+              console.log(`✅ Found existing user by customer API email: ${customerEmail}`);
+            }
+          }
+        } catch (stripeError) {
+          console.warn(`❌ Could not retrieve Stripe customer ${session.customer}:`, stripeError.message);
+        }
+      }
+
+      // Priority 3: Try local mapping by customer ID
+      if (!customerEmail && session.customer) {
+        console.log(`Attempting fallback: searching local database for existing user with customer ID ${session.customer}`);
+        user = await User.findOne({ stripeCustomerId: session.customer });
+        
+        if (user) {
+          customerEmail = user.email;
+          console.log(`✅ Found user via local customer ID mapping: ${customerEmail}`);
+        } else {
+          console.log(`❌ No existing user found with customer ID ${session.customer}`);
+        }
+      }
+
+      if (!customerEmail) {
+        console.error("❌ No email found in checkout session after all attempts");
         return;
       }
 
-      // Find or create user
-      let user = await User.findOne({ email });
+      // Create user if not found
       if (!user) {
         // If user doesn't exist, create one with basic info
         user = new User({
-          email,
-          name: session.customer_details?.name || email.split("@")[0],
+          email: customerEmail,
+          name: session.customer_details?.name || customerEmail.split("@")[0],
           authProvider: "stripe_checkout",
           role: "Tiare", // Default, will be updated if subscription
         });
         await user.save();
-        console.log(`Created new user from checkout: ${email}`);
+        console.log(`Created new user from checkout: ${customerEmail}`);
       }
 
       // Update user with Stripe customer ID if not set
@@ -556,7 +658,7 @@ class SubscriptionService {
 
         // Store pending update for future logins
         await PendingUserUpdate.create({
-          email,
+          email: customerEmail,
           stripeCustomerId: session.customer,
           pendingRole: plan,
           stripeSubscriptionId: subscription.id,
@@ -594,7 +696,7 @@ class SubscriptionService {
           },
         });
 
-        console.log(`Updated user ${email} to ${plan} from checkout`);
+        console.log(`Updated user ${customerEmail} to ${plan} from checkout`);
       }
     } catch (error) {
       console.error("Error handling checkout session completed:", error);
@@ -928,6 +1030,197 @@ class SubscriptionService {
       // Add more mappings as needed
     };
     return map[priceId] || "Tiare";
+  }
+
+  // Search for Stripe customer by email
+  static async findStripeCustomerByEmail(email) {
+    try {
+      const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+      
+      console.log(`Searching Stripe for customer with email: ${email}`);
+      
+      const customers = await stripe.customers.search({
+        query: `email:'${email}'`,
+        limit: 1
+      });
+      
+      if (customers.data.length > 0) {
+        const customer = customers.data[0];
+        console.log(`Found Stripe customer: ${customer.id} for email: ${email}`);
+        return customer;
+      }
+      
+      console.log(`No Stripe customer found for email: ${email}`);
+      return null;
+    } catch (error) {
+      console.error('Error searching Stripe customer:', error);
+      return null;
+    }
+  }
+
+  // Sync StripeEmails with PendingUserUpdates
+  static async syncStripeEmailWithPendingUpdates(stripeCustomerId, customerEmail = null) {
+    try {
+      console.log(`Syncing customer ${stripeCustomerId} with pending updates`);
+      
+      // Find the stripe email record
+      const stripeEmail = await StripeEmails.findByCustomerId(stripeCustomerId);
+      if (!stripeEmail) {
+        console.log(`No stripe email record found for customer ${stripeCustomerId}`);
+        return false;
+      }
+
+      // Find pending updates for this customer
+      let pendingUpdates = [];
+      
+      // Search by customer ID first
+      if (stripeCustomerId) {
+        const updatesByCustomerId = await PendingUserUpdate.findPendingForCustomer(stripeCustomerId);
+        pendingUpdates.push(...updatesByCustomerId);
+      }
+      
+      // Search by email if available
+      if (customerEmail || stripeEmail.email) {
+        const emailToSearch = customerEmail || stripeEmail.email;
+        const updatesByEmail = await PendingUserUpdate.findPendingForEmail(emailToSearch);
+        pendingUpdates.push(...updatesByEmail);
+      }
+      
+      // Remove duplicates based on _id
+      const uniqueUpdates = pendingUpdates.filter((update, index, self) => 
+        index === self.findIndex(u => u._id.toString() === update._id.toString())
+      );
+
+      if (uniqueUpdates.length === 0) {
+        console.log(`No pending updates found for customer ${stripeCustomerId}`);
+        return false;
+      }
+
+      // Use the most recent pending update
+      const latestUpdate = uniqueUpdates.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))[0];
+      
+      console.log(`Found ${uniqueUpdates.length} pending updates, using latest: ${latestUpdate._id}`);
+      
+      // Update the subscription field in stripe_emails
+      await stripeEmail.updateSubscriptionFromPending(latestUpdate);
+      
+      console.log(`✅ Successfully synced customer ${stripeCustomerId} with pending update ${latestUpdate._id}`);
+      
+      // Optionally mark the pending update as processed
+      await PendingUserUpdate.markAsProcessed(latestUpdate._id);
+      
+      return true;
+    } catch (error) {
+      console.error(`Error syncing customer ${stripeCustomerId} with pending updates:`, error);
+      
+      // Log the error in the stripe email record
+      const stripeEmail = await StripeEmails.findByCustomerId(stripeCustomerId);
+      if (stripeEmail) {
+        await stripeEmail.logSyncError(error.message);
+      }
+      
+      return false;
+    }
+  }
+
+  // Bulk sync all stripe emails that haven't been synced with pending updates
+  static async bulkSyncStripeEmailsWithPendingUpdates() {
+    try {
+      console.log('Starting bulk sync of stripe emails with pending updates');
+      
+      const unsynced = await StripeEmails.findNeedingSubscriptionUpdate();
+      console.log(`Found ${unsynced.length} stripe email records needing subscription updates`);
+      
+      let syncedCount = 0;
+      let errorCount = 0;
+      
+      for (const stripeEmail of unsynced) {
+        try {
+          const synced = await this.syncStripeEmailWithPendingUpdates(
+            stripeEmail.stripeCustomerId, 
+            stripeEmail.email
+          );
+          
+          if (synced) {
+            syncedCount++;
+          }
+        } catch (error) {
+          console.error(`Failed to sync customer ${stripeEmail.stripeCustomerId}:`, error);
+          errorCount++;
+        }
+      }
+      
+      console.log(`Bulk sync completed. Synced: ${syncedCount}, Errors: ${errorCount}`);
+      
+      return {
+        total: unsynced.length,
+        synced: syncedCount,
+        errors: errorCount
+      };
+    } catch (error) {
+      console.error('Error in bulk sync:', error);
+      throw error;
+    }
+  }
+
+  // Update StripeEmails subscription data from Stripe subscription object
+  static async updateStripeEmailSubscription(subscription, eventType = null) {
+    try {
+      if (!subscription.customer) {
+        console.log('No customer ID in subscription, skipping StripeEmails update');
+        return false;
+      }
+
+      const stripeEmail = await StripeEmails.findByCustomerId(subscription.customer);
+      if (!stripeEmail) {
+        console.log(`No StripeEmails record found for customer ${subscription.customer}`);
+        return false;
+      }
+
+      // Get subscription details
+      const subscriptionData = {
+        stripeSubscriptionId: subscription.id,
+        status: subscription.status,
+        startDate: subscription.current_period_start ? new Date(subscription.current_period_start * 1000) : null,
+        endDate: subscription.current_period_end ? new Date(subscription.current_period_end * 1000) : null,
+        lastUpdated: new Date()
+      };
+
+      // Get price and product info if available
+      if (subscription.items && subscription.items.data && subscription.items.data.length > 0) {
+        const item = subscription.items.data[0];
+        subscriptionData.priceId = item.price.id;
+        subscriptionData.productId = item.price.product;
+        subscriptionData.amount = item.price.unit_amount;
+        subscriptionData.currency = item.price.currency;
+        
+        // Map price to role
+        subscriptionData.role = this.priceIdToPlan(item.price.id);
+      }
+
+      // Handle subscription deletion
+      if (eventType === 'customer.subscription.deleted') {
+        subscriptionData.status = 'canceled';
+        subscriptionData.endDate = new Date(); // Set end date to now
+      }
+
+      // Update the subscription field
+      stripeEmail.subscription = {
+        ...stripeEmail.subscription,
+        ...subscriptionData
+      };
+      
+      stripeEmail.subscriptionUpdated = true;
+      stripeEmail.lastSyncAttempt = new Date();
+
+      await stripeEmail.save();
+      console.log(`✅ Updated StripeEmails subscription for customer ${subscription.customer}`);
+      
+      return true;
+    } catch (error) {
+      console.error(`Error updating StripeEmails subscription for customer ${subscription.customer}:`, error);
+      return false;
+    }
   }
 }
 

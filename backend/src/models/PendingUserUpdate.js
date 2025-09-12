@@ -4,7 +4,6 @@ const pendingUserUpdateSchema = new mongoose.Schema({
   email: {
     type: String,
     required: true,
-    lowercase: true,
     trim: true,
     index: true
   },
@@ -89,14 +88,28 @@ pendingUserUpdateSchema.index({ stripeCustomerId: 1, isProcessed: 1 });
 
 // Static method to find pending updates for an email
 pendingUserUpdateSchema.statics.findPendingForEmail = function(email) {
-  return this.find({
-    $or: [
-      { email: email.toLowerCase() },
-      { email: `stripe_customer_${email}` } // Also check fallback format
-    ],
-    isProcessed: false,
-    expiresAt: { $gt: new Date() }
-  }).sort({ createdAt: -1 });
+  // Check if this looks like a fallback email (starts with stripe_customer_)
+  const isFallbackEmail = email.toLowerCase().startsWith('stripe_customer_');
+  
+  if (isFallbackEmail) {
+    // For fallback emails, do exact match (preserve case)
+    return this.find({
+      email: email,
+      isProcessed: false,
+      expiresAt: { $gt: new Date() }
+    }).sort({ createdAt: -1 });
+  } else {
+    // For real emails, do case-insensitive match
+    return this.find({
+      $or: [
+        { email: email.toLowerCase() },
+        { email: email },
+        { email: `stripe_customer_${email}` }
+      ],
+      isProcessed: false,
+      expiresAt: { $gt: new Date() }
+    }).sort({ createdAt: -1 });
+  }
 };
 
 // Static method to find pending updates by Stripe customer ID

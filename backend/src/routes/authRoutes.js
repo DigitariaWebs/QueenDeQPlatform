@@ -139,6 +139,40 @@ router.post("/auth0", async (req, res) => {
     user.lastLoginAt = new Date();
     await user.save();
 
+    // Search for Stripe customer and link if not already linked
+    if (!user.stripeCustomerId) {
+      try {
+        console.log(`User ${userInfo.email} has no Stripe customer ID, searching Stripe...`);
+        const stripeCustomer = await SubscriptionService.findStripeCustomerByEmail(userInfo.email);
+        
+        if (stripeCustomer) {
+          console.log(`Linking Stripe customer ${stripeCustomer.id} to user ${userInfo.email}`);
+          user.stripeCustomerId = stripeCustomer.id;
+          
+          // Also get active subscription if available
+          if (stripeCustomer.subscriptions?.data?.length > 0) {
+            const activeSubscription = stripeCustomer.subscriptions.data.find(
+              sub => sub.status === 'active' || sub.status === 'trialing'
+            );
+            if (activeSubscription) {
+              console.log(`Found active subscription ${activeSubscription.id} for customer ${stripeCustomer.id}`);
+              user.stripeSubscriptionId = activeSubscription.id;
+            }
+          }
+          
+          await user.save();
+          console.log(`Successfully linked Stripe customer ${stripeCustomer.id} to user ${userInfo.email}`);
+        } else {
+          console.log(`No Stripe customer found for email ${userInfo.email}`);
+        }
+      } catch (error) {
+        console.error('Error linking Stripe customer:', error);
+        // Continue with login even if Stripe linking fails
+      }
+    } else {
+      console.log(`User ${userInfo.email} already has Stripe customer ID: ${user.stripeCustomerId}`);
+    }
+
     // Apply any pending subscription updates
     try {
       const updateResult = await SubscriptionService.applyPendingUpdates(userInfo.email);

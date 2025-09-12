@@ -1,6 +1,7 @@
 import express from 'express';
 import Stripe from 'stripe';
 import SubscriptionService from '../services/SubscriptionService.js';
+import { StripeEmails } from '../models/index.js';
 
 const router = express.Router();
 
@@ -181,6 +182,124 @@ router.post('/admin/apply-pending-update', async (req, res) => {
     });
   } catch (error) {
     console.error('Apply pending update error:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
+// Get all stripe emails (admin only)
+router.get('/admin/stripe-emails', async (req, res) => {
+  try {
+    // Add admin authentication here
+    const { page = 1, limit = 50, subscriptionUpdated, email, customerId } = req.query;
+    
+    const query = {};
+    
+    if (subscriptionUpdated !== undefined) {
+      query.subscriptionUpdated = subscriptionUpdated === 'true';
+    }
+    
+    if (email) {
+      query.email = { $regex: email, $options: 'i' };
+    }
+    
+    if (customerId) {
+      query.stripeCustomerId = customerId;
+    }
+    
+    const skip = (parseInt(page) - 1) * parseInt(limit);
+    
+    const [stripeEmails, total] = await Promise.all([
+      StripeEmails.find(query)
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(parseInt(limit)),
+      StripeEmails.countDocuments(query)
+    ]);
+    
+    res.json({
+      success: true,
+      data: stripeEmails,
+      pagination: {
+        page: parseInt(page),
+        limit: parseInt(limit),
+        total,
+        pages: Math.ceil(total / parseInt(limit))
+      }
+    });
+  } catch (error) {
+    console.error('Get stripe emails error:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
+// Manually sync stripe emails with pending updates (admin only)
+router.post('/admin/sync-stripe-emails', async (req, res) => {
+  try {
+    // Add admin authentication here
+    const result = await SubscriptionService.bulkSyncStripeEmailsWithPendingUpdates();
+    
+    res.json({
+      success: true,
+      message: 'Bulk sync completed',
+      ...result
+    });
+  } catch (error) {
+    console.error('Sync stripe emails error:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
+// Sync specific stripe email with pending updates (admin only)
+router.post('/admin/sync-stripe-email/:customerId', async (req, res) => {
+  try {
+    // Add admin authentication here
+    const { customerId } = req.params;
+    
+    const synced = await SubscriptionService.syncStripeEmailWithPendingUpdates(customerId);
+    
+    res.json({
+      success: synced,
+      message: synced ? 'Customer synced successfully' : 'No pending updates found for customer'
+    });
+  } catch (error) {
+    console.error('Sync stripe email error:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
+// Get stripe email by customer ID (admin only)
+router.get('/admin/stripe-email/:customerId', async (req, res) => {
+  try {
+    // Add admin authentication here
+    const { customerId } = req.params;
+    
+    const stripeEmail = await StripeEmails.findByCustomerId(customerId);
+    
+    if (!stripeEmail) {
+      return res.status(404).json({
+        success: false,
+        error: 'Stripe email record not found'
+      });
+    }
+    
+    res.json({
+      success: true,
+      data: stripeEmail
+    });
+  } catch (error) {
+    console.error('Get stripe email error:', error);
     res.status(500).json({
       success: false,
       error: error.message
