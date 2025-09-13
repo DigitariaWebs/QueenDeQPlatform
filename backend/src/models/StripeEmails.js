@@ -5,16 +5,14 @@ const stripeEmailsSchema = new mongoose.Schema({
   stripeCustomerId: {
     type: String,
     required: true,
-    unique: true,
-    index: true
+    unique: true
   },
 
   // Customer email
   email: {
     type: String,
     required: true,
-    trim: true,
-    index: true
+    trim: true
   },
 
   // Customer metadata from Stripe

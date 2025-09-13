@@ -59,7 +59,8 @@ const subscriptionStatusChangeSchema = new mongoose.Schema({
       'renewal',
       'payment_failed',
       'trial_ended',
-      'refund'
+      'refund',
+      'stripe_emails_sync'
     ],
     required: true,
     index: true

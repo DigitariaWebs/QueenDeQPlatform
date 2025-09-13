@@ -14,7 +14,16 @@ class SubscriptionService {
       const { type, data } = event;
       const object = data.object;
 
-      console.log(`Processing Stripe webhook: ${type}`);
+      console.log(`Processing Stripe webhook: ${type}, event ID: ${event.id}`);
+
+      // Check for duplicate event processing
+      if (event.id) {
+        const existingEvent = await PendingUserUpdate.findOne({ stripeEventId: event.id });
+        if (existingEvent) {
+          console.log(`⚠️ Event ${event.id} already processed, skipping duplicate`);
+          return { processed: true, duplicate: true };
+        }
+      }
 
       switch (type) {
         case "checkout.session.completed":
@@ -229,23 +238,44 @@ class SubscriptionService {
 
             console.log(`Subscription end date resolved to: ${endDate}`);
 
-            await PendingUserUpdate.create({
-              email:
-                customerEmail || `stripe_customer_${subscription.customer}`, // Fallback email
-              stripeCustomerId: subscription.customer,
-              pendingRole: newRole,
-              stripeSubscriptionId: subscription.id,
-              subscriptionStatus: subscription.status,
-              subscriptionEndDate: endDate,
-              sourceEvent: eventType || "customer.subscription.created",
-              stripeEventId: eventId,
-              metadata: {
-                stripePriceId: subscription.items.data[0]?.price?.id,
-                stripeProductId: subscription.items.data[0]?.price?.product,
-                amount: subscription.items.data[0]?.price?.unit_amount || 0,
-                currency: subscription.currency || "usd",
-              },
-            });
+            // Create pending update with duplicate handling
+            try {
+              await PendingUserUpdate.create({
+                email:
+                  customerEmail || `stripe_customer_${subscription.customer}`, // Fallback email
+                stripeCustomerId: subscription.customer,
+                pendingRole: newRole,
+                stripeSubscriptionId: subscription.id,
+                subscriptionStatus: subscription.status,
+                subscriptionEndDate: endDate,
+                sourceEvent: eventType || "customer.subscription.created",
+                stripeEventId: eventId,
+                metadata: {
+                  stripePriceId: subscription.items.data[0]?.price?.id,
+                  stripeProductId: subscription.items.data[0]?.price?.product,
+                  amount: subscription.items.data[0]?.price?.unit_amount || 0,
+                  currency: subscription.currency || "usd",
+                },
+              });
+              console.log(`✅ Created pending update for customer ${subscription.customer}`);
+              
+              // Immediately try to sync this pending update with StripeEmails
+              try {
+                console.log(`🔄 Attempting immediate sync with StripeEmails for customer ${subscription.customer}`);
+                const syncResult = await this.syncStripeEmailWithPendingUpdates(subscription.customer, customerEmail);
+                if (syncResult) {
+                  console.log(`✅ Successfully synced StripeEmails for customer ${subscription.customer}`);
+                }
+              } catch (syncError) {
+                console.error(`❌ Error syncing StripeEmails for customer ${subscription.customer}:`, syncError);
+              }
+            } catch (duplicateError) {
+              if (duplicateError.code === 11000 && duplicateError.keyValue?.stripeEventId) {
+                console.log(`⚠️ Pending update for event ${eventId} already exists, skipping creation`);
+              } else {
+                throw duplicateError; // Re-throw if it's not a duplicate event error
+              }
+            }
 
             console.log(
               `Created pending update for customer ${subscription.customer}`
@@ -310,22 +340,42 @@ class SubscriptionService {
         );
 
         // Store pending update for future logins (only if user exists)
-        await PendingUserUpdate.create({
-          email: user.email,
-          stripeCustomerId: subscription.customer,
-          pendingRole: newRole,
-          stripeSubscriptionId: subscription.id,
-          subscriptionStatus: subscription.status,
-          subscriptionEndDate: endDate,
-          sourceEvent: eventType || "customer.subscription.created",
-          stripeEventId: eventId,
-          metadata: {
-            stripePriceId: subscription.items.data[0]?.price?.id,
-            stripeProductId: subscription.items.data[0]?.price?.product,
-            amount: subscription.items.data[0]?.price?.unit_amount || 0,
-            currency: subscription.currency || "usd",
-          },
-        });
+        try {
+          await PendingUserUpdate.create({
+            email: user.email,
+            stripeCustomerId: subscription.customer,
+            pendingRole: newRole,
+            stripeSubscriptionId: subscription.id,
+            subscriptionStatus: subscription.status,
+            subscriptionEndDate: endDate,
+            sourceEvent: eventType || "customer.subscription.created",
+            stripeEventId: eventId,
+            metadata: {
+              stripePriceId: subscription.items.data[0]?.price?.id,
+              stripeProductId: subscription.items.data[0]?.price?.product,
+              amount: subscription.items.data[0]?.price?.unit_amount || 0,
+              currency: subscription.currency || "usd",
+            },
+          });
+          console.log(`✅ Created pending update for user ${user.email}`);
+          
+          // Immediately try to sync this pending update with StripeEmails
+          try {
+            console.log(`🔄 Attempting immediate sync with StripeEmails for customer ${subscription.customer}`);
+            const syncResult = await this.syncStripeEmailWithPendingUpdates(subscription.customer, user.email);
+            if (syncResult) {
+              console.log(`✅ Successfully synced StripeEmails for customer ${subscription.customer}`);
+            }
+          } catch (syncError) {
+            console.error(`❌ Error syncing StripeEmails for customer ${subscription.customer}:`, syncError);
+          }
+        } catch (duplicateError) {
+          if (duplicateError.code === 11000 && duplicateError.keyValue?.stripeEventId) {
+            console.log(`⚠️ Pending update for event ${eventId} already exists for user ${user.email}, skipping creation`);
+          } else {
+            throw duplicateError; // Re-throw if it's not a duplicate event error
+          }
+        }
 
         // Update StripeEmails collection with subscription data
         try {
@@ -394,21 +444,58 @@ class SubscriptionService {
               ? new Date(subscription.ended_at * 1000)
               : new Date(); // Use current date as fallback
 
-            await PendingUserUpdate.create({
-              email:
-                customerEmail || `stripe_customer_${subscription.customer}`, // Fallback email
-              stripeCustomerId: subscription.customer,
-              pendingRole: "Tiare",
-              stripeSubscriptionId: subscription.id,
-              subscriptionStatus: "canceled",
-              subscriptionEndDate: cancelEndDate,
-              sourceEvent: "customer.subscription.deleted",
-              stripeEventId: eventId,
-              metadata: {
-                amount: subscription.items.data[0]?.price?.unit_amount || 0,
-                currency: subscription.currency || "usd",
-              },
-            });
+            try {
+              await PendingUserUpdate.create({
+                email:
+                  customerEmail || `stripe_customer_${subscription.customer}`, // Fallback email
+                stripeCustomerId: subscription.customer,
+                pendingRole: "Tiare",
+                stripeSubscriptionId: subscription.id,
+                subscriptionStatus: "canceled",
+                subscriptionEndDate: cancelEndDate,
+                sourceEvent: "customer.subscription.deleted",
+                stripeEventId: eventId,
+                metadata: {
+                  amount: subscription.items.data[0]?.price?.unit_amount || 0,
+                  currency: subscription.currency || "usd",
+                },
+              });
+              console.log(
+                `✅ Created pending cancellation update for customer ${subscription.customer}`
+              );
+
+              // Immediately try to sync this pending update with StripeEmails
+              try {
+                console.log(
+                  `🔄 Attempting immediate sync with StripeEmails for customer ${subscription.customer}`
+                );
+                const syncResult = await this.syncStripeEmailWithPendingUpdates(
+                  subscription.customer,
+                  customerEmail
+                );
+                if (syncResult) {
+                  console.log(
+                    `✅ Successfully synced StripeEmails for customer ${subscription.customer}`
+                  );
+                }
+              } catch (syncError) {
+                console.error(
+                  `❌ Error syncing StripeEmails for customer ${subscription.customer}:`,
+                  syncError
+                );
+              }
+            } catch (duplicateError) {
+              if (
+                duplicateError.code === 11000 &&
+                duplicateError.keyValue?.stripeEventId
+              ) {
+                console.log(
+                  `⚠️ Pending cancellation update for event ${eventId} already exists, skipping creation`
+                );
+              } else {
+                throw duplicateError; // Re-throw if it's not a duplicate event error
+              }
+            }
 
             console.log(
               `Created pending cancellation update for customer ${subscription.customer}`
@@ -452,20 +539,57 @@ class SubscriptionService {
         console.log(`Canceled subscription for user ${user.email}`);
 
         // Store pending update for future logins (only if user exists)
-        await PendingUserUpdate.create({
-          email: user.email,
-          stripeCustomerId: subscription.customer,
-          pendingRole: "Tiare",
-          stripeSubscriptionId: subscription.id,
-          subscriptionStatus: "canceled",
-          subscriptionEndDate: cancelEndDate,
-          sourceEvent: "customer.subscription.deleted",
-          stripeEventId: eventId,
-          metadata: {
-            amount: subscription.items.data[0]?.price?.unit_amount || 0,
-            currency: subscription.currency || "usd",
-          },
-        });
+        try {
+          await PendingUserUpdate.create({
+            email: user.email,
+            stripeCustomerId: subscription.customer,
+            pendingRole: "Tiare",
+            stripeSubscriptionId: subscription.id,
+            subscriptionStatus: "canceled",
+            subscriptionEndDate: cancelEndDate,
+            sourceEvent: "customer.subscription.deleted",
+            stripeEventId: eventId,
+            metadata: {
+              amount: subscription.items.data[0]?.price?.unit_amount || 0,
+              currency: subscription.currency || "usd",
+            },
+          });
+          console.log(
+            `✅ Created pending cancellation update for user ${user.email}`
+          );
+
+          // Immediately try to sync this pending update with StripeEmails
+          try {
+            console.log(
+              `🔄 Attempting immediate sync with StripeEmails for customer ${subscription.customer}`
+            );
+            const syncResult = await this.syncStripeEmailWithPendingUpdates(
+              subscription.customer,
+              user.email
+            );
+            if (syncResult) {
+              console.log(
+                `✅ Successfully synced StripeEmails for customer ${subscription.customer}`
+              );
+            }
+          } catch (syncError) {
+            console.error(
+              `❌ Error syncing StripeEmails for customer ${subscription.customer}:`,
+              syncError
+            );
+          }
+        } catch (duplicateError) {
+          if (
+            duplicateError.code === 11000 &&
+            duplicateError.keyValue?.stripeEventId
+          ) {
+            console.log(
+              `⚠️ Pending cancellation update for event ${eventId} already exists for user ${user.email}, skipping creation`
+            );
+          } else {
+            throw duplicateError; // Re-throw if it's not a duplicate event error
+          }
+        }
 
         // Update StripeEmails collection with cancellation data
         try {
@@ -726,23 +850,43 @@ class SubscriptionService {
         await user.save();
 
         // Store pending update for future logins
-        await PendingUserUpdate.create({
-          email: customerEmail,
-          stripeCustomerId: session.customer,
-          pendingRole: plan,
-          stripeSubscriptionId: subscription.id,
-          subscriptionStatus: subscription.status,
-          subscriptionEndDate: subscriptionEndDate,
-          sourceEvent: "checkout.session.completed",
-          stripeEventId: eventId,
-          metadata: {
-            stripePriceId: priceId,
-            stripeProductId: subscription.items.data[0]?.price?.product,
-            checkoutSessionId: session.id,
-            amount: subscription.items.data[0]?.price?.unit_amount || 0,
-            currency: subscription.currency || "usd",
-          },
-        });
+        try {
+          await PendingUserUpdate.create({
+            email: customerEmail,
+            stripeCustomerId: session.customer,
+            pendingRole: plan,
+            stripeSubscriptionId: subscription.id,
+            subscriptionStatus: subscription.status,
+            subscriptionEndDate: subscriptionEndDate,
+            sourceEvent: "checkout.session.completed",
+            stripeEventId: eventId,
+            metadata: {
+              stripePriceId: priceId,
+              stripeProductId: subscription.items.data[0]?.price?.product,
+              checkoutSessionId: session.id,
+              amount: subscription.items.data[0]?.price?.unit_amount || 0,
+              currency: subscription.currency || "usd",
+            },
+          });
+          console.log(`✅ Created pending update for checkout session ${session.id}`);
+          
+          // Immediately try to sync this pending update with StripeEmails
+          try {
+            console.log(`🔄 Attempting immediate sync with StripeEmails for customer ${session.customer}`);
+            const syncResult = await this.syncStripeEmailWithPendingUpdates(session.customer, customerEmail);
+            if (syncResult) {
+              console.log(`✅ Successfully synced StripeEmails for customer ${session.customer}`);
+            }
+          } catch (syncError) {
+            console.error(`❌ Error syncing StripeEmails for customer ${session.customer}:`, syncError);
+          }
+        } catch (duplicateError) {
+          if (duplicateError.code === 11000 && duplicateError.keyValue?.stripeEventId) {
+            console.log(`⚠️ Pending update for event ${eventId} already exists for checkout session, skipping creation`);
+          } else {
+            throw duplicateError; // Re-throw if it's not a duplicate event error
+          }
+        }
 
         // Log the change
         await SubscriptionStatusChange.create({
@@ -1187,6 +1331,12 @@ class SubscriptionService {
         const updatesByEmail =
           await PendingUserUpdate.findPendingForEmail(emailToSearch);
         pendingUpdates.push(...updatesByEmail);
+        
+        // Also search for the fallback email pattern in case the pending update was created with it
+        const fallbackEmail = `stripe_customer_${stripeCustomerId}`;
+        const updatesByFallbackEmail =
+          await PendingUserUpdate.findPendingForEmail(fallbackEmail);
+        pendingUpdates.push(...updatesByFallbackEmail);
       }
 
       // Remove duplicates based on _id
@@ -1323,6 +1473,21 @@ class SubscriptionService {
         return false;
       }
 
+      console.log(`🔄 Found StripeEmails record for customer ${subscription.customer}, attempting sync with PendingUserUpdates`);
+      
+      // Try to sync with pending updates first - this will populate subscription data from PendingUserUpdate
+      try {
+        const syncResult = await this.syncStripeEmailWithPendingUpdates(subscription.customer, stripeEmail.email);
+        console.log(`✅ Sync result for customer ${subscription.customer}: ${syncResult}`);
+        if (syncResult) {
+          // If sync was successful, the subscription data is already updated and pending updates are deleted
+          return true;
+        }
+      } catch (syncError) {
+        console.error(`❌ Error syncing customer ${subscription.customer} with pending updates:`, syncError);
+        // Continue with webhook data processing if sync fails
+      }
+
       // Get subscription details
       const subscriptionData = {
         stripeSubscriptionId: subscription.id,
@@ -1358,7 +1523,26 @@ class SubscriptionService {
         subscriptionData.endDate = new Date(); // Set end date to now
       }
 
-      // Update the subscription field
+      // First, try to sync with any pending updates that might have more complete data
+      // This should happen BEFORE we update with webhook data, in case pending data is more complete
+      try {
+        console.log(`🔄 Attempting to sync StripeEmails with PendingUserUpdates for customer ${subscription.customer}`);
+        const syncResult = await this.syncStripeEmailWithPendingUpdates(subscription.customer, stripeEmail.email);
+        if (syncResult) {
+          console.log(`✅ Successfully synced customer ${subscription.customer} with pending updates`);
+          // Refresh the stripeEmail record after sync
+          const refreshedStripeEmail = await StripeEmails.findByCustomerId(subscription.customer);
+          if (refreshedStripeEmail) {
+            // Update our local reference
+            stripeEmail = refreshedStripeEmail;
+          }
+        }
+      } catch (syncError) {
+        console.error(`Error syncing with pending updates for customer ${subscription.customer}:`, syncError);
+        // Continue with webhook data update even if sync fails
+      }
+
+      // Update the subscription field with webhook data (this might override or complement the synced data)
       stripeEmail.subscription = {
         ...stripeEmail.subscription,
         ...subscriptionData,
@@ -1420,6 +1604,26 @@ class SubscriptionService {
       if (!stripeEmail) {
         console.log(`No StripeEmails record found for ${userEmail}`);
         return { applied: false, reason: "No StripeEmails record found" };
+      }
+
+      // First, try to sync any pending updates to StripeEmails before applying
+      try {
+        console.log(`🔄 Attempting to sync pending updates for ${userEmail} during login`);
+        const syncResult = await this.syncStripeEmailWithPendingUpdates(
+          stripeEmail.stripeCustomerId, 
+          userEmail
+        );
+        if (syncResult) {
+          console.log(`✅ Successfully synced pending updates for ${userEmail} during login`);
+          // Refresh the stripeEmail object after sync
+          const updatedStripeEmail = await StripeEmails.findByEmail(userEmail);
+          if (updatedStripeEmail) {
+            Object.assign(stripeEmail, updatedStripeEmail.toObject());
+          }
+        }
+      } catch (syncError) {
+        console.error(`❌ Error syncing pending updates for ${userEmail} during login:`, syncError);
+        // Continue with login process even if sync fails
       }
 
       if (!stripeEmail.subscriptionUpdated || !stripeEmail.subscription) {
