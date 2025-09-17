@@ -100,7 +100,7 @@ const stripeEmailsSchema = new mongoose.Schema({
 
 // Indexes for efficient queries
 stripeEmailsSchema.index({ email: 1 });
-stripeEmailsSchema.index({ stripeCustomerId: 1 });
+// stripeEmailsSchema.index({ stripeCustomerId: 1 }); // Removed duplicate index - unique: true already creates it
 stripeEmailsSchema.index({ subscriptionUpdated: 1 });
 stripeEmailsSchema.index({ 'subscription.stripeSubscriptionId': 1 });
 
