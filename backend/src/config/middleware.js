@@ -34,7 +34,7 @@ export const setupMiddleware = (app) => {
     },
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'x-user-id'],
     exposedHeaders: ['Content-Length', 'X-Kuma-Revision'],
     optionsSuccessStatus: 200 // Some legacy browsers choke on 204
   };
@@ -46,7 +46,7 @@ export const setupMiddleware = (app) => {
     res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-Credentials', 'true');
     res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization, x-user-id');
     
     // Handle preflight requests
     if (req.method === 'OPTIONS') {

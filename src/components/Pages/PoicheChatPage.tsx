@@ -147,7 +147,7 @@ const PoicheChatPage = () => {
       }));
       setMessages(converted);
       setShowHistory(false);
-      setTimeout(scrollToBottom, 200);
+      setTimeout(scrollToBottom, 50);
     } catch (e) {
       console.error("Failed to load session messages", e);
     }
@@ -215,15 +215,6 @@ const PoicheChatPage = () => {
   const handleSendMessage = async () => {
     if (!inputValue.trim() || isTyping) return;
 
-    // Ensure sessionId is set before sending a message
-    let sessionIdToUse: string | undefined = currentSessionId ?? undefined;
-    if (!sessionIdToUse) {
-      // Create a new session if missing
-      const session = await chatService.createSession("poiche");
-      sessionIdToUse = session.id ?? session._id ?? undefined;
-      if (sessionIdToUse) setCurrentSessionId(sessionIdToUse);
-    }
-
     const userMessage: Message = {
       id: Date.now().toString(),
       content: inputValue,
@@ -231,13 +222,26 @@ const PoicheChatPage = () => {
       timestamp: new Date(),
     };
 
+    // Immediately update UI for better responsiveness
     setMessages((prev) => [...prev, userMessage]);
     setInputValue("");
     setIsTyping(true);
     setStreamingMessage("");
-    setTimeout(scrollToBottom, 200); // Increased delay for layout settling
+    setTimeout(scrollToBottom, 50);
 
     try {
+      // Handle session creation in background if needed
+      let sessionIdToUse: string | undefined = currentSessionId ?? undefined;
+      if (!sessionIdToUse) {
+        try {
+          const session = await chatService.createSession("poiche");
+          sessionIdToUse = session.id ?? session._id ?? undefined;
+          if (sessionIdToUse) setCurrentSessionId(sessionIdToUse);
+        } catch (error) {
+          console.warn("Failed to create session, continuing without session ID:", error);
+        }
+      }
+
       const currentMessages = [...messages, userMessage];
       let streamingResponse = "";
 
@@ -251,7 +255,7 @@ const PoicheChatPage = () => {
           // Add a small delay before showing streaming to make typing indicator visible
           streamingTimeoutRef.current = window.setTimeout(() => {
             setStreamingMessage(streamingResponse);
-          }, 500);
+          }, 100);
         } else if (chunk.type === "complete") {
           // Clear any pending timeout
           if (streamingTimeoutRef.current) {
@@ -269,7 +273,7 @@ const PoicheChatPage = () => {
             timestamp: new Date(),
           };
           setMessages((prev) => [...prev, botMessage]);
-          setTimeout(scrollToBottom, 200); // Increased delay for layout settling
+          setTimeout(scrollToBottom, 50); // Reduced delay for better responsiveness
         } else if (chunk.type === "error") {
           // Clear any pending timeout
           if (streamingTimeoutRef.current) {

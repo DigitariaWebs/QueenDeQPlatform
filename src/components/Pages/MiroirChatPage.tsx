@@ -203,7 +203,7 @@ Dis-moi, ma Queen : choisis 1 ou 2. »`,
       }));
       setMessages(converted);
       setShowHistory(false);
-      setTimeout(scrollToBottom, 200);
+      setTimeout(scrollToBottom, 50);
     } catch (e) {
       console.error("Failed to load session messages", e);
     }
@@ -276,20 +276,6 @@ Dis-moi, ma Queen : choisis 1 ou 2. »`,
   const handleSendMessage = async () => {
     if (!inputValue.trim() || isTyping) return;
 
-    // Ensure sessionId is set before sending a message
-    let sessionIdToUse: string | undefined = currentSessionId ?? undefined;
-    if (!sessionIdToUse) {
-      // Create a new session if missing
-      try {
-        const chatType = getMiroirChatTypeForRole(user?.role);
-        const session = await chatService.createSession(chatType);
-        sessionIdToUse = session.id ?? session._id ?? undefined;
-        if (sessionIdToUse) setCurrentSessionId(sessionIdToUse);
-      } catch (e) {
-        console.error("Failed to create session before sending", e);
-      }
-    }
-
     const userMessage: Message = {
       id: Date.now().toString(),
       content: inputValue,
@@ -297,13 +283,30 @@ Dis-moi, ma Queen : choisis 1 ou 2. »`,
       timestamp: new Date(),
     };
 
+    // Immediately update UI for better responsiveness
     setMessages((prev) => [...prev, userMessage]);
     setInputValue("");
     setIsTyping(true);
     setStreamingMessage("");
-    setTimeout(scrollToBottom, 200); // Increased delay for layout settling
+    setTimeout(scrollToBottom, 50);
 
     try {
+      // Handle session creation in background if needed
+      let sessionIdToUse: string | undefined = currentSessionId ?? undefined;
+      if (!sessionIdToUse) {
+        try {
+          const chatType = getMiroirChatTypeForRole(user?.role);
+          const session = await chatService.createSession(chatType);
+          sessionIdToUse = session.id ?? session._id ?? undefined;
+          if (sessionIdToUse) setCurrentSessionId(sessionIdToUse);
+        } catch (e) {
+          console.warn(
+            "Failed to create session, continuing without session ID:",
+            e
+          );
+        }
+      }
+
       const currentMessages = [...messages, userMessage];
       let streamingResponse = "";
 
@@ -317,7 +320,7 @@ Dis-moi, ma Queen : choisis 1 ou 2. »`,
           // Add a small delay before showing streaming to make typing indicator visible
           streamingTimeoutRef.current = window.setTimeout(() => {
             setStreamingMessage(streamingResponse);
-          }, 500);
+          }, 100);
         } else if (chunk.type === "complete") {
           // Clear any pending timeout
           if (streamingTimeoutRef.current) {
@@ -335,7 +338,7 @@ Dis-moi, ma Queen : choisis 1 ou 2. »`,
             timestamp: new Date(),
           };
           setMessages((prev) => [...prev, botMessage]);
-          setTimeout(scrollToBottom, 200); // Increased delay for layout settling
+          setTimeout(scrollToBottom, 50); // Reduced delay for better responsiveness
         } else if (chunk.type === "error") {
           // Clear any pending timeout
           if (streamingTimeoutRef.current) {

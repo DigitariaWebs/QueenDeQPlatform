@@ -221,7 +221,7 @@ const SalonChatPage = () => {
       }));
       setMessages(converted);
       setShowHistory(false);
-      setTimeout(scrollToBottom, 200);
+      setTimeout(scrollToBottom, 50);
     } catch (e) {
       console.error("Failed to load session messages", e);
     }
@@ -299,7 +299,7 @@ const SalonChatPage = () => {
     setInputValue("");
     setIsTyping(true);
     setStreamingMessage("");
-    setTimeout(scrollToBottom, 200); // Increased delay for layout settling
+    setTimeout(scrollToBottom, 50); // Reduced delay for better responsiveness
 
     try {
       const currentMessages = [...messages, userMessage];
@@ -315,7 +315,7 @@ const SalonChatPage = () => {
           // Add a small delay before showing streaming to make typing indicator visible
           streamingTimeoutRef.current = window.setTimeout(() => {
             setStreamingMessage(streamingResponse);
-          }, 500);
+          }, 100);
         } else if (chunk.type === "complete") {
           // Clear any pending timeout
           if (streamingTimeoutRef.current) {
@@ -333,7 +333,7 @@ const SalonChatPage = () => {
             timestamp: new Date(),
           };
           setMessages((prev) => [...prev, botMessage]);
-          setTimeout(scrollToBottom, 200); // Increased delay for layout settling
+          setTimeout(scrollToBottom, 50); // Reduced delay for better responsiveness
         } else if (chunk.type === "error") {
           // Clear any pending timeout
           if (streamingTimeoutRef.current) {

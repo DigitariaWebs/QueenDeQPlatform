@@ -65,6 +65,16 @@ const API_BASE = import.meta.env.PROD
   ? 'https://queen-de-q-platform-backend.vercel.app/api/ai'
   : '/api/ai';
 
+// Timeout wrapper for fetch requests
+function fetchWithTimeout(url: string, options: RequestInit, timeoutMs: number = 25000) {
+  return Promise.race([
+    fetch(url, options),
+    new Promise<Response>((_, reject) =>
+      setTimeout(() => reject(new Error('Request timeout')), timeoutMs)
+    )
+  ]);
+}
+
 function getAuthHeaders(): Record<string, string> {
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
@@ -91,39 +101,55 @@ class ChatService {
   }
 
   async createSession(chatType: 'poiche' | 'reine_mere_Diademe' | 'reine_mere_Couronne' | 'miroir_free' | 'miroir_paid', title?: string): Promise<ChatSessionSummary> {
-    const response = await fetch(`${API_BASE}/sessions`, {
-      method: 'POST',
-      headers: getAuthHeaders(),
-      body: JSON.stringify({ title, chatType })
-    });
+    const response = await fetchWithTimeout(
+      `${API_BASE}/sessions`,
+      {
+        method: "POST",
+        headers: getAuthHeaders(),
+        body: JSON.stringify({ title, chatType }),
+      },
+      10000
+    );
     const data = await response.json();
     if (!response.ok || !data.success) throw new Error(data.error || 'Failed to create session');
     return data.session as ChatSessionSummary;
   }
 
   async listSessions(): Promise<ChatSessionSummary[]> {
-    const response = await fetch(`${API_BASE}/sessions`, {
-      headers: getAuthHeaders()
-    });
+    const response = await fetchWithTimeout(
+      `${API_BASE}/sessions`,
+      {
+        headers: getAuthHeaders(),
+      },
+      10000
+    );
     const data = await response.json();
     if (!response.ok || !data.success) throw new Error(data.error || 'Failed to fetch sessions');
     return data.sessions as ChatSessionSummary[];
   }
 
   async getSession(sessionId: string): Promise<ChatSessionWithMessages> {
-    const response = await fetch(`${API_BASE}/sessions/${sessionId}`, {
-      headers: getAuthHeaders()
-    });
+    const response = await fetchWithTimeout(
+      `${API_BASE}/sessions/${sessionId}`,
+      {
+        headers: getAuthHeaders(),
+      },
+      10000
+    );
     const data = await response.json();
     if (!response.ok || !data.success) throw new Error(data.error || 'Failed to fetch session');
     return data.session as ChatSessionWithMessages;
   }
 
   async deleteSession(sessionId: string): Promise<{ success: boolean; message: string }> {
-    const response = await fetch(`${API_BASE}/sessions/${sessionId}`, {
-      method: 'DELETE',
-      headers: getAuthHeaders()
-    });
+    const response = await fetchWithTimeout(
+      `${API_BASE}/sessions/${sessionId}`,
+      {
+        method: "DELETE",
+        headers: getAuthHeaders(),
+      },
+      10000
+    );
     const data = await response.json();
     if (!response.ok || !data.success) throw new Error(data.error || 'Failed to delete session');
     return data;
@@ -142,15 +168,19 @@ class ChatService {
         sessionId
       });
 
-      const response = await fetch(`${API_BASE}/chat`, {
-        method: 'POST',
-        headers: getAuthHeaders(),
-        body: JSON.stringify({
-          messages: this.convertMessagesToAPIFormat(messages),
-          chatType: chatType,
-          sessionId
-        })
-      });
+      const response = await fetchWithTimeout(
+        `${API_BASE}/chat`,
+        {
+          method: "POST",
+          headers: getAuthHeaders(),
+          body: JSON.stringify({
+            messages: this.convertMessagesToAPIFormat(messages),
+            chatType: chatType,
+            sessionId,
+          }),
+        },
+        25000
+      );
 
       let data: ChatResponse;
       try { data = await response.json(); } catch { data = { success: false, error: 'Invalid server response' }; }
@@ -191,15 +221,19 @@ class ChatService {
         sessionId
       });
 
-      const response = await fetch(`${API_BASE}/chat/stream`, {
-        method: 'POST',
-        headers: getAuthHeaders(),
-        body: JSON.stringify({
-          messages: this.convertMessagesToAPIFormat(messages),
-          chatType: chatType,
-          sessionId
-        })
-      });
+      const response = await fetchWithTimeout(
+        `${API_BASE}/chat/stream`,
+        {
+          method: "POST",
+          headers: getAuthHeaders(),
+          body: JSON.stringify({
+            messages: this.convertMessagesToAPIFormat(messages),
+            chatType: chatType,
+            sessionId,
+          }),
+        },
+        30000
+      );
 
       if (!response.ok) {
         const errorData = await response.json();
