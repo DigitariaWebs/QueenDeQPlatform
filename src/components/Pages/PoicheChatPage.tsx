@@ -43,7 +43,7 @@ const PoicheChatPage = () => {
     {
       id: "1",
       content:
-        "Oh Queen, si tu es ici c'est que tu es prête à voir clair dans son jeu. Avant d'aller plus loin, donne-moi un peu plus de détails pour que je puisse comprendre le contexte de la game. Tu le connais depuis quand? Vous vous êtes déjà rencontré? Vous en êtes à quel stade? Fréquentation, relation, situationship, exploration, dating ? Je pourrais adapter mes questions en fonction de ta situation. À toi, dis-moi tout!",
+        "Tire pas tout de suite, ma Queen. Avant de piger, regarde bien le jeu…\n\nIci, je mets la lumière sur **lui**, pas sur toi. Je décode son profil, je lève les drapeaux 🚩🟡✅, je nomme les risques et les moves archétypaux. C'est un spotlight : je braque le faisceau, je dis ce que je vois.\n\nTu as trois façons de jouer :\n   1️⃣ **Le Hint rapide** → un message, une situation, et je te dis vert, jaune ou rouge.\n   2️⃣ **Le Sniff intuitif** → tu veux juste valider ton gut feeling, et je te dis ce que ça sent.\n   3️⃣ **Le Portrait complet** → je t'amène plus loin avec au moins 15 questions pour révéler sa carte exacte.\n\nAlors, ma Queen… choisis : 1, 2 ou 3 ?",
       isUser: false,
       timestamp: new Date(),
     },
@@ -100,7 +100,7 @@ const PoicheChatPage = () => {
       {
         id: "1",
         content:
-          "Oh Queen, si tu es ici c'est que tu es prête à voir clair dans son jeu. Avant d'aller plus loin, donne-moi un peu plus de détails pour que je puisse comprendre le contexte de la game. Tu le connais depuis quand? Vous vous êtes déjà rencontré? Vous en êtes à quel stade? Fréquentation, relation, situationship, exploration, dating ? Je pourrais adapter mes questions en fonction de ta situation. À toi, dis-moi tout!",
+          "Tire pas tout de suite, ma Queen. Avant de piger, regarde bien le jeu…\n\nIci, je mets la lumière sur **lui**, pas sur toi. Je décode son profil, je lève les drapeaux 🚩🟡✅, je nomme les risques et les moves archétypaux. C'est un spotlight : je braque le faisceau, je dis ce que je vois.\n\nTu as trois façons de jouer :\n   1️⃣ **Le Hint rapide** → un message, une situation, et je te dis vert, jaune ou rouge.\n   2️⃣ **Le Sniff intuitif** → tu veux juste valider ton gut feeling, et je te dis ce que ça sent.\n   3️⃣ **Le Portrait complet** → je t'amène plus loin avec au moins 15 questions pour révéler sa carte exacte.\n\nAlors, ma Queen… choisis : 1, 2 ou 3 ?",
         isUser: false,
         timestamp: new Date(),
       },
@@ -172,7 +172,7 @@ const PoicheChatPage = () => {
           {
             id: "1",
             content:
-              "Oh Queen, si tu es ici c'est que tu es prête à voir clair dans son jeu. Avant d'aller plus loin, donne-moi un peu plus de détails pour que je puisse comprendre le contexte de la game. Tu le connais depuis quand? Vous vous êtes déjà rencontré? Vous en êtes à quel stade? Fréquentation, relation, situationship, exploration, dating ? Je pourrais adapter mes questions en fonction de ta situation. À toi, dis-moi tout!",
+              "Tire pas tout de suite, ma Queen. Avant de piger, regarde bien le jeu…\n\nIci, je mets la lumière sur **lui**, pas sur toi. Je décode son profil, je lève les drapeaux 🚩🟡✅, je nomme les risques et les moves archétypaux. C'est un spotlight : je braque le faisceau, je dis ce que je vois.\n\nTu as trois façons de jouer :\n   1️⃣ **Le Hint rapide** → un message, une situation, et je te dis vert, jaune ou rouge.\n   2️⃣ **Le Sniff intuitif** → tu veux juste valider ton gut feeling, et je te dis ce que ça sent.\n   3️⃣ **Le Portrait complet** → je t'amène plus loin avec au moins 15 questions pour révéler sa carte exacte.\n\nAlors, ma Queen… choisis : 1, 2 ou 3 ?",
             isUser: false,
             timestamp: new Date(),
           },
